@@ -1,0 +1,99 @@
+#login {    
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter'; 
+    height: 100%;
+    width: 100vw;
+}
+#login header {        
+    background-color: #FFFFFF;
+    padding: 20px;
+    border-radius: 10px;
+}
+#login header h1 {  
+    color: #437CA5;  
+    font-weight: 900;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+    margin-top: 10px;
+    
+}
+#login main {    
+    background-image: url('inicioSesionBackPic.png');
+    background-size: cover;    
+    background-repeat: repeat-y;
+    background-position-x: center;
+    background-position-y: -50px;    
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    background-color: #437ca565;
+    height: 100%;
+    min-height: 550px;    
+}
+
+#login #floating-box {
+    display: flex;
+    flex-direction: column;    
+    align-items: center;
+    background-color: #f8f9fa;
+    width: 400px;        
+    padding-top: 50px;
+    padding-bottom: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 10vh;
+    border-radius: 50px;
+
+    min-height: 400px;
+}
+#login #floating-box h2 {    
+    margin-bottom: 50px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+.input-container {    
+    display: flex;
+    flex-direction: column;
+    justify-content: left;
+    align-content: left;
+    width: 80%;
+    margin-bottom: 20px;
+}
+.input-container input {
+    border: unset;
+    border-radius: 30px;
+    height: 30px;
+    background-color: #D9D9D9;
+    padding-left: 15px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#login #floating-box button {
+    width: 80%;
+    border: unset;
+    border-radius: 30px;
+    background-color: #437CA5;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    padding: 10px 20px;    
+    cursor: pointer;
+}
+#login #floating-box button:hover {    
+    background-color: #5193c2;
+}
+
+#login #floating-box hr {
+    width: 80%;    
+    padding-bottom: 0px;
+    margin-bottom: 0px;
+    border-color: #437CA5;
+}
+#login #floating-box p {
+    color: #437CA5;
+}
+#login #floating-box a {
+    color: #437CA5;
+}
