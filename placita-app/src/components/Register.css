@@ -1,0 +1,126 @@
+#signup {    
+    display: flex;
+    flex-direction: column;
+    font-family: 'Inter'; 
+    height: 100%;
+    width: 100vw;
+}
+
+#signup main {    
+    background-image: url('inicioSesionBackPic.png');
+    background-size: cover;    
+    background-repeat: repeat-y;
+    background-position-x: center;
+    background-position-y: -50px;    
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    background-color: #437ca565;
+    height: 100%;
+    min-height: 550px;
+}
+
+#signup #floating-box {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    background-color: #f8f9fa;
+    width: 750px;        
+    padding-top: 10px;
+    padding-bottom: 50px;
+    padding-left: 30px;
+    padding-right: 30px;
+    margin-top: 5vh;
+    border-radius: 50px;
+    min-height: 400px;
+}
+
+#signup #floating-box h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+#signup form {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    margin: 10px 12px 0;
+}
+
+form .form-group {
+    margin-left: 20px;
+    margin-bottom: 15px;
+    width: calc(100%/2 - 20px);
+}
+
+form label {
+    display: block;
+    font-size: 110%;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+form input {
+    border: unset;
+    border-radius: 30px;
+    height: 20px;
+    background-color: #D9D9D9;
+    padding-left: 100px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#signup #floating-box hr {
+    width: 98%;    
+    padding-bottom: 5px;
+    margin-bottom: 3px;
+    background-color: #437CA5;
+}
+
+.you-belong label {
+    margin-left: 100px;
+    color: #437CA5;
+}
+
+.guild-code {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+#signup #floating-box .guild-code label {
+    font-size: 110%;
+    font-weight: 700;
+    margin-bottom: 5px;
+}
+
+#signup #floating-box .guild-code input {
+    border: unset;
+    border-radius: 30px;
+    height: 20px;
+    width: 250px;
+    background-color: #D9D9D9;
+    padding-left: 0px;
+    padding-top: 5px;
+    padding-bottom: 5px;
+}
+
+#signup #floating-box button {
+    margin-top: 20px;
+    margin-left: 227px;
+    width: 40%;
+    border: unset;
+    border-radius: 30px;
+    background-color: #437CA5;
+    color: white;
+    font-weight: bold;
+    font-size: medium;
+    padding: 10px 20px;    
+    cursor: pointer;
+}
+#signup #floating-box button:hover {    
+    background-color: #5193c2;
+}
