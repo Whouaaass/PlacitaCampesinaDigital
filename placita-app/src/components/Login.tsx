@@ -1,17 +1,15 @@
-import './Login.css';
-
 function Login() {
     return (
-        <div id="login">
-            <header>
+        <>
+            <header id="login-header">
                 <h1>AGROCAUCA</h1>            
             </header>
-            <main>
-                <div id="floating-box">
+            <main className='pine-background login'>
+                <div className="floating-box login">
                     <h2>Iniciar Sesión</h2>
                     <div className='input-container'>
-                        <label htmlFor="email">Usuario</label>
-                        <input type="email" id="email" name="email" />
+                        <label htmlFor="name">Usuario</label>
+                        <input type="name" id="name" name="name" />
                     </div>
                     <div className='input-container'>
                         <label htmlFor="password">Contraseña</label>
@@ -22,7 +20,7 @@ function Login() {
                     <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
                 </div>
             </main>
-        </div>
+        </>
     );
 }
 

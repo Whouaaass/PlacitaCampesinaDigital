@@ -10,6 +10,7 @@ export class dbInterface {
     }    
     async connect() {
         try {
+            console.log("conectando a la base de datos...");
             this.connection = await this.OracleDB.getConnection({
                 user: this.db_user,
                 password: this.db_password,
@@ -26,4 +27,13 @@ export class dbInterface {
             console.error(err);
         }
     }    
+    async query(query) {
+        try {
+            const result = await this.connection.execute(query);
+            return result;
+        } catch (err) {
+            
+            console.error(err);
+        }
+    }
 }
