@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useRef } from 'react';
 
 type YesNoRadioButtonProps = {
     yesLabel: string;
@@ -41,12 +41,12 @@ const YesNoRadioButton: React.FC<YesNoRadioButtonProps> = ({ yesLabel, noLabel, 
         }
     }
     return (
-        <div {...props}>
-            <div onClick={() => handleContainerCLick("yes")}>
+        <div {...props} className="flex-row">
+            <div className="flex-row" onClick={() => handleContainerCLick("yes")}>
                 <input ref={radioYesRef} type="radio" id="yes" name={name} value="yes" onChange={handleChange}/>
                 <label htmlFor={`${name}-yes`}>{yesLabel}</label>
             </div>
-            <div onClick={() => handleContainerCLick("no")}>
+            <div className="flex-row" onClick={() => handleContainerCLick("no")}>
                 <input ref={radioNoRef}type="radio" id="no" name={name} value="no" onChange={handleChange} />
                 <label htmlFor={`${name}-no`}>{noLabel}</label>
             </div>
