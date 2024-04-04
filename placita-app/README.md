@@ -1,3 +1,15 @@
+# Como inicializar el proyecto?
+
+Primero debes de tener todas las dependencias instaladas, para eso, en el directorio de `placita-app` ejecuta el comando en consola
+``` npm install ```
+
+Para inicializar el proyecto  debes debes de estar el el directorio de `placita-app` y ejecutar en consola:
+``` npm run dev ```
+
+** Recuerda que debes de tener instalado npm y node para ejecutar el proyecto **
+
+
+
 # React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
