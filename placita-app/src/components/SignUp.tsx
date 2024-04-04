@@ -1,7 +1,12 @@
 import './SignUp.css';
 import { useState, useRef, useEffect, FormEvent } from 'react';
-import YesNoRadioButton from './YesNoRadioButton';
+import { createPortal } from 'react-dom';
 import { Link } from 'react-router-dom';
+import { validateAgrocode } from '../validators';
+import PopUp, { PopUpRef } from './PopUp';
+import YesNoRadioButton from './YesNoRadioButton';
+
+
 
 
 /** 
@@ -19,6 +24,7 @@ function SignUp() {
         agrocode: ''
     });           
     const submitButton = useRef<HTMLButtonElement>(null);    
+    const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
     const isAgrocauca = user.agrocauca === 'yes' ? true : false;
     
@@ -38,6 +44,12 @@ function SignUp() {
         submitButton.current?.setAttribute('autocomplete', 'off');
         setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);
         
+        // Validate the form        
+        if (user.agrocauca === "yes" && !validateAgrocode(user.agrocode)) {
+            popUpRef.current?.show('Codigo de gremio incorrecto');       
+            return;
+        }
+        
         // sends the data to the api server
         fetch("http://localhost:3000/users", {
             method: 'POST',
@@ -49,13 +61,15 @@ function SignUp() {
         .then((res) => res.json())
         .then((data) => {
             console.log(data.message)            
-        }).catch(() => {
+        }).catch((err) => {
             console.log('something went wrong with the insert fetch')                
+            console.log(err)            
         });
     }
     
     return (
         <>
+            {createPortal(<PopUp ref={popUpRef}>*</PopUp>, document.getElementById('popup-root') as HTMLElement)}
             <header className='thick'>
                 <h1>AGROCAUCA</h1>            
             </header>

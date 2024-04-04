@@ -1,10 +1,43 @@
-#root {
-    font-family: 'Inter';
+:root {
+    --mywhite: #FFFFFF;
+    --lightred: #FFD3D3;
+    --steelblue: #437CA5;
+    --lava: #D61515;
+}
+
+.hidden {    
+    display: none;
+    animation: fadeout 0.5s;
+}
+
+
+#root {    
     position: absolute;
     display: flex;
     flex-direction: column;
     width: 100%;
     height: 100%;
+}
+
+#popup-root {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;    
+    z-index: 1000;    
+    overflow: hidden;
+}
+
+#popup {
+    background-color: var(--lava);
+    color: white;
+    animation-name: frombottom;
+    animation-duration: 0.5s;    
+    padding:1px;
+    padding-left: 10px;
+}
+#popup p {
+    text-align: center;
+    padding: 0;    
 }
 
 header.thick {        
@@ -28,8 +61,7 @@ main.pine-background {
     background-position-x: center;    
     display: flex;
     justify-content: center;
-    align-items: start;
-    background-color: #437ca565;        
+    align-items: start;        
     height: 100%;    
 }
 
@@ -74,6 +106,7 @@ main.login {
 .floating-box .input-container input:focus {
     border: unset;        
 }
+
 .floating-box button {
     width: 100%;
     border: unset;
@@ -88,6 +121,7 @@ main.login {
 .floating-box button:hover {    
     background-color: #5193c2;
 }
+
 .floating-box h2 {    
     margin-bottom: 50px;
     font-weight: 700;
@@ -98,13 +132,13 @@ main.login {
     width: 100%;    
     padding-bottom: 0px;
     margin-bottom: 0px;
-    border-color: #437CA5;
+    border-color: var(--steelblue);
 }
 .floating-box p {
-    color: #437CA5;
+    color: var(--steelblue);
 }
 .floating-box a {
-    color: #437CA5;
+    color: var(--steelblue);
 }
 
 
