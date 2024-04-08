@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
+import { createPortal } from "react-dom";
 
 type PopUpProps = {
     children: React.ReactNode;
@@ -40,9 +41,16 @@ const PopUp = forwardRef<PopUpRef, PopUpProps>(({ children }, ref) => {
     }, []);
 
     return (
-        <div id="popup" className={visible ? "" : "hidden"}>
-            <p>{msg}</p>
-        </div>
+        <>
+            {visible && createPortal(
+                <div id="popup">
+                    <p>{msg}</p>
+                </div>,
+                document.getElementById('popup-root') as HTMLElement
+            )
+            }
+        </>
+
     );
 });
 

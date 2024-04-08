@@ -5,6 +5,8 @@
     --lava: #D61515;
 }
 
+
+
 .hidden {    
     display: none;
     animation: fadeout 0.5s;
@@ -17,6 +19,7 @@
     flex-direction: column;
     width: 100%;
     height: 100%;
+    overflow: hidden;
 }
 
 #popup-root {
@@ -54,6 +57,19 @@ header h1 {
     margin-left: 10px;
     
 }
+
+main {
+    flex-grow: 1;
+    overflow: auto;  
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;  /* Firefox */
+}
+
+main::-webkit-scrollbar {
+    display: none;      /* Chrome, Safari, Opera*/
+}
+
+
 main.pine-background {    
     background-image: url('inicioSesionBackPic.png');
     background-size: cover;    

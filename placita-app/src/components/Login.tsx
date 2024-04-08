@@ -55,11 +55,11 @@ function Login() {
 
     return (
         <>
-            {createPortal(<PopUp ref={popUpRef}>*</PopUp>, document.getElementById('popup-root') as HTMLElement)}
+            <PopUp ref={popUpRef}>*</PopUp>
             <header className="thick">
                 <h1>AGROCAUCA</h1>            
             </header>
-            <main className='pine-background login' onSubmit={handleSubmit}>
+            <main className='pine-background' onSubmit={handleSubmit}>
                 <form className="floating-box login">
                     <h2>Iniciar Sesión</h2>
                     <div className='input-container'>

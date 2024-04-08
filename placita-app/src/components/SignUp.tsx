@@ -69,11 +69,11 @@ function SignUp() {
     
     return (
         <>
-            {createPortal(<PopUp ref={popUpRef}>*</PopUp>, document.getElementById('popup-root') as HTMLElement)}
+            <PopUp ref={popUpRef}>*</PopUp>
             <header className='thick'>
                 <h1>AGROCAUCA</h1>            
             </header>
-            <main className='pine-background signup'>
+            <main className='pine-background'>
                 <form className="floating-box signup" onSubmit={handleFormSubmit}>
                     <h2>REGISTRO</h2>
                     <div id="inputs-container"> 
