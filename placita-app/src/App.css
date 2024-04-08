@@ -69,7 +69,6 @@ main::-webkit-scrollbar {
     display: none;      /* Chrome, Safari, Opera*/
 }
 
-
 main.pine-background {    
     background-image: url('inicioSesionBackPic.png');
     background-size: cover;    
@@ -98,10 +97,6 @@ main.pine-background {
 .floating-box.login {
     width: 320px;
 }
-main.login {    
-    min-height: 500px;    
-}
-
 .floating-box .input-container {    
     display: flex;
     flex-direction: column;
