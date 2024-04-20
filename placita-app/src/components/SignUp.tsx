@@ -1,13 +1,9 @@
 import './SignUp.css';
-import { useState, useRef, useEffect, FormEvent } from 'react';
-import { createPortal } from 'react-dom';
+import { useState, useRef, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
 import { validateAgrocode } from '../validators';
 import PopUp, { PopUpRef } from './PopUp';
 import YesNoRadioButton from './YesNoRadioButton';
-
-
-
 
 /** 
  * @brief SingUp component that renders a page to register a new user.

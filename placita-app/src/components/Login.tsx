@@ -1,9 +1,8 @@
 import { Link } from 'react-router-dom';
 import { FormEvent, useState, useRef } from 'react';
-import { createPortal } from 'react-dom';
 import PopUp from './PopUp';
 import { PopUpRef } from './PopUp';
-import { validateEmail, validatePassword, validateUsername } from '../validators';
+import { validatePassword, validateUsername } from '../validators';
 
 /** 
  * @brief Login component that renders a page to login an existing user.
