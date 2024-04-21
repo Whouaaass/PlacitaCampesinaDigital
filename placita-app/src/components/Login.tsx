@@ -44,9 +44,6 @@ function Login() {
             body: JSON.stringify({ username: user.username })
         })
         .then(response => response.json())
-        .then(data => {
-            const password = data.password;            
-        })
         .catch(error => {
             console.error('Error:', error);
         });
@@ -62,7 +59,7 @@ function Login() {
                 <form className="floating-box login">
                     <h2>Iniciar Sesión</h2>
                     <div className='input-container'>
-                        <label htmlFor="input-container">Usuario</label>
+                        <label htmlFor="username">Usuario</label>
                         <input type="username" id="username" name="username" value={user.username} onChange={handleChange} className='invalid'/>
                     </div>
                     <div className='input-container'>

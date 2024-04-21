@@ -9,11 +9,11 @@ export interface PopUpRef {
     show: (msg: string) => void;
 }
 
-const PopUp = forwardRef<PopUpRef, PopUpProps>(({ children }, ref) => {
+const PopUp = forwardRef<PopUpRef, PopUpProps>(({}, ref) => {
     const [visible, setVisible] = useState(false);
     const [msg, setMsg] = useState('');
-    const timeoutRef = useRef<number | null>(null);
-
+    const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+    
     const show = (msg: string) => {
         setMsg(msg);
         setVisible(false);
