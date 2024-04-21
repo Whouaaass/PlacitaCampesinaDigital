@@ -12,20 +12,16 @@ import { render } from '@testing-library/react';
 
 // Importa el componente Login que deseas probar
 import Login from '../components/Login';
-import { BrowserRouter } from 'react-router-dom';
-
 // Prueba para verificar si el componente Login se renderiza correctamente
 test('renders Login component', () => {
   // Renderiza el componente Login
   const { getByText, getByLabelText } = render(
-    <BrowserRouter>
-      <Login />
-    </BrowserRouter>  
+    <Login />    
   );
 
   // Busca elementos en el componente renderizado
   const titleElement = getByText('Iniciar Sesión');
-  const usernameInput = getByLabelText('Usuario');
+  const usernameInput = getByLabelText('Cédula');
   const passwordInput = getByLabelText('Contraseña');
   const submitButton = getByText('Entrar');
 

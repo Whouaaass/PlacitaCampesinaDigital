@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import { FormEvent, useState, useRef } from 'react';
 import PopUp from './PopUp';
 import { PopUpRef } from './PopUp';
@@ -59,8 +58,8 @@ function Login() {
                 <form className="floating-box login">
                     <h2>Iniciar Sesión</h2>
                     <div className='input-container'>
-                        <label htmlFor="username">Usuario</label>
-                        <input type="username" id="username" name="username" value={user.username} onChange={handleChange} className='invalid'/>
+                        <label htmlFor="id">Cédula</label>
+                        <input type="username" id="id" name="id" value={user.username} onChange={handleChange} className='invalid'/>
                     </div>
                     <div className='input-container'>
                         <label htmlFor="password">Contraseña</label>
@@ -68,7 +67,7 @@ function Login() {
                     </div>
                     <button type="submit">Entrar</button>
                     <hr/>                    
-                    <p>¿No tienes cuenta? <Link to="/signup">Regístrate</Link></p>
+                    <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
                 </form>
             </main>            
         </>

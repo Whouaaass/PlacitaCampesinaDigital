@@ -1,6 +1,5 @@
 import './SignUp.css';
 import { useState, useRef, FormEvent } from 'react';
-import { Link } from 'react-router-dom';
 import { validateAgrocode } from '../validators';
 import PopUp, { PopUpRef } from './PopUp';
 import YesNoRadioButton from './YesNoRadioButton';
@@ -86,7 +85,7 @@ function SignUp() {
                             <input type="password" id="password" name="password" value={user.password} onChange={handleChange}/>
                         </div>
                         <div className='input-container'>
-                            <label htmlFor="id">ID (CC)</label>
+                            <label htmlFor="id">Cédula</label>
                             <input type="id" id="id" name="id" value={user.id} onChange={handleChange}/>
                         </div>
                         <div className='input-container'>
@@ -119,7 +118,7 @@ function SignUp() {
                     }
                     <button ref={submitButton} type="submit">Registrarse</button>
                     <hr />
-                    <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
+                    <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesion</a></p>
                 </form>
             </main>
         </>
