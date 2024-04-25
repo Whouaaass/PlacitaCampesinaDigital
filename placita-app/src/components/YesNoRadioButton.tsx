@@ -43,11 +43,11 @@ const YesNoRadioButton: React.FC<YesNoRadioButtonProps> = ({ yesLabel, noLabel, 
     return (
         <div {...props} className="flex-row">
             <div className="flex-row" onClick={() => handleContainerCLick("yes")}>
-                <input ref={radioYesRef} type="radio" id="yes" name={name} value="yes" onChange={handleChange}/>
+                <input ref={radioYesRef} type="radio" id={`${name}-yes`} name={name} value="yes" onChange={handleChange}/>
                 <label htmlFor={`${name}-yes`}>{yesLabel}</label>
             </div>
             <div className="flex-row" onClick={() => handleContainerCLick("no")}>
-                <input ref={radioNoRef}type="radio" id="no" name={name} value="no" onChange={handleChange} />
+                <input ref={radioNoRef}type="radio" id={`${name}-yes`} name={name} value="no" onChange={handleChange} />
                 <label htmlFor={`${name}-no`}>{noLabel}</label>
             </div>
         </div>

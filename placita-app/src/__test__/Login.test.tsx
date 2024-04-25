@@ -14,6 +14,8 @@ import Login from '../components/Login';
 import { BrowserRouter } from 'react-router-dom';
 
 // Prueba para verificar si el componente Login se renderiza correctamente
+document.body.innerHTML = '<div id="popup-root"></div>';
+
 test('renders Login component', () => {
   // Renderiza el componente Login
   const { getByText, getByLabelText } = render(

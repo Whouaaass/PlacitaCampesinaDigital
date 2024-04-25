@@ -8,7 +8,7 @@ import { validatePassword, validateUsername } from '../validators';
  */
 function Login() {
     const [user, setUser] = useState({
-        username: '',
+        id: '',
         password: ''
     });
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
@@ -25,11 +25,11 @@ function Login() {
         e.preventDefault();        
 
         // Validate the form
-        if (user.username.length === 0 || user.password.length === 0) {            
+        if (user.id.length === 0 || user.password.length === 0) {            
             popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
         }
-        if (!validateUsername(user.username) || !validatePassword(user.password)) {            
+        if (!validateUsername(user.id) || !validatePassword(user.password)) {            
             popUpRef.current?.show('Usuario o contraseña inválidos');
             return;
         }       
@@ -40,11 +40,11 @@ function Login() {
             headers: {
             'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: user.username })
+            body: JSON.stringify({ username: user.id })
         })
         .then(response => response.json())
         .catch(error => {
-            console.error('Error:', error);
+            console.error('Error: ', error);
         });
     }
 
@@ -52,24 +52,24 @@ function Login() {
         <>
             <PopUp ref={popUpRef}>*</PopUp>
             <header className="thick">
-                <h1>AGROCAUCA</h1>            
+                <h1>AGROCAUCA</h1>
             </header>
             <main className='pine-background' onSubmit={handleSubmit}>
                 <form className="floating-box login">
                     <h2>Iniciar Sesión</h2>
                     <div className='input-container'>
                         <label htmlFor="id">Cédula</label>
-                        <input type="username" id="id" name="id" value={user.username} onChange={handleChange} className='invalid'/>
+                        <input type="username" id="id" name="id" value={user.id} onChange={handleChange} className='invalid'/>
                     </div>
                     <div className='input-container'>
                         <label htmlFor="password">Contraseña</label>
                         <input type="password" id="password" name="password" value={user.password} onChange={handleChange}/>
                     </div>
                     <button type="submit">Entrar</button>
-                    <hr/>                    
+                    <hr/>
                     <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
                 </form>
-            </main>            
+            </main>
         </>
     );
 }

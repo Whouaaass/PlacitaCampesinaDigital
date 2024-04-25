@@ -2,7 +2,7 @@ import { useState, useRef, FormEvent } from 'react';
 import { validateAgrocode } from '../validators';
 import PopUp, { PopUpRef } from './PopUp';
 import YesNoRadioButton from './YesNoRadioButton';
-import './SignUp.css';
+
 
 /** 
  * @brief SingUp component that renders a page to register a new user.
@@ -74,7 +74,7 @@ function SignUp() {
                     <div id="inputs-container"> 
                         <div className='input-container'>
                             <label htmlFor="firstname">Nombre</label>
-                            <input type="name" id="email" name="firstname" value={user.firstname} onChange={handleChange}/>
+                            <input type="name" id="firstname" name="firstname" value={user.firstname} onChange={handleChange}/>
                         </div>
                         <div className='input-container'>
                             <label htmlFor="lastname">Apellido</label>
@@ -89,7 +89,7 @@ function SignUp() {
                             <input type="id" id="id" name="id" value={user.id} onChange={handleChange}/>
                         </div>
                         <div className='input-container'>
-                            <label htmlFor="telnumber">Teléfono</label>
+                            <label htmlFor="tel">Teléfono</label>
                             <input type="tel" id="tel" name="telnumber" value={user.telnumber} onChange={handleChange}/>
                         </div>
                         <div className='input-container'>

@@ -13,6 +13,8 @@ import '@testing-library/jest-dom';
 import SignUp from '../components/SignUp.tsx';
 import { BrowserRouter } from 'react-router-dom';
 
+document.body.innerHTML = '<div id="popup-root"></div>';
+
 // Prueba para verificar si el componente SignUp se renderiza correctamente
 test('renders SignUp component', () => { //El error se encuentra en SignUp.css al hacer #input
     // Renderiza el componente Login
@@ -26,7 +28,7 @@ test('renders SignUp component', () => { //El error se encuentra en SignUp.css a
     const titleElement = getByText('REGISTRO');
     const userNameInput = getByLabelText('Nombre');
     const userLastNameInput = getByLabelText('Apellido');
-    const userPasswordInput = getByLabelText('Constraseña');
+    const userPasswordInput = getByLabelText('Contraseña');
     const userIdInput = getByLabelText('Cédula');
     const userTelInput = getByLabelText('Teléfono');
     const userAdressInput = getByLabelText('Dirección');
