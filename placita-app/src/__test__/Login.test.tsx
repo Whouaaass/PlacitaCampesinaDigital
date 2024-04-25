@@ -4,19 +4,22 @@
  * @jest-environment jsdom
  */
 
-
-
 // Importa las funciones necesarias de Testing Library y React
-import { render } from '@testing-library/react';
+import { render, fireEvent, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
  // Importa las extensiones de expect de Jest
 
 // Importa el componente Login que deseas probar
 import Login from '../components/Login';
+import { BrowserRouter } from 'react-router-dom';
+
 // Prueba para verificar si el componente Login se renderiza correctamente
 test('renders Login component', () => {
   // Renderiza el componente Login
   const { getByText, getByLabelText } = render(
-    <Login />    
+    <BrowserRouter>
+      <Login />
+    </BrowserRouter>  
   );
 
   // Busca elementos en el componente renderizado
@@ -26,8 +29,53 @@ test('renders Login component', () => {
   const submitButton = getByText('Entrar');
 
   // Asegúrate de que los elementos esperados estén presentes en el DOM
-  expect(titleElement).not.toBeNull();
-  expect(usernameInput).not.toBeNull();
-  expect(passwordInput).not.toBeNull();
-  expect(submitButton).not.toBeNull();
+  expect(titleElement).toBeInTheDocument();
+  expect(usernameInput).toBeInTheDocument();
+  expect(passwordInput).toBeInTheDocument();
+  expect(submitButton).toBeInTheDocument();
 });
+test('Render Login and proove correct operation when credentials are not complete',async() =>{
+     const {getByText,getByLabelText} = render(
+      <BrowserRouter>
+        <Login />
+      </BrowserRouter> 
+     );
+     const userIdInput = getByLabelText('Cédula');
+     const submitButton = getByText('Entrar');
+    
+    //Put a string in the id input
+     fireEvent.change(userIdInput,{target:{value:'1999'}});
+    //Click on 'Entrar'
+     fireEvent.click(submitButton);
+    //Error Message expected
+    await waitFor(() => {
+      const errorMessage = getByText('Por favor, ingrese la información solicitada');
+      expect(errorMessage).toBeInTheDocument();
+    }); 
+}
+);
+test('Render Login and proove correct operation when credentials are incorrect',async() =>{
+  const {getByText,getByLabelText} = render(
+   <BrowserRouter>
+     <Login />
+   </BrowserRouter> 
+  );
+  const userIdInput = getByLabelText('Cédula');
+  const userPasswordInput = getByLabelText('Contraseña');
+  const submitButton = getByText('Entrar');
+ 
+//The following data is incorrect(they are not in the data base).
+ //Put a string in the id input
+  fireEvent.change(userIdInput,{target:{value:'1999'}});
+  //Put a string in the password input
+  fireEvent.change(userPasswordInput,{target:{value:'aaa'}});
+ 
+  //Click on 'Entrar'
+  fireEvent.click(submitButton);
+ //Error Message expected
+ await waitFor(() => {
+   const errorMessage = getByText('Usuario o contraseña inválidos');
+   expect(errorMessage).toBeInTheDocument();
+ }); 
+}
+);
