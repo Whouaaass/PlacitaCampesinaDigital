@@ -10,7 +10,7 @@ import '@testing-library/jest-dom';
  // Importa las extensiones de expect de Jest
 
 // Importa el componente Login que deseas probar
-import Login from '../components/Login';
+import Login from '../components/Login/Login';
 import { BrowserRouter } from 'react-router-dom';
 
 // Prueba para verificar si el componente Login se renderiza correctamente

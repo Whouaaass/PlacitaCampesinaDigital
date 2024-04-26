@@ -1,10 +1,10 @@
 import './App.css'
-import './SignUp.css';
-import './Animations.css'
+import './styles/SignUp.css';
+import './styles/Animations.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home'
-import Login from './components/Login';
-import SignUp from './components/SignUp';
+import Login from './components/Login/Login';
+import SignUp from './components/SignUp/SignUp';
 
 function App() {  
   return (    

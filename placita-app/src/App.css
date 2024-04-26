@@ -1,17 +1,14 @@
 :root {
-    --mywhite: #FFFFFF;
+    --white: #FFFFFF;
     --lightred: #FFD3D3;
     --steelblue: #437CA5;
     --lava: #D61515;
 }
 
-
-
 .hidden {    
     display: none;
     animation: fadeout 0.5s;
-}
-
+}   
 
 #root {    
     position: absolute;
@@ -122,8 +119,8 @@ main.pine-background {
     width: 100%;
     border: unset;
     border-radius: 30px;
-    background-color: #437CA5;
-    color: white;
+    background-color: var(--steelblue);
+    color: var(--white);
     font-weight: bold;
     font-size: medium;
     padding: 10px 20px;    

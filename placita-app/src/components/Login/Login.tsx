@@ -1,7 +1,7 @@
 import { FormEvent, useState, useRef } from 'react';
-import PopUp from './PopUp';
-import { PopUpRef } from './PopUp';
-import { validatePassword, validateUsername } from '../validators';
+import PopUp from '../PopUp';
+import { PopUpRef } from '../PopUp';
+import { validatePassword, validateUsername } from '../../validators';
 
 /** 
  * @brief Login component that renders a page to login an existing user.

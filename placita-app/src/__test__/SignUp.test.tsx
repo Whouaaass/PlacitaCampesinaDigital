@@ -10,7 +10,7 @@ import '@testing-library/jest-dom';
  // Importa las extensiones de expect de Jest
 
 // Importa el componente Login que deseas probar
-import SignUp from '../components/SignUp.tsx';
+import SignUp from '../components/SignUp/SignUp.tsx';
 import { BrowserRouter } from 'react-router-dom';
 
 document.body.innerHTML = '<div id="popup-root"></div>';

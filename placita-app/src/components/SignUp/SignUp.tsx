@@ -1,7 +1,7 @@
 import { useState, useRef, FormEvent } from 'react';
-import { validateAgrocode } from '../validators';
-import PopUp, { PopUpRef } from './PopUp';
-import YesNoRadioButton from './YesNoRadioButton';
+import { validateAgrocode } from '../../validators';
+import PopUp, { PopUpRef } from '../PopUp';
+import YesNoRadioButton from '../YesNoRadioButton';
 
 
 /** 
