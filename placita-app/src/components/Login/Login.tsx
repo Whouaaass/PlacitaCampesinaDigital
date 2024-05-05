@@ -1,7 +1,6 @@
 import { FormEvent, useState, useRef } from 'react';
 import PopUp from '../PopUp';
 import { PopUpRef } from '../PopUp';
-import { validatePassword, validateUsername } from '../../validators';
 import SimpleFrame1 from '../SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 
@@ -17,6 +16,7 @@ function Login() {
 
     // Functions
     const handleChange = (e: any) => {
+        e.target.className = "";
         setUser({
             ...user,
             [e.target.name]: e.target.value
@@ -25,18 +25,8 @@ function Login() {
 
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
         // Prevent the default form submission
-        e.preventDefault();
-
-        // Validate the form
-        if (user.id.length === 0 || user.password.length === 0) {
-            popUpRef.current?.show('Por favor, ingrese la información solicitada');
-            return;
-        }
-        if (!validateUsername(user.id) || !validatePassword(user.password)) {
-            popUpRef.current?.show('Usuario o contraseña inválidos');
-            return;
-        }
-
+        e.preventDefault();                
+               
         //TODO: fetch to the api server...
         fetch("http://localhost:3000/login", {
             method: 'POST',
@@ -50,13 +40,24 @@ function Login() {
                 console.error('Error: ', error);
             });
     }
-
+    const handleInvalid = (e: FormEvent<HTMLFormElement>) => {
+        const control = e.target as HTMLFormElement;    
+        control.className = 'invalid';            
+        if (control.validity.valueMissing) {
+            popUpRef.current?.show('Por favor, ingrese la información solicitada');
+            return;
+        }
+        if (control.validity.patternMismatch) {
+            popUpRef.current?.show('Formato de entrada incorrecto');
+            return;
+        }        
+    }
     // Render
     return (
         <>
             <PopUp ref={popUpRef} />
             <SimpleFrame1>
-                <form id="login" onSubmit={handleSubmit}>
+                <form id="login" onSubmit={handleSubmit} onInvalid={handleInvalid}>
                     <h2>Iniciar Sesión</h2>
                     <CustomInput1
                         label="Cédula"

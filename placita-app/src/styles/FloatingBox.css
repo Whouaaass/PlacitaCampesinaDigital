@@ -1,3 +1,9 @@
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
 .floating-box {
     display: flex;
     flex-direction: column;
@@ -10,6 +16,10 @@
     margin-top: 10vh;
     border-radius: 50px;
     min-height: 350px;
+}
+
+.floating-box .invalid {
+    background-color: var(--lightred);
 }
 
 .floating-box .input-container {
@@ -58,6 +68,7 @@
     height: auto;
     margin: 3px;
 }
+
 
 .floating-box input:focus {
     border: unset;

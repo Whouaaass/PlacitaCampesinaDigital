@@ -11,6 +11,10 @@
     animation: fadeout 0.5s;
 }   
 
+.floating-box input.invalid {
+    background-color: #FFD3D3;
+}
+
 #root {    
     position: absolute;
     display: flex;

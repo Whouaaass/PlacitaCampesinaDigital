@@ -26,12 +26,12 @@ document.body.innerHTML = '<div id="popup-root"></div>';
   
     // Busca elementos en el componente renderizado
     const titleElement = getByText('REGISTRO');
-    const userNameInput = getByLabelText('Nombre');
-    const userLastNameInput = getByLabelText('Apellido');
-    const userPasswordInput = getByLabelText('Contraseña');
-    const userIdInput = getByLabelText('Cédula');
-    const userTelInput = getByLabelText('Teléfono');
-    const userAdressInput = getByLabelText('Dirección');
+    const userNameInput = getByLabelText('Nombre *');
+    const userLastNameInput = getByLabelText('Apellido *');
+    const userPasswordInput = getByLabelText('Contraseña *');
+    const userIdInput = getByLabelText('Cédula *');
+    const userTelInput = getByLabelText('Teléfono *');
+    const userAdressInput = getByLabelText('Dirección *');
     const submitButton = getByText('Registrarse');
   
     // Asegúrate de que los elementos esperados estén presentes en el DOM

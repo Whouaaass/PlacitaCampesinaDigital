@@ -25,9 +25,9 @@ test('renders Login component', () => {
   );
 
   // Busca elementos en el componente renderizado
-  const titleElement = getByText('Iniciar Sesión');
-  const usernameInput = getByLabelText('Cédula');
-  const passwordInput = getByLabelText('Contraseña');
+  const titleElement = getByText('Iniciar Sesión');  
+  const usernameInput = getByLabelText('Cédula *');
+  const passwordInput = getByLabelText('Contraseña *');
   const submitButton = getByText('Entrar');
 
   // Asegúrate de que los elementos esperados estén presentes en el DOM
@@ -42,7 +42,7 @@ test('Render Login and proove correct operation when credentials are not complet
         <Login />
       </BrowserRouter> 
      );
-     const userIdInput = getByLabelText('Cédula');
+     const userIdInput = getByLabelText('Cédula *');
      const submitButton = getByText('Entrar');
     
     //Put a string in the id input
@@ -62,8 +62,8 @@ test('Render Login and proove correct operation when credentials are incorrect',
      <Login />
    </BrowserRouter> 
   );
-  const userIdInput = getByLabelText('Cédula');
-  const userPasswordInput = getByLabelText('Contraseña');
+  const userIdInput = getByLabelText('Cédula *');
+  const userPasswordInput = getByLabelText('Contraseña *');
   const submitButton = getByText('Entrar');
  
 //The following data is incorrect(they are not in the data base).
