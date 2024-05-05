@@ -1,15 +1,11 @@
 import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "react";
 import { createPortal } from "react-dom";
 
-type PopUpProps = {
-    children: React.ReactNode;
-};
-
 export interface PopUpRef {
     show: (msg: string) => void;
 }
 
-const PopUp = forwardRef<PopUpRef, PopUpProps>(({ }, ref) => {
+const PopUp = forwardRef<PopUpRef>(({ }, ref) => {
     const [visible, setVisible] = useState("hidden");
     const [msg, setMsg] = useState('');
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
