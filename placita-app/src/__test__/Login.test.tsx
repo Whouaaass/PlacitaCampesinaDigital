@@ -7,7 +7,11 @@
 // Importa las funciones necesarias de Testing Library y React
 import { render, fireEvent, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
- // Importa las extensiones de expect de Jest
+import fetchMock from 'jest-fetch-mock';
+
+fetchMock.enableMocks();
+
+// Importa las extensiones de expect de Jest
 
 // Importa el componente Login que deseas probar
 import Login from '../components/Login/Login';
@@ -36,7 +40,7 @@ test('renders Login component', () => {
   expect(passwordInput).toBeInTheDocument();
   expect(submitButton).toBeInTheDocument();
 });
-test('Render Login and proove correct operation when credentials are not complete',async() =>{
+test('Render Login and proove correct operation when credentials are not complete',async() =>{    
      const {getByText,getByLabelText} = render(
       <BrowserRouter>
         <Login />
@@ -48,7 +52,7 @@ test('Render Login and proove correct operation when credentials are not complet
     //Put a string in the id input
      fireEvent.change(userIdInput,{target:{value:'1999'}});
     //Click on 'Entrar'
-     fireEvent.click(submitButton);
+    fireEvent.click(submitButton);
     //Error Message expected
     await waitFor(() => {
       const errorMessage = getByText('Por favor, ingrese la información solicitada');
@@ -57,6 +61,7 @@ test('Render Login and proove correct operation when credentials are not complet
 }
 );
 test('Render Login and proove correct operation when credentials are incorrect',async() =>{
+  fetchMock.mockResponseOnce(JSON.stringify({ ok: false, status: 'error', message: 'Invalid credentials'}));
   const {getByText,getByLabelText} = render(
    <BrowserRouter>
      <Login />

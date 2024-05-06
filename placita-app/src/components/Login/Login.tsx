@@ -24,12 +24,12 @@ function Login() {
         });
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
         e.preventDefault();
 
         //TODO: fetch to the api server...
-        fetch("http://localhost:3000/users/login", {
+        await fetch("http://localhost:3000/users/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
@@ -37,10 +37,11 @@ function Login() {
             body: JSON.stringify({ id: user.id, password: user.password })
         }).then(response => {
             console.log(response)
+            
             if (response.ok) {
                 window.location.href = MARKETDIR;
             } else {
-                popUpRef.current?.show('Usuario o contraseña invalidos');
+                popUpRef.current?.show('Usuario o contraseña inválidos');
             }
         })
     }
@@ -48,7 +49,7 @@ function Login() {
         const control = e.target as HTMLFormElement;
         control.className = 'invalid';
         if (control.validity.valueMissing) {
-            popUpRef.current?.show('Por favor, ingrese la información solicitada');
+            popUpRef.current?.show('Por favor ingrese toda la información solicitada');
             return;
         }
         if (control.validity.patternMismatch) {

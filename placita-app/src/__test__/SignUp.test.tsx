@@ -7,15 +7,15 @@
 // Importa las funciones necesarias de Testing Library y React
 import { render,fireEvent,waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
- // Importa las extensiones de expect de Jest
+import fetchMock from 'jest-fetch-mock';
+
+fetchMock.enableMocks(); 
 
 // Importa el componente Login que deseas probar
 import SignUp from '../components/SignUp/SignUp';
 import { BrowserRouter } from 'react-router-dom';
 
 document.body.innerHTML = '<div id="popup-root"></div>';
-
-
   test('renders SignUp component', () => { 
     // Renderiza el componente Login
     const { getByText, getByLabelText } = render(
