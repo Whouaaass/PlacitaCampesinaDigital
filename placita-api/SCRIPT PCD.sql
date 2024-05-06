@@ -31,7 +31,8 @@ CREATE TABLE USUARIO (
     usuNombre VARCHAR(50) NOT NULL,
     usuApellido VARCHAR(50) NOT NULL,
     usuDireccion VARCHAR(100) NOT NULL,
-    usuContrasenia VARCHAR(20),
+    usuTelefono INT NOT NULL,
+    usuContrasenia VARCHAR(20) NOT NULL,
     usuTipo VARCHAR(20),
     CONSTRAINT pk_usuId PRIMARY KEY (usuId),
     CONSTRAINT fk_usu_munCodigo FOREIGN KEY (munCodigo) REFERENCES MUNICIPIO(munCodigo),
@@ -113,13 +114,14 @@ CREATE OR REPLACE PROCEDURE insertar_usuario (
     p_usuNombre IN VARCHAR2,
     p_usuApellido IN VARCHAR2,
     p_usuDireccion IN VARCHAR2,
+    p_usuTelefono IN INT,
     p_usuContrasenia IN VARCHAR2,
     p_usuTipo IN VARCHAR2
 )
 IS
 BEGIN
-    INSERT INTO USUARIO (usuId, munCodigo, usuNombre, usuApellido, usuDireccion, usuContrasenia, usuTipo)
-    VALUES (p_usuId, p_munCodigo, p_usuNombre, p_usuApellido, p_usuDireccion, p_usuContrasenia, p_usuTipo);
+    INSERT INTO USUARIO (usuId, munCodigo, usuNombre, usuApellido, usuDireccion, usuTelefono, usuContrasenia, usuTipo)
+    VALUES (p_usuId, p_munCodigo, p_usuNombre, p_usuApellido, p_usuDireccion, p_usuTelefono,  p_usuContrasenia, p_usuTipo);
     COMMIT;
 END insertar_usuario;
 
@@ -209,6 +211,7 @@ CREATE OR REPLACE PROCEDURE actualizar_usuario (
     p_usuNombre IN VARCHAR2,
     p_usuApellido IN VARCHAR2,
     p_usuDireccion IN VARCHAR2,
+    p_usuTelefono IN INT, 
     p_usuContrasenia IN VARCHAR2,
     p_usuTipo IN VARCHAR2
 )
@@ -218,6 +221,7 @@ BEGIN
     SET usuNombre = p_usuNombre,
         usuApellido = p_usuApellido,
         usuDireccion = p_usuDireccion,
+        usuTelefono = p_usuTelefono,
         usuContrasenia = p_usuContrasenia,
         usuTipo = p_usuTipo
     WHERE usuId = p_usuId AND munCodigo = p_munCodigo;
@@ -336,7 +340,6 @@ BEGIN
     COMMIT;
 END desactivar_oferta;
 
-
 --BLOQUE ANONIMO PARA INSERCIONES
 BEGIN
     -- Inserciones en la tabla MUNICIPIO
@@ -350,19 +353,19 @@ BEGIN
     insertar_municipio(8, 'Rosas', 'Frio');    
 
     -- Inserciones en la tabla PRODUCTO
-    insertar_producto(1, 'Semillas de Ma√≠z', 'Insumo');
+    insertar_producto(1, 'Semillas de MaÌz', 'Insumo');
     insertar_producto(2, 'Gallina', 'Animal');
     insertar_producto(3, 'Manzanas', 'Fruta');
     insertar_producto(4, 'Tomates', 'Vegetal');
-    insertar_producto(5, 'Fertilizante Org√°nico', 'Insumo');
+    insertar_producto(5, 'Fertilizante Org·nico', 'Insumo');
 
     -- Inserciones en la tabla USUARIO
-    insertar_usuario(1, 1, 'Freddy', 'Anaya', 'Calle 15 #7-33', 'papitas20', 'Campesino');
-    insertar_usuario(2, 4, 'Jhoan', 'Chacon', 'Calle 19 #3-16', 'arroz20', 'Comprador');
-    insertar_usuario(3, 2, 'Jonathan', 'Guejia', 'Carrera 2 #1-32', 'ola123', 'Campesino');
-    insertar_usuario(4, 1, 'Julian', 'Alvarez', 'Transversal 5 #1-32', 'contra123', 'Comprador');
-    insertar_usuario(5, 5, 'Jorge', 'Vilota', 'Calle 11 #2-63', 'campo20', 'Comprador');
-    insertar_usuario(6, 3, 'Juan', 'Hernandez', 'Calle 15 #1-3', 'azucar220', 'Comprador');
+    insertar_usuario(1, 1, 'Freddy', 'Anaya', 'Calle 15 #7-33',3202002567,'papitas20', 'Campesino');
+    insertar_usuario(2, 4, 'Jhoan', 'Chacon', 'Calle 19 #3-16',1234,'arroz20', 'Comprador');
+    insertar_usuario(3, 2, 'Jonathan', 'Guejia', 'Carrera 2 #1-32',6662221551,'ola123', 'Campesino');
+    insertar_usuario(4, 1, 'Julian', 'Alvarez', 'Transversal 5 #1-32',3212057085,'contra123', 'Comprador');
+    insertar_usuario(5, 5, 'Jorge', 'Vilota', 'Calle 11 #2-63',3103789454, 'campo20','Comprador');
+    insertar_usuario(6, 3, 'Juan', 'Hernandez', 'Calle 15 #1-3', 123,'azucar220', 'Comprador');
     -- Inserciones en la tabla OFERTA
     insertar_oferta(1, 1, 1, SYSDATE + 10,'Semillas secas' ,20,1000,'Y');
     insertar_oferta(2, 3, 2, SYSDATE + 5,'Gallina rabona' ,15,7000,'Y');
@@ -400,9 +403,9 @@ BEGIN
     actualizar_producto(1, 'Abono', 'Insumo');
 
     --UPDATE PARA USUARIO
-    actualizar_usuario(4, 1, 'Jude', 'Bellingham', 'Carrera 3 #7-14', 'rg4l', 'Campesino');
-    actualizar_usuario(5, 5, 'Ferland', 'Mendy', 'Carrera 8 #2-15', 'fumarola33', 'Campesino');
-    actualizar_usuario(6, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14', 'papas01', 'Comprador');
+    actualizar_usuario(4, 1, 'Jude', 'Bellingham', 'Carrera 3 #7-14', 124012452,'rg4l', 'Campesino');
+    actualizar_usuario(5, 5, 'Ferland', 'Mendy', 'Carrera 8 #2-15', 213415,'fumarola33', 'Campesino');
+    actualizar_usuario(6, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14', 102356077,'papas01', 'Comprador');
   
     --UPDATE PARA OFERTA
     actualizar_oferta(1, 1, 1, '27/05/24','Semillas mojadas' ,28, 1500, 'Y');
