@@ -2,7 +2,7 @@
 /* String validators for the registration and login form */
 
 export const RegexValidators = {
-    name: "^[a-zA-ZàáâäãåąčćęèéêëėįìíîïłńòóôöõøùúûüųūÿýżźñçčšžÀÁÂÄÃÅĄĆČĖĘÈÉÊËÌÍÎÏĮŁŃÒÓÔÖÕØÙÚÛÜŲŪŸÝŻŹÑßÇŒÆČŠŽ∂ð ,.'-]+$",
+    name: "\b([A-ZÀ-ÿ][-,a-z. ']+[ ]*)+",
     username: "^[a-zA-Z0-9]{4,}$",
     password: "^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$",
     email: "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$",

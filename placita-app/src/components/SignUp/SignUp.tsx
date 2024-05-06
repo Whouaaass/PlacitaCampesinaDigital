@@ -7,7 +7,8 @@ import CustomInput1 from '../CustomComponents/CustomInput1';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
 
 
-const DummyMUNICIPIOS = ['San Salvador', 'Santa Tecla', 'Santa Ana', 'San Miguel', 'Soyapango'];
+const DUMMY_MUNICIPIOS = ['---', 'San Salvador', 'Santa Tecla', 'Santa Ana', 'San Miguel', 'DUMMYVALUES'];
+let MUNICIPIOS: string[] | null = null;
 
 /** 
  * @brief SingUp component that renders a page to register a new user.
@@ -20,10 +21,10 @@ function SignUp() {
         id: '',
         telnumber: '',
         dir: '',
-        municipio: '',
+        municipioid: '',
         agrocauca: '',
         agrocode: ''
-    });
+    });    
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
@@ -31,12 +32,27 @@ function SignUp() {
 
     // Effects
     useEffect(() => {
-        // TODO: fetch to the api server the list of municipalities
+        fetch("http://localhost:3000/municipios"
+        ).then((res) => {
+            console.log('res: ', res)
+            res.json().then((data) => {                
+                MUNICIPIOS = data.map((m: any) => m.MUNNOMBRE);
+                console.log(MUNICIPIOS);
+                setUser({
+                    ...user,
+                    municipioid: '0'
+                });
+                // TODO: posible error en la asignacion de MUNICIPIOS si un municipio falta en la consecucion de la tabla
+            })
+            //MUNICIPIOS = res;
+        }).catch((err) => {
+            console.log('something went wrong with the fetch')
+            console.log(err)
+        })
     }, []);
 
     // Functions
     const handleChange = (e: any) => {
-        e.target.className = "";
         setUser({
             ...user,
             [e.target.name]: e.target.value
@@ -56,26 +72,44 @@ function SignUp() {
             return;
         }
 
+        if (user.municipioid === '') {
+            const form = e.target as HTMLFormElement;
+            form.municipioid.className = 'invalid';
+            popUpRef.current?.show('Por favor, seleccione un municipio');
+            return;
+        }
+
         // sends the data to the api server
-        fetch("http://localhost:3000/users", {
+        fetch("http://localhost:3000/users/signup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify(user)
-        })
-            .then((res) => res.json())
-            .then((data) => {
-                console.log(data.message)
-            }).catch((err) => {
-                console.log('something went wrong with the insert fetch')
-                console.log(err)
-            });
+        }).then((res) => {
+            console.log('res: ', res)
+            if (res.ok) {
+                popUpRef.current?.show('Usuario registrado exitosamente', 'blue');
+                setTimeout(() => window.location.href = '/login', 2000);                
+            } else {
+                res.json().then((data) => {                    
+                    if (data.errorNum === 1) {
+                        popUpRef.current?.show('La cedula ya se encuentra registrada');
+                    } else {
+                        console.log('Error interno', data.errorNum);
+                        popUpRef.current?.show('Error al registrar el usuario');
+                    }
+                });
+            }
+        }).catch((err) => {
+            console.log('something went wrong with the insert fetch')
+            console.log(err)
+        });
     }
     // handle invalid executes every time an input is invalid
     const handleInvalid = (e: InvalidEvent<HTMLFormElement>) => {
-        const control = e.target as HTMLFormElement;    
-        control.className = 'invalid';            
+        const control = e.target as HTMLFormElement;
+        control.className = 'invalid';        
         if (control.validity.valueMissing) {
             popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
@@ -84,11 +118,7 @@ function SignUp() {
             popUpRef.current?.show('Formato de entrada incorrecto');
             return;
         }
-        
-        
     }
-
-
     // Render
     return (
         <>
@@ -122,7 +152,7 @@ function SignUp() {
                             name='password'
                             value={user.password}
                             onChange={handleChange}
-                            required                                       
+                            required
                         />
                         <CustomInput1
                             label='Cédula'
@@ -152,10 +182,10 @@ function SignUp() {
                             required
                         />
                         <CustomSelect1
-                            values={DummyMUNICIPIOS}
+                            values={MUNICIPIOS ?? DUMMY_MUNICIPIOS}
                             label='Municipio'
-                            name='municipio'
-                            value={user.municipio}
+                            name='municipioid'
+                            value={user.municipioid}
                             onChange={handleChange}
                             required
                         />
@@ -181,7 +211,7 @@ function SignUp() {
                             value={user.agrocode}
                             onChange={handleChange}
                             required={user.agrocauca === 'yes' ? true : false}
-                            pattern='[0-9]{4}'                            
+                            pattern='[0-9]{4}'
                         />
                     }
                     <button ref={submitButton} type="submit">Registrarse</button>

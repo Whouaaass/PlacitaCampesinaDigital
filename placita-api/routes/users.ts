@@ -1,34 +1,73 @@
 //const express = require("express");
+/**
+ * @brief Este archivo contiene las rutas para el recurso de usuarios
+ */
 const db = require('../dbInterface');
-import express, { Express, Request, Response } from "express";
+import express, { Request, Response } from "express";
 
 const router = express.Router();
 
-const idLength = 8;
-
-router.get("/", async (req: Request, res: Response) => {        
+/** TODO: desactivar al final / ahora esta para pruebas */
+router.get("/", async (req: Request, res: Response) => {       
     const connection = await db.connect();
-    const result = await connection.execute("SELECT * FROM users");    
-    res.json(result.rows);
-    connection.close();
+    try {        
+        const result = await connection.execute("SELECT * FROM usuario");    
+        res.json(result.rows);        
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error en la base de datos");
+        
+    } finally {
+        connection.close();
+    } 
 });
 
-router.get("/:id", async (req: Request, res: Response) => {    
+/**
+ * @brief Valida las credenciales de un usuario
+ */
+router.post("/login", async (req: Request, res: Response) => {
+    console.log(req.body);
+    
     const connection = await db.connect();
-    const result = await connection.execute(`SELECT * FROM users WHERE id = ${req.params.id}`);
-    res.json(result.rows);
-    connection.close();
+    const { id, password } = req.body;    
+    try {
+        const result = await connection.execute(`SELECT usucontrasenia FROM usuario WHERE usuid = ${id}`);
+        if (result.rows.length > 0) {
+            const user = result.rows[0];        
+            if (password === user.USUCONTRASENIA) { // replace with hashed password comparison in production
+                res.json({ status: 'success', message: 'Login successful' });
+            } else {
+                res.status(401).json({ status: 'error', message: 'Invalid password' });
+            }
+        } else {
+            res.status(404).json({ status: 'error', message: 'User not found' });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).send("Error en la base de datos");
+    } finally {
+        connection.close();
+    }
+    
 });
 
-router.post("/", async (req, res) => {
+router.post("/signup", async (req: Request, res: Response) => {
     const connection = await db.connect();
-    const { firstname } = req.body;
-    const id = Math.floor(Math.random() * Math.pow(10, idLength));
-    const result = await connection.execute(`INSERT INTO users VALUES (${id}, '${firstname}')`);
-    res.json(result);
-    connection.commit();
-    connection.close();
+    const { id, municipioid, firstname, lastname, password, dir, agrocuaca } = req.body;
+    const campesino = agrocuaca === 'yes'? 'Campesino' : 'Comprador';
+    const hashedPassword = password; // replace with hashed password in production
+    const bdpetition = `begin insertar_usuario(${id}, ${municipioid}, '${firstname}', '${lastname}', '${dir}', '${hashedPassword}', '${campesino}'); end;`;
+    console.log(bdpetition);
+    console.log(req.body)
+    try {        
+        await connection.execute(bdpetition);
+        res.json({ status: 'success', message: 'User created' });
+    } catch (error: any) {    
+        console.log(error);    
+        res.status(500).json({ status: 'error', message: 'Database error', errorNum: error.errorNum });
+    } finally {
+        connection.close();
+    }
 });
-
 
 module.exports = router;

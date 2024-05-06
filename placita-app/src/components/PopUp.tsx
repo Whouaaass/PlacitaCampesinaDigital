@@ -2,16 +2,37 @@ import { useState, useRef, useEffect, forwardRef, useImperativeHandle } from "re
 import { createPortal } from "react-dom";
 
 export interface PopUpRef {
-    show: (msg: string) => void;
+    show: (msg: string, color?: string) => void;
+}
+
+const COLORREF = {
+    red: "var(--lava)",
+    blue: "var(--infoblue)",
 }
 
 const PopUp = forwardRef<PopUpRef>(({ }, ref) => {
     const [visible, setVisible] = useState("hidden");
-    const [msg, setMsg] = useState('');
+    const [props, setProps] = useState({
+        msg: "",
+        color: "red",
+    });
     const timeoutRef = useRef<NodeJS.Timeout | null>(null);
 
-    const show = (msg: string) => {
-        setMsg(msg);
+    const style = {
+        backgroundColor: COLORREF[props.color as keyof typeof COLORREF],
+        color: 'white',
+        //     padding: '1rem',
+        //     position: 'fixed',
+        //     top: '0',
+        //    left: '50%',
+        //    transform: 'translateX(-50%)',
+        //    zIndex: 1000,
+        //    transition: 'visibility 0.5s'
+    };
+
+    const show = (msg: string, color = 'red') => {
+
+        setProps({ msg, color});
         setVisible("hidden");
         setTimeout(() => {
             setVisible("");
@@ -37,8 +58,8 @@ const PopUp = forwardRef<PopUpRef>(({ }, ref) => {
     }, []);
 
     return createPortal(
-        <div id="popup" className={visible}>
-            <p>{msg}</p>
+        <div id="popup" className={visible} style={style}>
+            <p>{props.msg}</p>
         </div>,
         document.getElementById('popup-root') as HTMLElement
     );

@@ -4,6 +4,8 @@ import { PopUpRef } from '../PopUp';
 import SimpleFrame1 from '../SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 
+const MARKETDIR ="../market";
+
 /** 
  * @brief Login component that renders a page to login an existing user.
  */
@@ -15,34 +17,36 @@ function Login() {
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
     // Functions
-    const handleChange = (e: any) => {
-        e.target.className = "";
+    function handleChange(e: any) {
         setUser({
             ...user,
             [e.target.name]: e.target.value
         });
     }
 
-    const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
-        e.preventDefault();                
-               
+        e.preventDefault();
+
         //TODO: fetch to the api server...
-        fetch("http://localhost:3000/login", {
+        fetch("http://localhost:3000/users/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ username: user.id })
+            body: JSON.stringify({ id: user.id, password: user.password })
+        }).then(response => {
+            console.log(response)
+            if (response.ok) {
+                window.location.href = MARKETDIR;
+            } else {
+                popUpRef.current?.show('Usuario o contraseña invalidos');
+            }
         })
-            .then(response => response.json())
-            .catch(error => {
-                console.error('Error: ', error);
-            });
     }
-    const handleInvalid = (e: FormEvent<HTMLFormElement>) => {
-        const control = e.target as HTMLFormElement;    
-        control.className = 'invalid';            
+    function handleInvalid(e: FormEvent<HTMLFormElement>) {
+        const control = e.target as HTMLFormElement;
+        control.className = 'invalid';
         if (control.validity.valueMissing) {
             popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
@@ -50,7 +54,7 @@ function Login() {
         if (control.validity.patternMismatch) {
             popUpRef.current?.show('Formato de entrada incorrecto');
             return;
-        }        
+        }
     }
     // Render
     return (
@@ -64,16 +68,16 @@ function Login() {
                         type='text'
                         name="id"
                         value={user.id}
-                        onChange={handleChange}      
-                        required                  
+                        onChange={handleChange}
+                        required
                     />
                     <CustomInput1
                         label="Contraseña"
                         type="password"
                         name="password"
                         value={user.password}
-                        onChange={handleChange}    
-                        required                    
+                        onChange={handleChange}
+                        required
                     />
                     <button type="submit">Entrar</button>
                     <hr />
