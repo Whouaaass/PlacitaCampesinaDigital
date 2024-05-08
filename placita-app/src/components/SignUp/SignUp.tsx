@@ -21,10 +21,11 @@ function SignUp() {
         id: '',
         telnumber: '',
         dir: '',
-        municipioid: '',
+        municipio: '',
         agrocauca: '',
         agrocode: ''
     });    
+    console.log(user);
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
@@ -40,7 +41,7 @@ function SignUp() {
                 console.log(MUNICIPIOS);
                 setUser({
                     ...user,
-                    municipioid: '0'
+                    municipio: '0'
                 });
                 // TODO: posible error en la asignacion de MUNICIPIOS si un municipio falta en la consecucion de la tabla
             })
@@ -72,7 +73,7 @@ function SignUp() {
             return;
         }
 
-        if (user.municipioid === '') {
+        if (user.municipio === '') {
             const form = e.target as HTMLFormElement;
             form.municipioid.className = 'invalid';
             popUpRef.current?.show('Por favor, seleccione un municipio');
@@ -184,8 +185,8 @@ function SignUp() {
                         <CustomSelect1
                             values={MUNICIPIOS ?? DUMMY_MUNICIPIOS}
                             label='Municipio'
-                            name='municipioid'
-                            value={user.municipioid}
+                            name='municipio'
+                            value={user.municipio}
                             onChange={handleChange}
                             required
                         />

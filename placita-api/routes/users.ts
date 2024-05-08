@@ -53,10 +53,10 @@ router.post("/login", async (req: Request, res: Response) => {
 
 router.post("/signup", async (req: Request, res: Response) => {
     const connection = await db.connect();
-    const { id, municipioid, firstname, lastname, password, dir, agrocuaca } = req.body;
+    const { id, municipio, firstname, lastname, password, dir, agrocuaca, telnumber } = req.body;
     const campesino = agrocuaca === 'yes'? 'Campesino' : 'Comprador';
     const hashedPassword = password; // replace with hashed password in production
-    const bdpetition = `begin insertar_usuario(${id}, ${municipioid}, '${firstname}', '${lastname}', '${dir}', '${hashedPassword}', '${campesino}'); end;`;
+    const bdpetition = `begin registrar_usuario.insertar_usuario(${id}, ${municipio}, '${firstname}', '${lastname}', '${dir}', ${telnumber}, '${hashedPassword}', '${campesino}'); end;`;
     console.log(bdpetition);
     console.log(req.body)
     try {        

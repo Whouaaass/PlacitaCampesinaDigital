@@ -26,7 +26,7 @@ const CustomSelect1: FC<CustomProps> = ({ values, label, value, name, required, 
             {`${label} ${required ? '*' : ''}`}
             <select id={name} name={name} value={value} onChange={innerOnChange} required={required}>
                 {values.map((value, index) => (
-                    <option key={index} value={index}>{value}</option>
+                    <option key={index} value={value}>{value}</option>
                 ))}
             </select>
         </label>
