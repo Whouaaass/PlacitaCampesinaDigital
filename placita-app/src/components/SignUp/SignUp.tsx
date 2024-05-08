@@ -96,7 +96,10 @@ function SignUp() {
                 res.json().then((data) => {                    
                     if (data.errorNum === 1) {
                         popUpRef.current?.show('La cedula ya se encuentra registrada');
-                    } else {
+                    } else if (data.errorNum === 20001) {
+                        popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
+                    }
+                    else {
                         console.log('Error interno', data.errorNum);
                         popUpRef.current?.show('Error al registrar el usuario');
                     }
@@ -135,7 +138,7 @@ function SignUp() {
                             value={user.firstname}
                             onChange={handleChange}
                             required
-                            pattern={RegexValidators.name}
+                            //pattern={RegexValidators.name}
 
                         />
                         <CustomInput1
@@ -145,7 +148,7 @@ function SignUp() {
                             value={user.lastname}
                             onChange={handleChange}
                             required
-                            pattern={RegexValidators.name}
+                            //pattern={RegexValidators.name}
                         />
                         <CustomInput1
                             label='Contraseña'
@@ -162,7 +165,7 @@ function SignUp() {
                             value={user.id}
                             onChange={handleChange}
                             required
-                            pattern={RegexValidators.cedula}
+                            //pattern={RegexValidators.cedula}
                         />
                         <CustomInput1
                             label='Teléfono'
