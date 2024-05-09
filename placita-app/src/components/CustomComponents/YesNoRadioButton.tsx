@@ -3,7 +3,7 @@ import { useRef } from 'react';
 type YesNoRadioButtonProps = {
     yesLabel: string;
     noLabel: string;
-    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;    
+    handleChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
     name: string;
     htmlFor: string;
     // additional props...
@@ -26,11 +26,11 @@ type YesNoRadioButtonProps = {
  * />
  */
 
-const YesNoRadioButton: React.FC<YesNoRadioButtonProps> = ({ yesLabel, noLabel, handleChange, name, htmlFor, ...props }) => {        
+const YesNoRadioButton: React.FC<YesNoRadioButtonProps> = ({ yesLabel, noLabel, handleChange, name}) => {
     const radioNoRef = useRef<HTMLInputElement>(null);
     const radioYesRef = useRef<HTMLInputElement>(null);
-    
-    function handleContainerCLick(value: string) {        
+
+    function handleContainerCLick(value: string) {
         switch (value) {
             case "yes":
                 radioYesRef.current?.click();
@@ -41,15 +41,15 @@ const YesNoRadioButton: React.FC<YesNoRadioButtonProps> = ({ yesLabel, noLabel, 
         }
     }
     return (
-        <div {...props} className="flex-row">
-            <div className="flex-row" onClick={() => handleContainerCLick("yes")}>
-                <input ref={radioYesRef} type="radio" id="yes" name={name} value="yes" onChange={handleChange}/>
-                <label htmlFor={`${name}-yes`}>{yesLabel}</label>
-            </div>
-            <div className="flex-row" onClick={() => handleContainerCLick("no")}>
-                <input ref={radioNoRef}type="radio" id="no" name={name} value="no" onChange={handleChange} />
-                <label htmlFor={`${name}-no`}>{noLabel}</label>
-            </div>
+        <div className='flex-row flex-gap'>
+            <label htmlFor={`${name}-yes`} onClick={() => handleContainerCLick("yes")} className='block'>
+                <input ref={radioYesRef} type="radio" id={`${name}-yes`} name={name} value="yes" onChange={handleChange} />
+                {yesLabel}
+            </label>
+            <label htmlFor={`${name}-no`} onClick={() => handleContainerCLick("no")} className='block'>
+                <input ref={radioNoRef} type="radio" id={`${name}-no`} name={name} value="no" onChange={handleChange}/>
+                {noLabel}
+            </label>
         </div>
     );
 };

@@ -1,17 +1,20 @@
 :root {
-    --mywhite: #FFFFFF;
+    --white: #FFFFFF;
+    --lightgray: #D9D9D9;
     --lightred: #FFD3D3;
     --steelblue: #437CA5;
+    --infoblue: #57A6DE;
     --lava: #D61515;
 }
-
-
 
 .hidden {    
     display: none;
     animation: fadeout 0.5s;
-}
+}   
 
+.floating-box input.invalid {
+    background-color: #FFD3D3;
+}
 
 #root {    
     position: absolute;
@@ -54,8 +57,7 @@ header h1 {
     font-size: 2.5rem;
     margin-bottom: 10px;
     margin-top: 10px;
-    margin-left: 10px;
-    
+    margin-left: 10px;   
 }
 
 main {
@@ -80,90 +82,15 @@ main.pine-background {
     height: 100%;    
 }
 
-/* Flating box*/
-.floating-box {
+.input-question {
+    margin-top: 10px;
     display: flex;
-    flex-direction: column;    
-    align-items: center;
-    background-color: #f8f9fa;    
-    padding-top: 50px;
-    padding-bottom: 50px;  
-    padding-left: 50px;  
-    padding-right: 50px;   
-    margin-top: 10vh;
-    border-radius: 50px;    
-    min-height: 350px;
-}
-.floating-box.login {
-    width: 320px;
-}
-.floating-box .input-container {    
-    display: flex;
-    flex-direction: column;
-    width: 100%;    
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: left;
+    width: 70vw;
     min-width: 200px;
-    max-width: 300px;
+    max-width: 310px;
     margin-bottom: 20px;
 }
-.floating-box .input-container input {
-    border: unset;
-    border-radius: 30px;
-    height: 30px;    
-    background-color: #D9D9D9;
-    padding-left: 15px;    
-    padding-top: 5px;
-    padding-bottom: 5px;    
-}
-.floating-box .input-container input:focus {
-    border: unset;        
-}
 
-.floating-box button {
-    width: 100%;
-    border: unset;
-    border-radius: 30px;
-    background-color: #437CA5;
-    color: white;
-    font-weight: bold;
-    font-size: medium;
-    padding: 10px 20px;    
-    cursor: pointer;
-}
-.floating-box button:hover {    
-    background-color: #5193c2;
-}
-
-.floating-box h2 {    
-    margin-bottom: 50px;
-    font-weight: 700;
-    text-transform: uppercase;
-}
-
-.floating-box hr {
-    width: 100%;    
-    padding-bottom: 0px;
-    margin-bottom: 0px;
-    border-color: var(--steelblue);
-}
-.floating-box p {
-    color: var(--steelblue);
-}
-.floating-box a {
-    color: var(--steelblue);
-}
-
-
-@media screen and (min-width: 768px) {
-    .floating-box.signup {
-        width: 650px;
-    }
-}
-@media screen and (max-width: 768px) {
-    .floating-box.signup {        
-        width: 320px;        
-    }       
-    
-    main.signup {
-        min-height: 1000px;
-    }
-}

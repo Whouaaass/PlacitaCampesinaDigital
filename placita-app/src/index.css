@@ -18,6 +18,22 @@ body {
 .flex-row {    
     flex-direction: row;
 }
+.flex-gap {
+    gap: 1rem;
+
+}
+.inline {
+    display: inline;
+
+}
+
+.no-margin {
+    margin: 0;
+
+}
+.no-padding {
+    padding: 0;
+}
 
 .no-wrap {
     flex-wrap: nowrap;
