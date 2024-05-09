@@ -8,8 +8,10 @@ const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
     const connection = await db.connect();
+    const sqltable = "vista_ofertas_disponibles";
+    const dbQuery = `SELECT * FROM ${sqltable}`;
     try {
-        const result = await connection.execute("SELECT * FROM oferta");
+        const result = await connection.execute(dbQuery);
         res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
@@ -19,15 +21,16 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
     const id = req.params.id;
+    const dbQuery = `SELECT * FROM ofeId WHERE ofecodigo = ${id}`;
     try {
-        const result = await connection.execute(`SELECT * FROM municipio WHERE muncodigo = ${id}`);
+        const result = await connection.execute(dbQuery);
         if (result.rows.length > 0) {
             res.json(result.rows[0]);
         } else {
-            res.status(404).json({ error: "Municipio not found" });
+            res.status(404).json({ error: "Oferta not found" });
         }
-    } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
+    } catch (error: any) {
+        res.status(500).json({ error: "Internal server error", errorNum: error.errorNum});
     }
 });
 

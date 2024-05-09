@@ -1,7 +1,7 @@
 import { FormEvent, useState, useRef } from 'react';
 import PopUp from '../PopUp';
 import { PopUpRef } from '../PopUp';
-import SimpleFrame1 from '../SimpleFrame1';
+import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 
 const MARKETDIR ="../market";
@@ -29,7 +29,7 @@ function Login() {
         e.preventDefault();
 
         //TODO: fetch to the api server...
-        await fetch("http://localhost:3000/users/login", {
+        await fetch("http://localhost:3000/usuarios/login", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

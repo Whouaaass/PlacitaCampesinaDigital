@@ -2,7 +2,7 @@ import { useState, useRef, FormEvent, useEffect, InvalidEvent } from 'react';
 import { RegexValidators, validateAgrocode } from '../../validators';
 import PopUp, { PopUpRef } from '../PopUp';
 import YesNoRadioButton from '../CustomComponents/YesNoRadioButton';
-import SimpleFrame1 from '../SimpleFrame1';
+import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
 
@@ -81,7 +81,7 @@ function SignUp() {
         }
 
         // sends the data to the api server
-        fetch("http://localhost:3000/users/signup", {
+        fetch("http://localhost:3000/usuarios/signup", {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json'

@@ -4,7 +4,7 @@ import { Express, Request, Response } from "express";
 const express = require('express');
 const cors = require('cors');
 const morgan = require('morgan');
-const usersRouter = require('./routes/users');
+const usersRouter = require('./routes/usuarios');
 const municipiosRouter = require('./routes/municipios');
 const ofertasRouter = require('./routes/ofertas');
 
@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 app.use(morgan('dev'));
 
-app.use('/users', usersRouter);
+app.use('/usuarios', usersRouter);
 app.use('/municipios', municipiosRouter);
 app.use('/ofertas', ofertasRouter);
 

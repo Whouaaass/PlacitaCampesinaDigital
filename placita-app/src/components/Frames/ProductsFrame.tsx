@@ -1,35 +1,27 @@
 /**
- * @file MarketFrame.tsx
- * @brief Archivo de definición de un componente no funcional que representa un marco simple usado en la pagina principal
+ * @file ProductsFrame.tsx
+ * @brief Archivo de definición de un componente no funcional que representa un marco simple usado en la pagina de productos
  */
 import { FC, ReactNode } from 'react';
 import placitaLogo from '/PlacitaLogo.png';
+
 
 // Propiedades que recibe el componente
 type CustomProps = {
     children: ReactNode;
 };
 
-const MarketFrame: FC<CustomProps> = ({ children }) => {
+const ProductsFrame: FC<CustomProps> = ({ children }) => {
     return <>
         <header id="market-header" className="thick flex flex-row">
-            <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
+            <img id="placita-logo" src={placitaLogo} alt='placita-logo'/>
             <div className='flex flex-column'>
-
-                <button className='flex flex-column'>
-                    <span className="material-symbols-outlined">
-                        carrito_icon
-                    </span>
-                    Carrito
+                <button className='flex flex-column'>                    
+                    Mis Ofertas
                 </button>
-                <a href="/products">
-                    <button className='flex flex-column'>
-                        <span className="material-symbols-outlined">
-                            productos_icon
-                        </span>
-                        Mis Productos
-                    </button>
-                </a >
+                <button className='flex flex-column'>
+                    Agregar Oferta
+                </button>
             </div>
             <label className='search'>
                 <input type='search' />
@@ -51,4 +43,4 @@ const MarketFrame: FC<CustomProps> = ({ children }) => {
 }
 
 
-export default MarketFrame;
+export default ProductsFrame;

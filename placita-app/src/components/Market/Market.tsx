@@ -5,15 +5,17 @@
 import {FC} from 'react';
 import MarketFrame from '../Frames/MarketFrame';
 import { useEffect, useState } from 'react';
+import OffersContainer from './OffersContainer';
 
 const Market: FC = () => {
-    const [ofertas, setOfertas] = useState([]);
+    const [offers, setOffers] = useState([]);
 
     useEffect(() => {
         fetch("http://localhost:3000/ofertas"
         ).then((res) => {
             res.json().then((data) => {
-                setOfertas(data);
+                console.log(data);
+                setOffers(data);
             })
         }).catch((err) => {
             console.log('something went wrong with the fetch')
@@ -21,10 +23,10 @@ const Market: FC = () => {
         })
     }, []);
 
-    
+
     return (
-        <MarketFrame>
-            <div></div>
+        <MarketFrame>            
+            <OffersContainer offers={offers}></OffersContainer>
         </MarketFrame>
     );
 };

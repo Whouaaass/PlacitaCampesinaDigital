@@ -1,0 +1,91 @@
+.offer-card-small {
+    display: flex;
+    flex-direction: column;
+    background-color: var(--lightgray);
+    
+    font-size: medium;
+    width: 250px;
+    height: 300px;
+    margin: 10px;
+    justify-content: left;
+
+    .buttons {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+        gap: 20px;
+        height: 50px;        
+        margin-top: auto;
+        margin-bottom: auto;
+        margin-left: 10px;
+        margin-right: 10px;    
+        button {
+            background-color: var(--steelblue);
+            color: var(--white);
+            width: 90px;
+            height: 90px;
+            border: none;
+            border-radius: 5px;
+            padding: 5px;
+            cursor: pointer;        
+        }
+        button:hover {
+            background-color: var(--white);
+        }
+    }
+}
+
+
+#market-header {
+    background-image: url('inicioSesionBackPic.png');
+    background-size: cover;
+    height: 90px;
+    width: 100vw;
+    position: absolute;
+
+    .orderby {
+        position: absolute;
+        bottom: 10px;
+        right: 50px;                
+    }
+    .search {
+        position: absolute;
+        right: 100px;
+        bottom: calc(100%/2);
+    }
+}
+
+
+#market-container {
+    z-index: -1;
+    position: absolute;
+    padding-top: 140px;
+    display: flex;
+    flex-direction: column;
+
+
+    height: 100vh;
+    width: 100vw;
+
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+
+}
+
+#offers-container {
+    list-style-type: none;
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;    
+    gap: 20px;
+    padding: 20px;
+    justify-content: left;
+
+}
+
+#placita-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+}

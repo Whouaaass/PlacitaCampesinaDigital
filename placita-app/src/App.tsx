@@ -2,12 +2,14 @@ import './App.css'
 import './styles/SignUp.css';
 import './styles/Login.css';
 import './styles/Animations.css'
-import './styles/FloatingBox.css'
+import './styles/SimpleFrame1.css'
+import './styles/Market.css'
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home'
 import Login from './components/Login/Login';
 import SignUp from './components/SignUp/SignUp';
 import Market from './components/Market/Market';
+import ProductsSec from './components/ProductsSec/ProductsSec';
 
 function App() {  
   
@@ -17,7 +19,8 @@ function App() {
         <Route path='/' element={<Home/>} />         
         <Route path='/login' element={<Login/>} />   
         <Route path='/signup' element={<SignUp/>} />             
-        <Route path='/Market' element={<Market/>}></Route>
+        <Route path='/market' element={<Market/>} />
+        <Route path='/products' element={<ProductsSec />} />
         <Route path="*">404 Not Found</Route>        
       </Routes>    
     </BrowserRouter>
