@@ -31,8 +31,8 @@ CREATE TABLE USUARIO (
     usuNombre VARCHAR(50) NOT NULL,
     usuApellido VARCHAR(50) NOT NULL,
     usuDireccion VARCHAR(100) NOT NULL,
-    usuTelefono INT NOT NULL,
     usuContrasenia VARCHAR(20) NOT NULL,
+    usuTelefono int NOT NULL,
     usuTipo VARCHAR(20),
     CONSTRAINT pk_usuId PRIMARY KEY (usuId),
     CONSTRAINT fk_usu_munCodigo FOREIGN KEY (munCodigo) REFERENCES MUNICIPIO(munCodigo),
@@ -340,6 +340,7 @@ BEGIN
     COMMIT;
 END desactivar_oferta;
 
+
 --BLOQUE ANONIMO PARA INSERCIONES
 BEGIN
     -- Inserciones en la tabla MUNICIPIO
@@ -353,19 +354,20 @@ BEGIN
     insertar_municipio(8, 'Rosas', 'Frio');    
 
     -- Inserciones en la tabla PRODUCTO
-    insertar_producto(1, 'Semillas de Maíz', 'Insumo');
+    insertar_producto(1, 'Semillas de MaÃ­z', 'Insumo');
     insertar_producto(2, 'Gallina', 'Animal');
     insertar_producto(3, 'Manzanas', 'Fruta');
     insertar_producto(4, 'Tomates', 'Vegetal');
-    insertar_producto(5, 'Fertilizante Orgánico', 'Insumo');
+    insertar_producto(5, 'Fertilizante OrgÃ¡nico', 'Insumo');
 
     -- Inserciones en la tabla USUARIO
-    insertar_usuario(1, 1, 'Freddy', 'Anaya', 'Calle 15 #7-33',3202002567,'papitas20', 'Campesino');
-    insertar_usuario(2, 4, 'Jhoan', 'Chacon', 'Calle 19 #3-16',1234,'arroz20', 'Comprador');
-    insertar_usuario(3, 2, 'Jonathan', 'Guejia', 'Carrera 2 #1-32',6662221551,'ola123', 'Campesino');
-    insertar_usuario(4, 1, 'Julian', 'Alvarez', 'Transversal 5 #1-32',3212057085,'contra123', 'Comprador');
-    insertar_usuario(5, 5, 'Jorge', 'Vilota', 'Calle 11 #2-63',3103789454, 'campo20','Comprador');
-    insertar_usuario(6, 3, 'Juan', 'Hernandez', 'Calle 15 #1-3', 123,'azucar220', 'Comprador');
+    insertar_usuario(1, 1, 'Freddy', 'Anaya', 'Calle 15 #7-33',1223, 'papitas20', 'Campesino');
+    insertar_usuario(2, 4, 'Jhoan', 'Chacon', 'Calle 19 #3-16',3232, 'arroz20', 'Comprador');
+    insertar_usuario(3, 2, 'Jonathan', 'Guejia', 'Carrera 2 #1-32',2323, 'ola123', 'Campesino');
+    insertar_usuario(4, 1, 'Julian', 'Alvarez', 'Transversal 5 #1-32',5445, 'contra123', 'Comprador');
+    insertar_usuario(5, 5, 'Jorge', 'Vilota', 'Calle 11 #2-63',1233, 'campo20', 'Comprador');
+    insertar_usuario(6, 3, 'Juan', 'Hernandez', 'Calle 15 #1-3',2322, 'azucar220', 'Comprador');
+
     -- Inserciones en la tabla OFERTA
     insertar_oferta(1, 1, 1, SYSDATE + 10,'Semillas secas' ,20,1000,'Y');
     insertar_oferta(2, 3, 2, SYSDATE + 5,'Gallina rabona' ,15,7000,'Y');
@@ -403,9 +405,9 @@ BEGIN
     actualizar_producto(1, 'Abono', 'Insumo');
 
     --UPDATE PARA USUARIO
-    actualizar_usuario(4, 1, 'Jude', 'Bellingham', 'Carrera 3 #7-14', 124012452,'rg4l', 'Campesino');
-    actualizar_usuario(5, 5, 'Ferland', 'Mendy', 'Carrera 8 #2-15', 213415,'fumarola33', 'Campesino');
-    actualizar_usuario(6, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14', 102356077,'papas01', 'Comprador');
+    actualizar_usuario(4, 1, 'Jude', 'Bellingham', 'Carrera 3 #7-14','1234', 'rg4l', 'Campesino');
+    actualizar_usuario(5, 5, 'Ferland', 'Mendy', 'Carrera 8 #2-15','6532', 'fumarola33', 'Campesino');
+    actualizar_usuario(6, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14','2323', 'papas01', 'Comprador');
   
     --UPDATE PARA OFERTA
     actualizar_oferta(1, 1, 1, '27/05/24','Semillas mojadas' ,28, 1500, 'Y');
@@ -432,4 +434,229 @@ BEGIN
     desactivar_oferta(2);
     desactivar_oferta(3);
     COMMIT;
+END;
+
+
+--Paquete declaracion
+CREATE OR REPLACE PACKAGE paquete_compras IS
+    -- Funciones
+    FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE;
+    FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE;
+
+    -- Procedimientos
+    PROCEDURE productos_mas_baratos;
+    PROCEDURE ord_prod_fecha_cad;
+    PROCEDURE ord_prod_fecha_cad(p_proTipo IN VARCHAR2);
+    PROCEDURE list_ofertas_tipo;
+    PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER);
+    PROCEDURE comprar(p_comId IN INT,
+    p_facId IN INT,
+    p_ofeId IN INT,
+    p_comCantidadUnidades IN INT);
+
+END paquete_compras;
+/
+--CREACION DEL PAQUETE
+CREATE OR REPLACE PACKAGE BODY paquete_compras AS
+    -- Funciones
+    FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE IS
+        v_cantidad Oferta.ofeCantidad%TYPE;
+    BEGIN
+        SELECT ofeCantidad INTO v_cantidad FROM Oferta WHERE ofeId = p_ofeId;
+        RETURN v_cantidad;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Oferta inexistente');
+            v_cantidad := -1;
+            RETURN v_cantidad; 
+    END cantidad_disponible;
+
+    FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE IS
+        v_precio_unitario Oferta.ofePrecio%TYPE;
+        v_subtotal Compra.comSubtotal%TYPE;
+    BEGIN
+        SELECT ofePrecio INTO v_precio_unitario FROM Oferta WHERE ofeId = p_ofeId;
+        v_subtotal := p_cantidad * v_precio_unitario;
+        RETURN v_subtotal;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            DBMS_OUTPUT.PUT_LINE('Oferta inexistente');
+            v_subtotal := -1;
+            RETURN v_subtotal;    
+    END calcular_subtotal;
+
+    -- Procedimientos
+    PROCEDURE productos_mas_baratos IS
+        CURSOR producto_cursor IS
+            SELECT proNombre, proTipo, ofeDescripcion, ofePrecio, usuNombre || ' ' || usuApellido AS Ofertador
+            FROM Oferta
+            INNER JOIN Producto ON Oferta.proId = Producto.proId
+            INNER JOIN Usuario ON Oferta.usuId = Usuario.usuId
+            ORDER BY Oferta.ofePrecio ASC;
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('Los productos mas baratos son: ');
+        FOR pro_record IN producto_cursor LOOP
+            DBMS_OUTPUT.PUT_LINE('Nombre del producto: ' || pro_record.proNombre);
+            DBMS_OUTPUT.PUT_LINE('Tipo del producto: ' || pro_record.proTipo);
+            DBMS_OUTPUT.PUT_LINE('Descripcion del Producto: ' || pro_record.ofeDescripcion);
+            DBMS_OUTPUT.PUT_LINE('Precio de la oferta: ' || pro_record.ofePrecio);
+            DBMS_OUTPUT.PUT_LINE('Nombre del ofertador: ' || pro_record.Ofertador);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        END LOOP;
+    END productos_mas_baratos;
+
+    PROCEDURE ord_prod_fecha_cad IS
+        CURSOR producto_cursor IS
+            SELECT proNombre, proTipo, TO_CHAR(ofeFechaCaducidad, 'DD MONTH YYYY') AS fechaCaducidad
+            FROM Oferta
+            INNER JOIN Producto ON Oferta.proId = Producto.proId
+            ORDER BY Oferta.ofeFechaCaducidad ASC;
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('Los productos proximos a caducar son: ');
+        FOR pro_record IN producto_cursor LOOP
+            DBMS_OUTPUT.PUT_LINE('Nombre del producto: ' || pro_record.proNombre);
+            DBMS_OUTPUT.PUT_LINE('Tipo del producto: ' || pro_record.proTipo);
+            DBMS_OUTPUT.PUT_LINE('Fecha de caducidad: ' || pro_record.fechaCaducidad);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        END LOOP;
+    END ord_prod_fecha_cad;
+
+    PROCEDURE ord_prod_fecha_cad(p_proTipo IN VARCHAR2) IS
+        CURSOR producto_cursor IS
+            SELECT proNombre, proTipo, TO_CHAR(ofeFechaCaducidad, 'DD MONTH YYYY') AS fechaCaducidad
+            FROM Oferta
+            INNER JOIN Producto ON Oferta.proId = Producto.proId
+            WHERE Producto.proTipo = p_proTipo
+            ORDER BY Oferta.ofeFechaCaducidad ASC;
+    BEGIN
+        DBMS_OUTPUT.PUT_LINE('Los productos de tipo ' ||  p_proTipo || ' proximos a caducar son: ');
+        FOR pro_record IN producto_cursor LOOP
+            DBMS_OUTPUT.PUT_LINE('Nombre del producto: ' || pro_record.proNombre);
+            DBMS_OUTPUT.PUT_LINE('Tipo del producto: ' || pro_record.proTipo);
+            DBMS_OUTPUT.PUT_LINE('Fecha de caducidad: ' || pro_record.fechaCaducidad);
+            DBMS_OUTPUT.PUT_LINE('----------------------------------------');
+        END LOOP;
+    END ord_prod_fecha_cad;
+
+    PROCEDURE list_ofertas_tipo AS
+    BEGIN
+        FOR tipo_prod IN (SELECT DISTINCT proTipo FROM PRODUCTO)
+        LOOP
+            DBMS_OUTPUT.PUT_LINE('Ofertas de tipo ' || tipo_prod.proTipo || ':');
+            
+            FOR oferta_rec IN (
+                SELECT OFERTA.ofeId, USUARIO.usuNombre, PRODUCTO.proNombre, OFERTA.ofeFechaCaducidad, OFERTA.ofeDescripcion, OFERTA.ofeCantidad, OFERTA.ofePrecio
+                FROM OFERTA
+                INNER JOIN PRODUCTO ON OFERTA.proId = PRODUCTO.proId
+                INNER JOIN USUARIO ON OFERTA.usuId = USUARIO.usuId
+                WHERE PRODUCTO.proTipo = tipo_prod.proTipo
+                ORDER BY OFERTA.proId
+            )
+            LOOP
+                DBMS_OUTPUT.PUT_LINE('ID: ' || oferta_rec.ofeId || ', Usuario: ' || oferta_rec.usuNombre || ', Producto: ' || oferta_rec.proNombre || ', Fecha de Caducidad: ' || oferta_rec.ofeFechaCaducidad || ', DescripciÃ³n: ' || oferta_rec.ofeDescripcion || ', Cantidad: ' || oferta_rec.ofeCantidad || ', Precio: ' || oferta_rec.ofePrecio);
+            END LOOP;
+        END LOOP;
+    END list_ofertas_tipo;
+
+    PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER) IS
+        CURSOR offer_cursor IS
+            SELECT 
+                u.usuNombre ||' '|| u.usuApellido AS NombreCompleto,
+                o.ofeDescripcion AS DescripcionOferta,
+                o.ofePrecio AS price
+            FROM OFERTA o
+            INNER JOIN USUARIO u 
+            ON o.usuId = u.usuId
+            WHERE u.usuId = p_campesino_id AND o.ofeActivo = 'Y'
+            ORDER BY price DESC;
+
+        v_record offer_cursor%ROWTYPE;
+    BEGIN
+        OPEN offer_cursor;
+        DBMS_OUTPUT.PUT_LINE('OFERTAS DE CAMPESINO: ');
+        LOOP
+            FETCH offer_cursor INTO v_record;
+
+            EXIT WHEN offer_cursor%NOTFOUND;
+
+            DBMS_OUTPUT.PUT_LINE(v_record.NombreCompleto ||': '|| v_record.DescripcionOferta ||' - $'|| v_record.price);
+        END LOOP;
+
+        CLOSE offer_cursor;
+    END ordenar_ofertas_campesino;
+    PROCEDURE comprar (
+    p_comId IN INT,
+    p_facId IN INT,
+    p_ofeId IN INT,
+    p_comCantidadUnidades IN INT
+    )
+    IS
+    BEGIN
+      INSERT INTO COMPRA (comId, facId, ofeId, comCantidadUnidades,comSubtotal)
+      VALUES (p_comId, p_facId, p_ofeId, p_comCantidadUnidades,calcular_subtotal(p_ofeId,p_comCantidadUnidades));
+END comprar;
+
+END paquete_compras;
+
+--TRIGGERS
+CREATE OR REPLACE TRIGGER TR_cantidad_valida
+BEFORE INSERT OR UPDATE OF comCantidadUnidades ON Compra
+FOR EACH ROW
+BEGIN
+    IF INSERTING THEN
+        IF(:NEW.comCantidadUnidades > paquete_compras.cantidad_disponible(:NEW.ofeId)) THEN
+            RAISE_APPLICATION_ERROR(-20200,'Cantidad no disponible');
+        END IF;
+    END IF;
+    IF UPDATING THEN
+        IF(:NEW.comCantidadUnidades > paquete_compras.cantidad_disponible(:OLD.ofeId)) THEN
+            RAISE_APPLICATION_ERROR(-20200,'Cantidad no disponible');
+        END IF;
+    END IF;
+END;
+drop trigger actualizar_precio_oferta;
+-- Disparar el trigger
+BEGIN
+    insertar_compra(10, 1, 1, 30,60000);
+END;
+--Bloque para probar el procedimiento comprar(cantidad_valida)
+BEGIN
+    paquete_compras.comprar(6,1,1,11);
+    --eliminar_compra(6);
+END;
+--Select para revisar la compra
+select * from compra
+
+--Bloque para probar el subtotal
+SET SERVEROUTPUT ON
+BEGIN
+    DBMS_OUTPUT.PUT_LINE('Subtotal de 5kg de semillas de maiz ' || paquete_compras.calcular_subtotal(1,5));
+END;
+--Bloque anonimo que testea ordenamiento por campesino con las ofertas del fredy
+SET SERVEROUTPUT ON
+BEGIN
+paquete_compras.ordenar_ofertas_campesino(1);
+END;
+--Bloque anonimo que ordena por tipo de producto 
+SET SERVEROUTPUT ON
+BEGIN
+paquete_compras.list_ofertas_tipo;
+END;
+/*
+Bloque para ordenar por fecha de caducidad
+*/
+BEGIN 
+    paquete_compras.ord_prod_fecha_cad();
+END;
+/*
+Bloque para ordenar por fecha de caducidad segun tipo de producto
+*/
+BEGIN 
+    paquete_compras.ord_prod_fecha_cad('Insumo');
+END;
+/*
+Bloque para ordenar por ofertas mas baratas
+*/
+BEGIN 
+    paquete_compras.productos_mas_baratos();
 END;

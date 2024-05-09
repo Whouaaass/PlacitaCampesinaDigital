@@ -38,10 +38,10 @@ function SignUp() {
             console.log('res: ', res)
             res.json().then((data) => {                
                 MUNICIPIOS = data.map((m: any) => m.MUNNOMBRE);
-                console.log(MUNICIPIOS);
+
                 setUser({
                     ...user,
-                    municipio: '0'
+                    municipio: MUNICIPIOS? MUNICIPIOS[0] : ''
                 });
                 // TODO: posible error en la asignacion de MUNICIPIOS si un municipio falta en la consecucion de la tabla
             })
@@ -66,7 +66,7 @@ function SignUp() {
         submitButton.current?.blur();
         submitButton.current?.setAttribute('disabled', 'true');
         submitButton.current?.setAttribute('autocomplete', 'off');
-        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);
+        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);        
 
         if (user.agrocauca === "yes" && !validateAgrocode(user.agrocode)) {
             popUpRef.current?.show('Codigo de gremio incorrecto');
