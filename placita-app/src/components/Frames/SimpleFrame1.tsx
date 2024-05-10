@@ -10,7 +10,7 @@ type CustomProps = {
 
 const SimpleFrame1: FC<CustomProps> = ({ children }) => {
     return <>
-        <header className="thick">
+        <header id="simple-header-1" className="thick">
             <h1>AGROCAUCA</h1>
         </header>
         <main className='pine-background'>

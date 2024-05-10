@@ -7,16 +7,12 @@
     --lava: #D61515;
 }
 
-.hidden {    
+.hidden {
     display: none;
     animation: fadeout 0.5s;
-}   
-
-.floating-box input.invalid {
-    background-color: #FFD3D3;
 }
 
-#root {    
+#root {
     position: absolute;
     display: flex;
     flex-direction: column;
@@ -28,10 +24,11 @@
 #popup-root {
     position: absolute;
     bottom: 0px;
-    width: 100%;    
-    z-index: 1000;    
+    width: 100%;
+    z-index: 1000;
     overflow: hidden;
 }
+
 #modal-root {
     position: absolute;
     width: 100%;
@@ -39,6 +36,7 @@
     z-index: 1000;
     overflow: hidden;
 }
+
 #modal-overlay {
     position: absolute;
     width: 100%;
@@ -49,6 +47,7 @@
     justify-content: center;
     align-items: center;
 }
+
 #modal-content {
     background-color: var(--white);
     border-radius: 10px;
@@ -63,49 +62,43 @@
     background-color: var(--lava);
     color: white;
     animation-name: frombottom;
-    animation-duration: 0.5s;    
-    padding:1px;
+    animation-duration: 0.5s;
+    padding: 1px;
     padding-left: 10px;
-}
-#popup p {
-    text-align: center;
-    padding: 0;    
+
+    p {
+        text-align: center;
+        padding: 0;
+    }
 }
 
-header.thick {        
-    background-color: #FFFFFF;
-    padding: 20px;
-    border-radius: 10px;
-}
-header h1 {  
-    color: #437CA5;  
-    font-weight: 900;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    margin-left: 10px;   
+header#search-bar {
+    background-color: var(--white);
 }
 
 main {
     flex-grow: 1;
-    overflow: auto;  
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
+    overflow: auto;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 main::-webkit-scrollbar {
-    display: none;      /* Chrome, Safari, Opera*/
+    display: none;
+    /* Chrome, Safari, Opera*/
 }
 
-main.pine-background {    
+main.pine-background {
     background-image: url('inicioSesionBackPic.png');
-    background-size: cover;    
+    background-size: cover;
     background-repeat: repeat-y;
-    background-position-x: center;    
+    background-position-x: center;
     display: flex;
     justify-content: center;
-    align-items: start;        
-    height: 100%;    
+    align-items: start;
+    height: 100%;
 }
 
 .input-question {
@@ -119,4 +112,3 @@ main.pine-background {
     max-width: 310px;
     margin-bottom: 20px;
 }
-

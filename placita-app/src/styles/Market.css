@@ -36,22 +36,51 @@
 }
 
 
-#market-header {
+
+#market-header {    
+    position: absolute;   
     background-image: url('inicioSesionBackPic.png');
-    background-size: cover;
-    height: 90px;
-    width: 100vw;
-    position: absolute;
+    background-position-y: calc(100%/1.7);
+    background-size: cover;    
+    width: 100%;
+    padding: 10px;
+    
+    
 
     .orderby {
         position: absolute;
         bottom: 10px;
         right: 50px;                
     }
-    .search {
-        position: absolute;
-        right: 100px;
-        bottom: calc(100%/2);
+    
+    #navigation-buttons {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;        
+        button {
+            display: flex;            
+            background-color: var(--infoblue);
+            color: var(--white);          
+            font-family: 'Inter';
+            font-weight: 900;  
+            font-size: medium;                        
+            border: none;
+            gap: 0.5rem;
+            border-radius: 20px;
+            padding-inline: 20px;
+            padding-block: 10px;
+            cursor: pointer;                    
+            align-items: center;
+        }
+        button:hover {
+            transform: scale(1.05);
+            background-color: var(--steelblue);
+            color: var(--white);
+        }
+    }
+    #logo-search-container {
+        display: flex;
+        font-display: inherit;
     }
 }
 

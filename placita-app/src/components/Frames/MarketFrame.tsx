@@ -4,6 +4,8 @@
  */
 import { FC, ReactNode } from 'react';
 import placitaLogo from '/PlacitaLogo.png';
+import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
+import SearchBar from '../CustomComponents/SearchBar';
 
 // Propiedades que recibe el componente
 type CustomProps = {
@@ -11,38 +13,24 @@ type CustomProps = {
 };
 
 const MarketFrame: FC<CustomProps> = ({ children }) => {
-    return <>
-        <header id="market-header" className="thick flex flex-row">
-            <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
-            <div className='flex flex-column'>
-
-                <button className='flex flex-column'>
-                    <span className="material-symbols-outlined">
-                        carrito_icon
-                    </span>
+    return <>        
+        <header id="market-header" className="thick flex flex-row">            
+            <div id="navigation-buttons" >
+                <button>
+                    <MaterialSymbolsIcon name="shopping_cart" opsz="48" weight='600' size='3rem'/>
                     Carrito
                 </button>
-                <a href="/products">
-                    <button className='flex flex-column'>
-                        <span className="material-symbols-outlined">
-                            productos_icon
-                        </span>
-                        Mis Productos
-                    </button>
-                </a >
+                <button>
+                    <MaterialSymbolsIcon name="inventory_2" opsz="48" weight='600' color="#000000" size="3rem"/>
+                    Mis productos
+                </button>
             </div>
-            <label className='search'>
-                <input type='search' />
-                <span className="material-symbols-outlined">
-                    search_icon
-                </span>
-            </label>
-            <label className="orderby">
-                Ordenar por:
-                <span>
-                    :flechita abajo
-                </span>
-            </label>
+            <div id="logo-search-container">
+                <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
+                <SearchBar />
+            </div>
+            
+            
         </header>
         <main id="market-container">
             {children}
