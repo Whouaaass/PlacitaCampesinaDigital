@@ -6,11 +6,11 @@ interface CustomProps extends React.HTMLAttributes<HTMLDivElement> {
     offers: any[] | undefined;
 }
 
-const OffersContainer: React.FC<CustomProps> = ({ offers }) => {
-    const offerList = offers?? [];
+const OffersContainer: React.FC<CustomProps> = ({ offers = [] }) => {
+    
     return (
         <ul id="offers-container">
-            {offerList.map((offer) => (
+            {offers.map((offer) => (
                 <li key={offer.ID}>
                     <OfferCardSmall
                         name={offer.NOMBRE}

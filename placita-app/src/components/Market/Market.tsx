@@ -19,7 +19,7 @@ const Market: FC = () => {
             })
         }).catch((err) => {
             console.log('something went wrong with the fetch')
-            console.log(err)
+            console.log(err)            
         })
     }, []);
 
