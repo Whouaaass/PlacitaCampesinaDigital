@@ -76,6 +76,7 @@
             transform: scale(1.05);
             background-color: var(--steelblue);
             color: var(--white);
+            transition: 0.3s ease;
         }
     }
     #logo-search-container {

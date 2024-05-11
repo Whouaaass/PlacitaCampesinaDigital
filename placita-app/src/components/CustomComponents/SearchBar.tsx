@@ -6,7 +6,7 @@ interface SearchBarProps {
 }
 
 const SearchBar: FC<SearchBarProps> = () => {
-    return <search>
+    return <div id="searchbar">
         <input>
 
         </input>
@@ -14,7 +14,7 @@ const SearchBar: FC<SearchBarProps> = () => {
             <MaterialSymbolsIcon name="search" opsz="48" weight='900' color='black' />
         </button>
         <span className="vertical-line" />
-        <span>
+        <label id="search-orderby">
             Ordenar por:
 
             <select>
@@ -25,9 +25,9 @@ const SearchBar: FC<SearchBarProps> = () => {
                     nombre
                 </option>
             </select>
-        </span>
+        </label>
 
-    </search>
+    </div>
 
 
 }

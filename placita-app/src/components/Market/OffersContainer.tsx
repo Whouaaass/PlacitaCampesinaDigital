@@ -3,14 +3,14 @@ import React from 'react';
 import OfferCardSmall from './OfferCardSmall';
 
 interface CustomProps extends React.HTMLAttributes<HTMLDivElement> {
-    offers: any[];
+    offers: any[] | undefined;
 }
 
 const OffersContainer: React.FC<CustomProps> = ({ offers }) => {
-
+    const offerList = offers?? [];
     return (
         <ul id="offers-container">
-            {offers.map((offer) => (
+            {offerList.map((offer) => (
                 <li key={offer.ID}>
                     <OfferCardSmall
                         name={offer.NOMBRE}

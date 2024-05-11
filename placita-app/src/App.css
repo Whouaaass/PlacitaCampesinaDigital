@@ -114,19 +114,18 @@ main.pine-background {
 }
 .vertical-line {
     border-left: 1px solid black;
-    height: 100%;
-    margin-left: 10px;
-    margin-right: 10px;
+    height: 100%;   
 }
 
-search {
+#searchbar {
     display: flex;
     flex-direction: row;
     align-items: center;    
     height: 40px;
     background-color: var(--lightgray);
-    border-radius: 20px;
-    input {
+    border-radius: 20px;    
+    overflow: hidden;
+    input {        
         background-color: transparent;
         border: none;
         height: 100%;
@@ -139,13 +138,17 @@ search {
         background-color: transparent;
         outline: none;
         border: none;
-        border-radius: 100%;
+        border-radius: 10em; 
+        padding: 0.1em;       
     }    
     button:hover {
         cursor: pointer;
-        background-color: var(--lightred);
+        background-color: var(--infoblue);
+        opacity: 0.8;
+        transition: background-color 0.3s ease;
     }
-    select {                
+    select {       
+        font: inherit;         
         background-color: transparent;
         border: none;
         height: 100%;
@@ -153,5 +156,9 @@ search {
     select:focus {
         border: none;
         outline: none;
+    }
+    #search-orderby {
+        padding-inline: 1em;
+        height: 100%;            
     }
 }
