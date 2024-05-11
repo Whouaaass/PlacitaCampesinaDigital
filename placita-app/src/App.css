@@ -112,3 +112,46 @@ main.pine-background {
     max-width: 310px;
     margin-bottom: 20px;
 }
+.vertical-line {
+    border-left: 1px solid black;
+    height: 100%;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+
+search {
+    display: flex;
+    flex-direction: row;
+    align-items: center;    
+    height: 40px;
+    background-color: var(--lightgray);
+    border-radius: 20px;
+    input {
+        background-color: transparent;
+        border: none;
+        height: 100%;
+    }
+    input:focus {
+        border: none;
+        outline: none;        
+    }
+    button {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        border-radius: 100%;
+    }    
+    button:hover {
+        cursor: pointer;
+        background-color: var(--lightred);
+    }
+    select {                
+        background-color: transparent;
+        border: none;
+        height: 100%;
+    }
+    select:focus {
+        border: none;
+        outline: none;
+    }
+}
