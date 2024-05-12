@@ -1,3 +1,5 @@
+
+
 body {
     font-family: 'Inter' !important;
     margin: 0;
@@ -6,6 +8,18 @@ body {
     height: 100%;
     width: 100%;
 }
+
+button, input, select {
+    font-family: 'Inter' !important;
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+    
+}
+
 
 .block {
     display: block;
@@ -45,6 +59,14 @@ body {
 .no-wrap {
     flex-wrap: nowrap;
 }
+
+.dot {
+    height: 25px;
+    width: 25px;
+    background-color: #bbb;
+    border-radius: 50%;
+    display: inline-block;
+  }
 
 
 div.flex-row {

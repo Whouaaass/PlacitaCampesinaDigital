@@ -3,6 +3,7 @@ import PopUp from '../PopUp';
 import { PopUpRef } from '../PopUp';
 import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
+import { Link, useNavigate } from 'react-router-dom';
 
 const MARKETDIR ="../market";
 
@@ -14,6 +15,7 @@ function Login() {
         id: '',
         password: ''
     });
+    const navigate = useNavigate();
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
     // Functions
@@ -39,7 +41,7 @@ function Login() {
             console.log(response)
             
             if (response.ok) {
-                window.location.href = MARKETDIR;
+                navigate(MARKETDIR);
             } else {
                 popUpRef.current?.show('Usuario o contraseña inválidos');
             }
@@ -82,7 +84,7 @@ function Login() {
                     />
                     <button type="submit">Entrar</button>
                     <hr />
-                    <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
+                    <p>¿No tienes cuenta? <Link to="/signup">Regístrate</Link></p>
                 </form>
             </SimpleFrame1>
         </>

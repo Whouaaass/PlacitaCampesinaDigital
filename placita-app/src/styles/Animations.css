@@ -25,3 +25,12 @@
     transform: translateY(0);
   }    
 }
+
+@keyframes rotate180 {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(180deg);
+  }
+}

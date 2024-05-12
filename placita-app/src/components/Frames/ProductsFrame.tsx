@@ -4,6 +4,9 @@
  */
 import { FC, ReactNode } from 'react';
 import placitaLogo from '/PlacitaLogo.png';
+import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
+import { Link } from 'react-router-dom';
+import SearchBar from '../CustomComponents/SearchBar';
 
 
 // Propiedades que recibe el componente
@@ -13,28 +16,24 @@ type CustomProps = {
 
 const ProductsFrame: FC<CustomProps> = ({ children }) => {
     return <>
-        <header id="market-header" className="thick flex flex-row">
-            <img id="placita-logo" src={placitaLogo} alt='placita-logo'/>
-            <div className='flex flex-column'>
-                <button className='flex flex-column'>                    
-                    Mis Ofertas
+        <header id="products-header" className="thick flex flex-row">
+            <Link to="/market" >
+                <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
+            </Link>
+
+            <h1 id="page-title">Mis productos</h1>
+            <SearchBar />
+
+            <Link id="go-market" to="/market">
+                <button id="go-market-button">
+                    <MaterialSymbolsIcon name="storefront" opsz="48" weight='600' size='2.5rem' color="black" />
+                    Mercado
                 </button>
-                <button className='flex flex-column'>
-                    Agregar Oferta
-                </button>
-            </div>
-            <label className='search'>
-                <input type='search' />
-                <span className="material-symbols-outlined">
-                    search_icon
-                </span>
-            </label>
-            <label className="orderby">
-                Ordenar por:
-                <span>
-                    :flechita abajo
-                </span>
-            </label>
+            </Link>
+
+
+
+
         </header>
         <main id="market-container">
             {children}

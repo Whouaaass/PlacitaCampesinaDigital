@@ -6,6 +6,7 @@ CREATE OR REPLACE VIEW vista_ofertas_disponibles AS
         ofedescripcion AS descripcion,
         ofeprecio AS precio,
         ofecantidad AS cantidad,
+        ofefechacaducidad AS fechaCaducidad,
         usunombre || ' ' || usuapellido AS ofertador
     FROM
         oferta

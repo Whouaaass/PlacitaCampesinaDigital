@@ -3,7 +3,7 @@
  */
 import { FC } from 'react';
 
-interface MaterialSymbolsIconProps {
+interface MaterialSymbolsIconProps extends React.HTMLAttributes<HTMLSpanElement> {
     name: string;
     fill?: string;
     weight?: string;
@@ -23,14 +23,14 @@ interface MaterialSymbolsIconProps {
  * @param color El color del ícono.
  * @param size El tamaño del ícono.
  */
-const MaterialSymbolsIcon: FC<MaterialSymbolsIconProps> = ({ name, fill = 0, weight = 400, grad = 0, opsz = 48, color="white", size}) => {
+const MaterialSymbolsIcon: FC<MaterialSymbolsIconProps> = ({ name, fill = 0, weight = 400, grad = 0, opsz = 48, color = "white", size, ...props }) => {
     const style = {
         fontVariationSettings: `'FILL' ${fill}, 'wght' ${weight}, 'GRAD' ${grad}, 'opsz' ${opsz}`,
         color: color,
         fontSize: size,
     };
     return (
-        <span className="material-symbols-rounded" style={style} >
+        <span className="material-symbols-rounded" style={style} {...props}>
             {name}
         </span>
     );

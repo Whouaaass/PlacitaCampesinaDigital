@@ -5,6 +5,7 @@ import YesNoRadioButton from '../CustomComponents/YesNoRadioButton';
 import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
+import { Link } from 'react-router-dom';
 
 
 const DUMMY_MUNICIPIOS = ['---', 'San Salvador', 'Santa Tecla', 'Santa Ana', 'San Miguel', 'DUMMYVALUES'];
@@ -220,7 +221,7 @@ function SignUp() {
                     }
                     <button ref={submitButton} type="submit">Registrarse</button>
                     <hr />
-                    <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesion</a></p>
+                    <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
                 </form>
             </SimpleFrame1>
 
