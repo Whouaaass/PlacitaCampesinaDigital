@@ -1,23 +1,32 @@
-import { FormEvent, useState, useRef } from 'react';
+import { FormEvent, useState, useRef, useEffect } from 'react';
 import PopUp from '../PopUp';
 import { PopUpRef } from '../PopUp';
 import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 import { Link, useNavigate } from 'react-router-dom';
-
-const MARKETDIR ="../market";
+import { loginData, useAuth } from '../../hooks/AuthProvider';
 
 /** 
  * @brief Login component that renders a page to login an existing user.
  */
 function Login() {
-    const [user, setUser] = useState({
-        id: '',
-        password: ''
+    const [user, setUser] = useState<loginData>({
+        id: "",
+        password: ""
     });
-    const navigate = useNavigate();
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
+    const auth = useAuth();
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        auth.verify().then(
+            (res: any) => {
+                if (res) {
+                    navigate('/market');
+                }
+            }
+        );
+    }, []);
     // Functions
     function handleChange(e: any) {
         setUser({
@@ -29,23 +38,7 @@ function Login() {
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
         e.preventDefault();
-
-        //TODO: fetch to the api server...
-        await fetch("http://localhost:3000/usuarios/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: user.id, password: user.password })
-        }).then(response => {
-            console.log(response)
-            
-            if (response.ok) {
-                navigate(MARKETDIR);
-            } else {
-                popUpRef.current?.show('Usuario o contraseña inválidos');
-            }
-        })
+        auth.loginAction(user);
     }
     function handleInvalid(e: FormEvent<HTMLFormElement>) {
         const control = e.target as HTMLFormElement;

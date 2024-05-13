@@ -5,7 +5,7 @@
 import {FC} from 'react';
 import MarketFrame from '../Frames/MarketFrame';
 import { useEffect, useState } from 'react';
-import OffersContainer from './OffersContainer';
+import OffersContainer from '../Offers/OffersContainer';
 
 const Market: FC = () => {
     const [offers, setOffers] = useState([]);
@@ -14,6 +14,7 @@ const Market: FC = () => {
         fetch("http://localhost:3000/ofertas"
         ).then((res) => {
             res.json().then((data) => {
+                if (data.error) throw new Error(data.error);
                 console.log(data);
                 setOffers(data);
             })

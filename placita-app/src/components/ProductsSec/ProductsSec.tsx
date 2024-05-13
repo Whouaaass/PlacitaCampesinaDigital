@@ -1,19 +1,15 @@
 
 import React from 'react';
 import ProductsFrame from '../Frames/ProductsFrame';
+import OffersContainer from '../Offers/OffersContainer';
+
+import { DUMMYOFFERS } from './dummyOffers';
 
 const ProductsSec: React.FC = () => {
+
     return (
         <ProductsFrame>
-            <h2>User Products</h2>
-            <ul>
-                {/*products.map((product) => (
-                    <li key={product.id}>
-                        <span>{product.name}</span>
-                        <span>{product.price}</span>
-                    </li>
-                ))*/}
-            </ul>
+            <OffersContainer offers={DUMMYOFFERS}/>
         </ProductsFrame>
     );
 };

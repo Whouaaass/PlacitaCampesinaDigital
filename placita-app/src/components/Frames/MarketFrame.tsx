@@ -8,6 +8,7 @@ import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import SearchBar from '../CustomComponents/SearchBar';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../hooks/AuthProvider';
 
 // Propiedades que recibe el componente
 type CustomProps = {
@@ -15,6 +16,7 @@ type CustomProps = {
 };
 
 const MarketFrame: FC<CustomProps> = ({ children }) => {
+    const auth= useAuth();
 
     return <>
         <header id="market-header" className="thick flex flex-row" >
@@ -37,7 +39,7 @@ const MarketFrame: FC<CustomProps> = ({ children }) => {
                 </div>
                 <SearchBar />
             </div>
-            <button id="close-session-button">
+            <button id="close-session-button" onClick={() => auth.logOut()}>
                 <MaterialSymbolsIcon name="close" opsz="48" weight='600' size='2.5rem' color="black" />
                 Cerrar sesion
             </button>

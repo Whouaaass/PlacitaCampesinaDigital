@@ -5,6 +5,7 @@
 const db = require('../dbInterface');
 import express, { Request, Response } from "express";
 
+
 const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
@@ -14,6 +15,8 @@ router.get("/", async (req: Request, res: Response) => {
         res.json(result.rows);
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
+    } finally {
+        connection.close();
     }
 });
 // Todo: Refactorizar correctamente todas las rutas
@@ -27,8 +30,10 @@ router.get("/:id", async (req: Request, res: Response) => {
         } else {
             res.status(404).json({ error: "Municipio not found" });
         }
-    } catch (error) {
-        res.status(500).json({ error: "Internal server error" });
+    } catch (error: any) {
+        res.status(500).json({ error: "Internal server error", errorNum: error.errorNum });
+    } finally {
+        connection.close();
     }
 });
 

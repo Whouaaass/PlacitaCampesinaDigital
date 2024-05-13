@@ -35,7 +35,7 @@ const ProductsFrame: FC<CustomProps> = ({ children }) => {
 
 
         </header>
-        <main id="market-container">
+        <main id="products-container">
             {children}
         </main>
     </>

@@ -13,21 +13,27 @@ import Login from './components/Login/Login';
 import SignUp from './components/SignUp/SignUp';
 import Market from './components/Market/Market';
 import ProductsSec from './components/ProductsSec/ProductsSec';
+import AuthProvider from './hooks/AuthProvider';
+import PrivateRoute from './components/auth/PrivateRoute';
 
-function App() {    
-  return (    
+function App() {
+  return (
     <BrowserRouter>
-      <Routes>        
-        <Route path='/' element={<Home/>} />         
-        <Route path='/login' element={<Login/>} />   
-        <Route path='/signup' element={<SignUp/>} />             
-        <Route path='/market' element={<Market/>} />
-        <Route path='/products' element={<ProductsSec />} />
-        <Route path="*">404 Not Found</Route>        
-      </Routes>    
+      <AuthProvider>
+        <Routes>
+          <Route path='/' element={<Home />} />
+          <Route path='/login' element={<Login />} />
+          <Route path='/signup' element={<SignUp />} />
+          <Route element={<PrivateRoute />}>
+            <Route path='/market' element={<Market />} />
+            <Route path='/products' element={<ProductsSec />} />
+          </Route>
+          <Route path="*">404 Not Found</Route>
+        </Routes>
+      </AuthProvider>
     </BrowserRouter>
   )
-  
+
 }
 
 export default App
