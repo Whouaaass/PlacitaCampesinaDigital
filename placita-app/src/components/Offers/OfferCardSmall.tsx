@@ -9,37 +9,32 @@ interface OfferCardProps extends React.HTMLAttributes<HTMLDivElement> {
     price: number;
     amount: number;
     editing?: boolean;
-    key?: number;
     expired?: boolean;
 }
 
-const OfferCardSmall: React.FC<OfferCardProps> = ({ name, price, editing, amount, key, expired }) => {
+const OfferCardSmall: React.FC<OfferCardProps> = ({ name, price, editing, amount, expired }) => {
     const buyTop = <>
-        <button>
-            <MaterialSymbolsIcon name="shopping_cart" size='3rem'/>
-        </button>
-        <button>
-            <MaterialSymbolsIcon name="visibility" size='3rem'/>
-        </button>
+        <button><MaterialSymbolsIcon name="shopping_cart" size='3rem' /></button>
+        <button><MaterialSymbolsIcon name="visibility" size='3rem' /></button>
     </>
     const editTop = <>
-        <button>Editar</button>
-        <button>Eliminar</button>
+        <button><MaterialSymbolsIcon name="edit" size='3rem' /></button>
+        <button><MaterialSymbolsIcon name="delete" size="3rem" /></button>
     </>
     return (
-        <div key={key} className="offer-card-small" >
+        <div className="offer-card-small" >
 
             {editing ? editTop : buyTop}
 
 
-            <h3>{name}</h3>            
+            <h3>{name}</h3>
             <p>{`${amount} Unidades`}</p>
             <p id="tag-caducidad">
-                {expired && 
-                <>
-                    <span className="dot"> </span>
-                    Caducado
-                </>}
+                {expired &&
+                    <>
+                        <span className="dot"> </span>
+                        Caducado
+                    </>}
             </p>
             <h3>{`${price}$`}</h3>
 

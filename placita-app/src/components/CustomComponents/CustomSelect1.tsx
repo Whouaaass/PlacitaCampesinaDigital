@@ -18,13 +18,13 @@ type CustomProps = {
 const CustomSelect1: FC<CustomProps> = ({ values, label, value, name, required, onChange }) => {
     
     function innerOnChange(e: any) {
-        e.target.className = '';
+        e.target.classList.remove('invalid');
         onChange(e);
     }
     return (
         <label className="input-container custom-select">
             {`${label} ${required ? '*' : ''}`}
-            <select id={name} name={name} value={value} onChange={innerOnChange} required={required}>
+            <select id={name} name={name} value={value} onChange={innerOnChange} required={required} className="select-1">
                 {values.map((value, index) => (
                     <option key={index} value={value}>{value}</option>
                 ))}

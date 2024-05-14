@@ -114,7 +114,7 @@ function SignUp() {
     // handle invalid executes every time an input is invalid
     const handleInvalid = (e: InvalidEvent<HTMLFormElement>) => {
         const control = e.target as HTMLFormElement;
-        control.className = 'invalid';        
+        control.classList.add('invalid');
         if (control.validity.valueMissing) {
             popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
@@ -219,7 +219,7 @@ function SignUp() {
                             pattern='[0-9]{4}'
                         />
                     }
-                    <button ref={submitButton} type="submit">Registrarse</button>
+                    <button ref={submitButton} type="submit" className='button-1'>Registrarse</button>
                     <hr />
                     <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
                 </form>

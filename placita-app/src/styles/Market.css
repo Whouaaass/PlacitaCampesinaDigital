@@ -4,33 +4,25 @@
     background-image: url('inicioSesionBackPic.png');
     background-position-y: calc(100%/1.7);
     background-size: cover;
-    width: 100%;
-    padding: 10px;
+    width: calc(100% - 20px);
+    /* Se le debe restar el padding*/
+    padding-inline: 10px;
     min-height: 180px;
 
-    .orderby {
-        position: absolute;
-        bottom: 10px;
-        right: 50px;
-    }
-
-    #navigation-buttons {
-        display: flex;
-        flex-direction: column;
-        justify-content: space-around;
-        gap: 10px;
-
-        
-    }
+    display: grid;
+    grid-template-columns: 2fr 4fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    max-height: 180px;
 
     #page-title {
+        grid-column: 2 / 3;
+        grid-row: 1;
         font-family: 'Kulim Park';
         font-size: large;
         margin: auto;
         display: flex;
         flex-direction: row;
         align-items: center;
-        padding-right: 10%;
         gap: 1.5rem;
 
         h1 {
@@ -39,15 +31,27 @@
         }
     }
 
-    #logo-search-container {
+    #go-cart {
+        grid-column: 1 / 2;
+        grid-row: 1;
+    }
 
-        margin-left: 5%;
-        width: 60%;
-        display: flex;
-        flex-direction: column;
-        gap: 20px;
-        font-display: inherit;
-        justify-content: center;
+    #go-products {
+        grid-column: 1 / 2;
+        grid-row: 2;
+    }
+
+    #searchbar {
+        grid-column: 2 / 4;
+        grid-row: 2;
+        width: 70%;
+        align-self: center;
+    }
+
+    button.button-2 {
+        align-self: center;
+        width: 240px;
+        height: 65px;
     }
 
     button#close-session-button {
@@ -56,7 +60,7 @@
         position: absolute;
         gap: 1rem;
         top: 0px;
-        right: 20px;
+        right: 0px;
         border-radius: 0px;
         color: black;
         border-bottom-left-radius: 1.7rem;
@@ -94,18 +98,6 @@
 }
 
 
-#offers-container {
-    list-style-type: none;
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    grid-auto-rows: auto;
-    margin: 0 auto;
-    gap: 5px;
-    padding: 5px;
-    width: calc(100% - 10px);
-    max-width: 1070px;
-    overflow: visible;
-}
 
 #placita-logo {
     width: 100px;

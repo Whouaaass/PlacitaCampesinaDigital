@@ -5,13 +5,11 @@ import OfferCardSmall from './OfferCardSmall';
 interface CustomProps extends React.HTMLAttributes<HTMLDivElement> {
  
     offers: any[] | undefined;
-    edit?: boolean;
+    editing?: boolean;
 }
 
 
-const OffersContainer: React.FC<CustomProps> = ({ offers = [], edit}) => {     
-    //offers = [...DUMMYOFFERS, ...offers];
-    console.log(offers);
+const OffersContainer: React.FC<CustomProps> = ({ offers = [], editing}) => {     
     return (
         <ul id="offers-container">
             {offers.map((offer) => (
@@ -20,6 +18,7 @@ const OffersContainer: React.FC<CustomProps> = ({ offers = [], edit}) => {
                         name={offer.NOMBRE}
                         amount={offer.CANTIDAD}
                         price={offer.PRECIO}
+                        editing={editing}
                     />
                 </li>
             ))}

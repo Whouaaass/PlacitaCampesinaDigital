@@ -7,6 +7,7 @@ import './styles/Market.css';
 import './styles/ProductsSec.css';
 import './styles/SearchBar.css';
 import './styles/OfferCards.css';
+import './styles/Modals.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/Login/Login';

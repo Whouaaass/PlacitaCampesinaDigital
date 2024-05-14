@@ -19,6 +19,7 @@
     width: 100%;
     height: 100%;
     overflow: hidden;
+    transition: all 0.1s ease;
 }
 
 #popup-root {
@@ -31,31 +32,6 @@
 
 #modal-root {
     position: absolute;
-    width: 100%;
-    height: 100%;
-    z-index: 1000;
-    overflow: hidden;
-}
-
-#modal-overlay {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    z-index: 1000;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-#modal-content {
-    background-color: var(--white);
-    border-radius: 10px;
-    padding: 20px;
-    width: 80%;
-    max-width: 400px;
-    height: auto;
-    overflow: auto;
 }
 
 #popup {
@@ -76,7 +52,7 @@ header#search-bar {
     background-color: var(--white);
 }
 
-main {    
+main {
     overflow: auto;
     -ms-overflow-style: none;
     /* IE and Edge */
@@ -130,27 +106,85 @@ main.pine-background {
     transform: rotate(180deg);
 }
 
-header {
-    button {
-        display: flex;
-        background-color: var(--infoblue);
-        color: var(--white);
-        font-family: 'Inter';
-        font-weight: 900;
-        font-size: medium;
-        border: none;
-        gap: 0.5rem;
-        border-radius: 20px;
-        padding-inline: 20px;
-        padding-block: 10px;
-        cursor: pointer;
-        align-items: center;
-    }
+button.button-1 {
+    width: 100%;
+    border: unset;
+    border-radius: 30px;
+    background-color: var(--steelblue);
+    color: var(--white);
+    font-weight: bold;
+    font-size: medium;
+    padding: 10px 20px;
+    cursor: pointer;
+}
 
-    button:hover {
-        transform: scale(1.05);
-        background-color: var(--steelblue);
-        color: var(--white);
-        transition: 0.3s ease;
-    }
+button.button-1:hover {
+    background-color: #5193c2;
+}
+
+button.button-2 {
+    display: flex;
+    background-color: var(--infoblue);
+    color: var(--white);
+    font-family: 'Inter';
+    font-weight: 900;
+    font-size: larger;
+    border: none;
+    gap: 0.5rem;
+    border-radius: 20px;
+    padding-inline: 20px;
+    padding-block: 10px;
+    cursor: pointer;
+    align-items: center;
+}
+
+button.button-2:hover {
+    transform: scale(1.05);
+    background-color: var(--steelblue);
+    color: var(--white);
+    transition: 0.3s ease;
+}
+
+input.input-1 {
+    border: unset;
+    border-radius: 30px;
+    height: 30px;
+    background-color: var(--lightgray);
+    padding-inline: 15px;    
+    padding-block: 5px;    
+}
+
+input.input-1:focus {
+    border: unset;
+}
+
+select.select-1 {
+    appearance: none;
+    /* safari */
+    -webkit-appearance: none;
+    /* other styles for aesthetics */
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.675em 6em 0.675em 1em;
+    background-color: var(--lightgray);
+    border: unset;
+    border-radius: 30px;
+    color: black;
+    cursor: pointer;
+}
+
+select.select-1:focus {
+    border: unset;
+}
+
+textarea {
+    font-family: 'Inter'
+}
+
+textarea.textarea-1 {
+    border: unset;
+    border-radius: 30px;
+    background-color: var(--lightgray);
+    padding: 1rem;
+    height: 150px;
 }

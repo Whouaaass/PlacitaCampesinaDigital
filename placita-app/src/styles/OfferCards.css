@@ -1,3 +1,16 @@
+
+#offers-container {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-auto-rows: auto;
+    margin: 0 auto;
+    gap: 5px;
+    padding: 5px;
+    width: calc(100% - 10px);
+    max-width: 1070px;
+    overflow: visible;
+}
 .offer-card-small {
     display: grid;    
     grid-template-columns: 1fr 1fr;

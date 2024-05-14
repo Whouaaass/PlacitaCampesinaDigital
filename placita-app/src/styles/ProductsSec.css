@@ -26,7 +26,12 @@
         grid-column: 3;
         grid-row: 1;
         margin: 5px;        
+        align-self: center;
+        margin-right: 1rem;
         justify-self: right;
+        button {
+            padding-inline: 2rem
+        }
     }
     #searchbar {
         align-self: center;        
@@ -38,4 +43,17 @@
         text-decoration: none;
     }
     
+}
+
+
+#add-offer-button {    
+    position: absolute;
+    display: flex;
+    font-size: larger;    
+    align-items: center;
+    bottom: 1rem;
+    right: 1rem;
+    z-index: 2;
+    padding-block: 1rem;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.3);    
 }

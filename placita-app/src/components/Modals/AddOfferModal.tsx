@@ -1,0 +1,112 @@
+import { FC, FormEvent, useEffect, useState, useRef } from 'react';
+import Modal from './Modal'; // Replace './path/to/Modal' with the actual path to the Modal component
+import CustomInput1 from '../CustomComponents/CustomInput1';
+import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
+import CustomSelect1 from '../CustomComponents/CustomSelect1';
+import { useAuth } from '../../hooks/AuthProvider';
+import PopUp, {PopUpRef} from '../PopUp';
+
+async function getProducts() {
+    const response = await fetch('http://localhost:3000/productos');
+    if (response.status !== 200) throw new Error("Internal server error");
+    return await response.json();
+}
+
+async function addOffer(offer: Offer, token: string) {
+    const response = await fetch('http://localhost:3000/ofertas', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: `session=${token}`
+        },
+        body: JSON.stringify(offer)
+    });
+    return await response.json();    
+}
+
+export interface Offer {
+    name: string;
+    quantity: string;
+    price: string;
+    expirationDate: string;
+    description: string;
+}
+
+export interface AddOfferModalProps {
+    open: boolean;
+    onClose: () => void;
+}
+
+const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose }) => {
+    const popupRef = useRef<PopUpRef>(null);
+    const [offer, setOffer] = useState({
+        name: '',
+        quantity: '',
+        price: '',
+        expirationDate: '',
+        description: ''
+    });
+    const [products, setProducts] = useState([]);
+    const { token } = useAuth();
+    console.log(offer);
+
+    useEffect(() => {
+        getProducts().then((products) => {
+            if (!products.data) return;
+            setProducts(products.data?.map((product: any) => product.PRONOMBRE));
+            setOffer((offer) => ({ ...offer, name: products.data[0].PRONOMBRE }))
+        });
+    }, []);
+
+    function handleChange(e: any) {
+        setOffer({
+            ...offer,
+            [e.target.name]: e.target.value
+        });
+    }
+    function handleSumbmit(e: FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+        addOffer(offer, token).then((response) => {
+            console.log(response);
+            if (response.message) {                
+                popupRef.current?.show("Oferta agregada exitosamente", "blue");
+                onClose();
+            }
+            if (response.error) {
+                popupRef.current?.show("Error al agregar la oferta", "red");
+            }
+        });;
+    }
+
+    return (<>
+        {open &&
+        <Modal>
+            <form id="add-offer-modal" onSubmit={handleSumbmit}>
+                <h1>Ingresar Datos de la oferta</h1>
+                <CustomSelect1 values={products} label="Nombre" name="name" value={offer.name} required
+                    onChange={handleChange}
+                />
+                <CustomInput1 label="Cantidad" type="number" name="quantity" value={offer.quantity} required
+                    onChange={handleChange}
+                />
+                <CustomInput1 label="Precio ($COP)" type="number" name="price" value={offer.price} required
+                    onChange={handleChange}
+                />
+                <CustomInput1 label="Caducidad" type="date" name="expirationDate" value={offer.expirationDate} required
+                    onChange={handleChange}
+                />
+                <label id="label-desc">
+                    Descripción
+                    <textarea name="description" value={offer.description} onChange={handleChange} className="textarea-1"></textarea>
+                </label>
+                <button id="close-modal-button" onClick={onClose}><MaterialSymbolsIcon name="close" color="black" size='3rem' /></button>
+                <button type="submit" className="button-1">Agregar</button>
+            </form>
+            <div id="modal-mask" onClick={onClose}></div>
+        </Modal>}
+        <PopUp ref={popupRef} />
+    </>
+    );
+};
+
+export default AddOfferModal;

@@ -10,15 +10,15 @@ interface CustomProps extends InputHTMLAttributes<HTMLInputElement> {
     label: string;
 };
 
-const CustomInput1: FC<CustomProps> = ({ label, type, name, value, required, onChange, ...rest }) => {
+const CustomInput1: FC<CustomProps> = ({ label, type, name, value, required, onChange, ...props }) => {
     function innerOnChange(e: any) {
-        e.target.className = '';
+        e.target.classList.remove('invalid');
         onChange(e);
     }
     return (
         <label htmlFor={name} className="input-container">
             {`${label} ${required ? '*' : ''}`}
-            <input type={type} id={name} name={name} value={value} onChange={innerOnChange} required={required} {...rest} />
+            <input type={type} id={name} name={name} value={value} onChange={innerOnChange} required={required} className='input-1' {...props} />
         </label>
 
     )

@@ -16,40 +16,37 @@ type CustomProps = {
 };
 
 const MarketFrame: FC<CustomProps> = ({ children }) => {
-    const auth= useAuth();
+    const auth = useAuth();
 
     return <>
         <header id="market-header" className="thick flex flex-row" >
-            <div id="navigation-buttons" >                
-                <button>
-                    <MaterialSymbolsIcon name="shopping_cart" opsz="48" weight='600' size='3rem' />
-                    Carrito
+            <button className='button-2'>
+                <MaterialSymbolsIcon name="shopping_cart" opsz="48" weight='600' size='3rem' />
+                Carrito
+            </button>
+            <Link to="/products" id="go-products">
+                <button className='button-2'>
+                    <MaterialSymbolsIcon name="store" opsz="48" weight='600' size="3rem" color="#000000" />
+                    Mis productos
                 </button>
-                <Link to="/products">
-                    <button>
-                        <MaterialSymbolsIcon name="store" opsz="48" weight='600' size="3rem" color="#000000"/>  
-                        Mis productos
-                    </button>
-                </Link>
+            </Link>
+            <div id="page-title">
+                <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
+                <h1>Marketplace</h1>
             </div>
-            <div id="logo-search-container">
-                <div id="page-title">
-                    <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
-                    <h1>Marketplace</h1>
-                </div>
-                <SearchBar />
-            </div>
+            <SearchBar />
+
             <button id="close-session-button" onClick={() => auth.logOut()}>
                 <MaterialSymbolsIcon name="close" opsz="48" weight='600' size='2.5rem' color="black" />
                 Cerrar sesion
             </button>
         </header>
         <main id="market-container">
-            
+
             {children}
-            
+
         </main>
-        
+
     </>
 }
 

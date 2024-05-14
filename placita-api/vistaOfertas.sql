@@ -1,5 +1,6 @@
 CREATE OR REPLACE VIEW vista_ofertas_disponibles AS
     SELECT
+        oferta.usuid as usuid,
         ofeid AS id,
         pronombre AS nombre,
         protipo AS tipo,

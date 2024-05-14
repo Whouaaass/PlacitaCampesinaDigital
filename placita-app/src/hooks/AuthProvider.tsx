@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext({
   token: "",
-  user: null,
-  loginAction: (data: loginData) => { },
+  user: "", /*!< User  */
+  loginAction: async (data: loginData) => {},
   logOut: () => { },
   verify: async () => { },
 });
@@ -14,32 +14,29 @@ interface AuthProviderProps {
 }
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
-  const [user, setUser] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("site") || "");
+  const [user, setUser] = useState(localStorage.getItem("user") || "");
+  const [token, setToken] = useState(localStorage.getItem("site") || "");  
   const navigate = useNavigate();
-
+  
   const loginAction = async (data: loginData) => {
-    try {
-      const response = await fetch("http://localhost:3000/usuarios/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      });
-      const res = await response.json();
-      console.log(res);
-      if (res.data) {
-        setUser(res.data.user);
-        setToken(res.token);
-        localStorage.setItem("site", res.token);
-        navigate("/market");
-        return "ok";
-      }
-      throw new Error(res.message);
-    } catch (err) {
-      console.error(err);
-    }
+
+    const response = await fetch("http://localhost:3000/usuarios/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    });
+    const res = await response.json();
+    if (res.data) {
+      setUser(res.data.userid);
+      setToken(res.token);
+      localStorage.setItem("user", res.data.userid);
+      localStorage.setItem("site", res.token);
+      navigate("/market");      
+    }    
+    throw new Error(res.message);
+
   };
   const verify = async () => {
     try {
@@ -49,7 +46,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
         },
       });
       if (response.status === 401) {
-        logOut();        
+        logOut();
       } else {
         return response.json();
       }
@@ -61,8 +58,9 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const logOut = () => {
     if (!token)
       return;
-    setUser(null);    
+    setUser("");
     setToken("");
+    localStorage.removeItem("user");
     localStorage.removeItem("site");
     navigate("/login");
   };

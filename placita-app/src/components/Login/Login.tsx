@@ -1,10 +1,10 @@
 import { FormEvent, useState, useRef, useEffect } from 'react';
-import PopUp from '../PopUp';
-import { PopUpRef } from '../PopUp';
-import SimpleFrame1 from '../Frames/SimpleFrame1';
-import CustomInput1 from '../CustomComponents/CustomInput1';
 import { Link, useNavigate } from 'react-router-dom';
 import { loginData, useAuth } from '../../hooks/AuthProvider';
+import CustomInput1 from '../CustomComponents/CustomInput1';
+import SimpleFrame1 from '../Frames/SimpleFrame1';
+import PopUp, { PopUpRef } from '../PopUp';
+
 
 /** 
  * @brief Login component that renders a page to login an existing user.
@@ -19,13 +19,11 @@ function Login() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        auth.verify().then(
-            (res: any) => {
-                if (res) {
-                    navigate('/market');
-                }
+        auth.verify().then((res: any) => {
+            if (res) {
+                navigate('/market');
             }
-        );
+        });
     }, []);
     // Functions
     function handleChange(e: any) {
@@ -35,14 +33,17 @@ function Login() {
         });
     }
 
-    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
         e.preventDefault();
-        auth.loginAction(user);
+        auth.loginAction(user).catch((err: any) => {
+            if (err.message === "Invalid password")
+                popUpRef.current?.show("Contraseña o usuario incorrecto");
+        });
     }
     function handleInvalid(e: FormEvent<HTMLFormElement>) {
         const control = e.target as HTMLFormElement;
-        control.className = 'invalid';
+        control.classList.add('invalid');
         if (control.validity.valueMissing) {
             popUpRef.current?.show('Por favor ingrese toda la información solicitada');
             return;
@@ -75,7 +76,7 @@ function Login() {
                         onChange={handleChange}
                         required
                     />
-                    <button type="submit">Entrar</button>
+                    <button type="submit" className='button-1'>Entrar</button>
                     <hr />
                     <p>¿No tienes cuenta? <Link to="/signup">Regístrate</Link></p>
                 </form>

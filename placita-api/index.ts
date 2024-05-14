@@ -7,6 +7,7 @@ const morgan = require('morgan');
 const usersRouter = require('./routes/usuarios');
 const municipiosRouter = require('./routes/municipios');
 const ofertasRouter = require('./routes/ofertas');
+const productosRouter = require('./routes/productos');
 
 const PORT = process.env.PORT || '3000';
 
@@ -19,5 +20,6 @@ app.use(morgan('dev'));
 app.use('/usuarios', usersRouter);
 app.use('/municipios', municipiosRouter);
 app.use('/ofertas', ofertasRouter);
+app.use('/productos', productosRouter);
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
