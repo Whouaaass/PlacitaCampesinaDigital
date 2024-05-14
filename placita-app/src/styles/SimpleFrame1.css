@@ -27,9 +27,7 @@ input::-webkit-inner-spin-button {
     margin-top: 10vh;
     border-radius: 50px;
     min-height: 350px;
-    .invalid {
-        background-color: var(--lightred);
-    }
+    
     .input-container {
         display: flex;
         flex-direction: column;

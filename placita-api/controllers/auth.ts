@@ -19,7 +19,7 @@ export async function Verify(req : Request , res: Response, next: NextFunction) 
                 // if token has been altered or has expired, return an unauthorized error
                 return res
                     .status(401)
-                    .json({ message: "This session has expired. Please login" });
+                    .json({ error: "This session has expired. Please login" });
             }
 
             const { id } = decoded; // get user id from the decoded token

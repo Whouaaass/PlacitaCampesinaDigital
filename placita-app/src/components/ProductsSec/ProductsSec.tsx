@@ -13,21 +13,27 @@ const getUserOffers = async (user: string) => {
     return await response.json();
 }
 
+
+
 const ProductsSec: React.FC = () => {
     const [offers, setOffers] = useState([]);
     const [inOfferAdding, setInOfferAdding] = useState(false);
     const { user } = useAuth();
     useEffect(() => {
+        refreshOffers();
+    }, []);
+
+    function refreshOffers() {
         getUserOffers(user).then((offers) => {
             if (offers.data) setOffers(offers.data);
         });
-    }, [inOfferAdding]);
+    }
 
     return <>
-        <AddOfferModal open={inOfferAdding} onClose={() => setInOfferAdding(false)}></AddOfferModal>
+        <AddOfferModal open={inOfferAdding} onClose={() => setInOfferAdding(false)} onSuccess={refreshOffers}></AddOfferModal>
         <SearchProvider>
             <ProductsFrame>
-                <OffersContainer offers={offers} editing />
+                <OffersContainer offers={offers} editing onRefresh={refreshOffers}/>
             </ProductsFrame>
 
         </SearchProvider>

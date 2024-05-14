@@ -12,6 +12,10 @@
     animation: fadeout 0.5s;
 }
 
+.invalid {
+    background-color: var(--lightred) !important;
+}
+
 #root {
     position: absolute;
     display: flex;
@@ -150,8 +154,8 @@ input.input-1 {
     border-radius: 30px;
     height: 30px;
     background-color: var(--lightgray);
-    padding-inline: 15px;    
-    padding-block: 5px;    
+    padding-inline: 15px;
+    padding-block: 5px;
 }
 
 input.input-1:focus {

@@ -74,9 +74,24 @@ router.post("/edit", Verify, async (req: Request, res: Response) => {
     try {
         await connection.execute(dbQuery);
         res.status(201).json({ message: "Offer edited" });
-    } catch (error) {
+    } catch (error : any) {
         console.log(error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Internal server error", errorNum: error.errorNum});
+    }
+});
+
+router.delete("/:id", Verify, async (req: Request, res: Response) => {
+    const connection = await db.connect();
+    const id = req.params.id;
+    const dbQuery = `BEGIN 
+    PAQ_OFERTA.DESACTIVAR_OFERTA(${id}); 
+    END;`;
+    try {
+        await connection.execute(dbQuery);
+        res.status(200).json({ message: "Offer deleted" });
+    } catch (error : any) {
+        console.log(error);
+        res.status(500).json({ error: "Internal server error", errorNum: error.errorNum});
     }
 });
 

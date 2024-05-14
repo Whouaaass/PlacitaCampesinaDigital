@@ -4,7 +4,7 @@ import CustomInput1 from '../CustomComponents/CustomInput1';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
 import { useAuth } from '../../hooks/AuthProvider';
-import PopUp, {PopUpRef} from '../PopUp';
+import PopUp, { PopUpRef } from '../PopUp';
 
 async function getProducts() {
     const response = await fetch('http://localhost:3000/productos');
@@ -21,7 +21,7 @@ async function addOffer(offer: Offer, token: string) {
         },
         body: JSON.stringify(offer)
     });
-    return await response.json();    
+    return await response.json();
 }
 
 export interface Offer {
@@ -35,10 +35,11 @@ export interface Offer {
 export interface AddOfferModalProps {
     open: boolean;
     onClose: () => void;
+    onSuccess: () => void;
 }
 
-const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose }) => {
-    const popupRef = useRef<PopUpRef>(null);
+const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => {
+    const popUpRef = useRef<PopUpRef>(null);
     const [offer, setOffer] = useState({
         name: '',
         quantity: '',
@@ -48,7 +49,6 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose }) => {
     });
     const [products, setProducts] = useState([]);
     const { token } = useAuth();
-    console.log(offer);
 
     useEffect(() => {
         getProducts().then((products) => {
@@ -64,47 +64,67 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose }) => {
             [e.target.name]: e.target.value
         });
     }
-    function handleSumbmit(e: FormEvent<HTMLFormElement>) {
+    function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();
         addOffer(offer, token).then((response) => {
             console.log(response);
-            if (response.message) {                
-                popupRef.current?.show("Oferta agregada exitosamente", "blue");
-                onClose();
+            if (response.message) {
+                popUpRef.current?.show("Oferta agregada exitosamente", "blue");
+                setOffer({
+                    name: '',
+                    quantity: '',
+                    price: '',
+                    expirationDate: '',
+                    description: ''
+                });
+                onSuccess();
             }
             if (response.error) {
-                popupRef.current?.show("Error al agregar la oferta", "red");
+                popUpRef.current?.show("Error al agregar la oferta", "red");
             }
         });;
     }
 
+    function handleInvalid(e: FormEvent<HTMLFormElement>) {
+        const control = e.target as HTMLFormElement;
+        control.classList.add('invalid');
+        if (control.validity.valueMissing) {
+            popUpRef.current?.show('Por favor ingrese toda la información solicitada');
+            return;
+        }
+        if (control.validity.patternMismatch) {
+            popUpRef.current?.show('Formato de entrada incorrecto');
+            return;
+        }
+    }
+
     return (<>
         {open &&
-        <Modal>
-            <form id="add-offer-modal" onSubmit={handleSumbmit}>
-                <h1>Ingresar Datos de la oferta</h1>
-                <CustomSelect1 values={products} label="Nombre" name="name" value={offer.name} required
-                    onChange={handleChange}
-                />
-                <CustomInput1 label="Cantidad" type="number" name="quantity" value={offer.quantity} required
-                    onChange={handleChange}
-                />
-                <CustomInput1 label="Precio ($COP)" type="number" name="price" value={offer.price} required
-                    onChange={handleChange}
-                />
-                <CustomInput1 label="Caducidad" type="date" name="expirationDate" value={offer.expirationDate} required
-                    onChange={handleChange}
-                />
-                <label id="label-desc">
-                    Descripción
-                    <textarea name="description" value={offer.description} onChange={handleChange} className="textarea-1"></textarea>
-                </label>
-                <button id="close-modal-button" onClick={onClose}><MaterialSymbolsIcon name="close" color="black" size='3rem' /></button>
-                <button type="submit" className="button-1">Agregar</button>
-            </form>
-            <div id="modal-mask" onClick={onClose}></div>
-        </Modal>}
-        <PopUp ref={popupRef} />
+            <Modal>
+                <form id="add-offer-modal" onSubmit={handleSubmit} onInvalid={handleInvalid}>
+                    <h1>Ingresar Datos de la oferta</h1>
+                    <CustomSelect1 values={products} label="Nombre" name="name" value={offer.name} required
+                        onChange={handleChange}
+                    />
+                    <CustomInput1 label="Cantidad" type="number" name="quantity" value={offer.quantity} required
+                        onChange={handleChange}
+                    />
+                    <CustomInput1 label="Precio ($COP)" type="number" name="price" value={offer.price} required
+                        onChange={handleChange}
+                    />
+                    <CustomInput1 label="Caducidad" type="date" name="expirationDate" value={offer.expirationDate} required
+                        onChange={handleChange}
+                    />
+                    <label id="label-desc">
+                        Descripción
+                        <textarea name="description" value={offer.description} onChange={handleChange} className="textarea-1"></textarea>
+                    </label>
+                    <button id="close-modal-button" onClick={onClose}><MaterialSymbolsIcon name="close" color="black" size='3rem' /></button>
+                    <button type="submit" className="button-1">Agregar</button>
+                </form>
+                <div id="modal-mask" onClick={onClose}></div>
+            </Modal>}
+        <PopUp ref={popUpRef} />
     </>
     );
 };
