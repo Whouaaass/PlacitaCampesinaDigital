@@ -39,6 +39,8 @@ function Login() {
         auth.loginAction(user).catch((err: any) => {
             if (err.message === "Invalid password")
                 popUpRef.current?.show("Contraseña o usuario incorrecto");
+            else
+                popUpRef.current?.show("Error al iniciar sesión");
         });
     }
     function handleInvalid(e: FormEvent<HTMLFormElement>) {

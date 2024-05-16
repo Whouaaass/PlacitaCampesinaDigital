@@ -1,9 +1,10 @@
 /**
  * @brief Componente que representa una oferta en la pagina principal
  */
-import React from 'react';
+import React, { useState } from 'react';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { useAuth } from '../../hooks/AuthProvider';
+import OfferModal from '../Modals/OfferModal';
 
 async function deleteOffer(token: string, offerid: number) {
     const response = await fetch(`http://localhost:3000/ofertas/${offerid}`, {
@@ -11,7 +12,7 @@ async function deleteOffer(token: string, offerid: number) {
         headers: {
             'Content-Type': 'application/json',
             token: `session=${token}`
-        }        
+        }
     });
     return await response.json();
 }
@@ -27,6 +28,7 @@ interface OfferCardProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editing, amount, expired, onRefresh }) => {
+    const [cardOpen, setCardOpen] = useState(false);
     const { token } = useAuth();
 
     function handleDelete() {
@@ -35,16 +37,17 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editin
             if (data.error) return console.log(data.error);
             onRefresh && onRefresh();
         });
-    }
+    }    
     const buyTop = <>
         <button><MaterialSymbolsIcon name="shopping_cart" size='3rem' /></button>
-        <button><MaterialSymbolsIcon name="visibility" size='3rem' /></button>
+        <button onClick={() => setCardOpen(true)}><MaterialSymbolsIcon name="visibility" size='3rem' /></button>
     </>
     const editTop = <>
-        <button><MaterialSymbolsIcon name="edit" size='3rem' /></button>
+        <button onClick={() => setCardOpen(true)}><MaterialSymbolsIcon name="edit" size='3rem' /></button>
         <button onClick={handleDelete}><MaterialSymbolsIcon name="delete" size="3rem" /></button>
     </>
     return (<>
+        <OfferModal open={cardOpen} onClose={() => setCardOpen(false)}/>
         <div className="offer-card-small" >
             {editing ? editTop : buyTop}
             <h3>{name}</h3>
@@ -57,8 +60,6 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editin
                     </>}
             </p>
             <h3>{`${price}$`}</h3>
-
-
         </div>
     </>);
 };

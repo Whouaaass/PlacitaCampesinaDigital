@@ -72,3 +72,59 @@
         }
     }
 }
+
+#offer-modal {
+    position: absolute;
+    background-color: var(--white);
+    border-radius: 50px;
+    max-width: 800px;
+    display: flex;
+    flex-direction: column;
+    label {
+        font-size: x-large;
+        font-weight: bold;
+        max-height: 70px;
+    }
+    #offer-modal-data {        
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        margin: 50px;
+        margin-block: 40px;
+        column-gap: 5px;        
+        img {
+            grid-row: span 4;
+            width: 100%;                  
+        }
+        label#offer-modal__name {            
+            font-size: xx-large;            
+        }
+        label#offer-modal__price {
+            align-self: self-end;
+        }
+        label#offer-modal__expiration {
+            align-self: self-end;
+        }        
+    }
+    label#offer-modal__description {
+        margin-inline: 70px;
+        margin-bottom: 20px;
+    }
+    #offer-modal-buy {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+        gap: 20px;
+        label {
+            display: flex;
+            flex-direction: column;
+            font-size:larger;
+        }
+        button {
+            justify-self: self-end;
+        }
+    }
+
+    
+}

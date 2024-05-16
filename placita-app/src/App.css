@@ -149,6 +149,25 @@ button.button-2:hover {
     transition: 0.3s ease;
 }
 
+button.button-3 {
+    background-color: var(--lightgray);    
+    font-family: 'Inter';
+    font-weight: 900;
+    font-size: larger;
+    border: none;
+    border-radius: 20px;
+    padding-inline: 20px;
+    padding-block: 10px;
+    cursor: pointer;
+}
+
+button.button-3:hover {
+    transform: scale(1.05);
+    background-color: var(--steelblue);
+    color: var(--white);
+    transition: 0.3s ease;
+}
+
 input.input-1 {
     border: unset;
     border-radius: 30px;
