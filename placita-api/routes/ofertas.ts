@@ -13,7 +13,7 @@ router.get("/", async (req: Request, res: Response) => {
     const dbQuery = `SELECT * FROM ${sqltable}`;
     try {
         const result = await connection.execute(dbQuery);
-        res.json(result.rows);
+        res.json({data: result.rows});
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
@@ -22,7 +22,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
     const id = req.params.id;
-    const dbQuery = `SELECT * FROM ofeId WHERE ofecodigo = ${id}`;
+    const dbQuery = `SELECT * FROM vista_ofertas_disponibles WHERE id = ${id}`;
     try {
         const result = await connection.execute(dbQuery);
         if (result.rows.length > 0) {
@@ -52,11 +52,11 @@ router.post("/", Verify, async (req: Request, res: Response) => {
     const connection = await db.connect();
     console.log(req.body);
     const { name, user, quantity, price, expirationDate, description } = req.body;
-    const dbQuery = `BEGIN 
+    const dbInsertQuery = `BEGIN 
     PAQ_OFERTA.INSERTAR_OFERTA(${user.USUID},'${name}',TO_DATE('${expirationDate}','YYYY-MM-DD'), '${description}', ${quantity}, ${price}, 'Y' ); 
     END;`;
     try {
-        await connection.execute(dbQuery);
+        await connection.execute(dbInsertQuery);
         res.status(201).json({ message: "Offer created" });
     } catch (error) {
         console.log(error);

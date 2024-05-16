@@ -126,5 +126,19 @@
         }
     }
 
+    #edit-offer-button {
+        background-color: transparent;
+        border: none;
+        border-radius: 15px;
+        outline: none;
+    }
+    #edit-offer-button:hover {
+        background-color: var(--lightgray);
+    }
+
+    #close-offer-modal-button {
+
+    }
+
     
 }

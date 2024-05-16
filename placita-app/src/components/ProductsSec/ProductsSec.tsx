@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import ProductsFrame from '../Frames/ProductsFrame';
 import OffersContainer from '../Offers/OffersContainer';
 import { useAuth } from '../../hooks/AuthProvider';
@@ -6,26 +6,19 @@ import { DUMMYOFFERS } from './dummyOffers';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import SearchProvider from '../../hooks/SearchProvider';
 import AddOfferModal from '../Modals/AddOfferModal';
+import { OffersContext } from '../../hooks/OffersProvider';
 
-const getUserOffers = async (user: string) => {
-    const response = await fetch(`http://localhost:3000/ofertas/user/${user}`);
-    if (response.status !== 200) throw new Error("Internal server error");
-    return await response.json();
-}
-
-
-
-const ProductsSec: React.FC = () => {
-    const [offers, setOffers] = useState([]);
+const ProductsSec: React.FC = () => {    
     const [inOfferAdding, setInOfferAdding] = useState(false);
+    const { loadOffersByUser } = useContext(OffersContext);
     const { user } = useAuth();
     useEffect(() => {
         refreshOffers();
     }, []);
 
     function refreshOffers() {
-        getUserOffers(user).then((offers) => {
-            if (offers.data) setOffers(offers.data);
+        loadOffersByUser(+user).then((offers: any) => {
+            if (offers.error) console.log(offers.error);            
         });
     }
 
@@ -33,7 +26,7 @@ const ProductsSec: React.FC = () => {
         <AddOfferModal open={inOfferAdding} onClose={() => setInOfferAdding(false)} onSuccess={refreshOffers}></AddOfferModal>
         <SearchProvider>
             <ProductsFrame>
-                <OffersContainer offers={offers} editing onRefresh={refreshOffers}/>
+                <OffersContainer editing />
             </ProductsFrame>
 
         </SearchProvider>

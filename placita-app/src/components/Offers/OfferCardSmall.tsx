@@ -1,41 +1,28 @@
 /**
  * @brief Componente que representa una oferta en la pagina principal
  */
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { useAuth } from '../../hooks/AuthProvider';
 import OfferModal from '../Modals/OfferModal';
-
-async function deleteOffer(token: string, offerid: number) {
-    const response = await fetch(`http://localhost:3000/ofertas/${offerid}`, {
-        method: 'DELETE',
-        headers: {
-            'Content-Type': 'application/json',
-            token: `session=${token}`
-        }
-    });
-    return await response.json();
-}
+import { OffersContext } from '../../hooks/OffersProvider';
 
 interface OfferCardProps extends React.HTMLAttributes<HTMLDivElement> {
-    offerid: number;
-    name: string;
-    price: number;
-    amount: number;
+    offerData: any;
     editing?: boolean;
-    expired?: boolean;
-    onRefresh?: () => void;
+    expired?: boolean;    
 }
 
-const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editing, amount, expired, onRefresh }) => {
+const OfferCardSmall: React.FC<OfferCardProps> = ({ offerData, editing, expired}) => {
+    const {offerid, name, price, amount} = offerData;
     const [cardOpen, setCardOpen] = useState(false);
     const { token } = useAuth();
+    const { deleteOffer } = useContext(OffersContext);
 
     function handleDelete() {
         console.log("Deleting");
-        deleteOffer(token, offerid).then((data) => {
-            if (data.error) return console.log(data.error);
-            onRefresh && onRefresh();
+        deleteOffer(offerid, token).then((data) => {
+            if (data.error) return console.log(data.error);            
         });
     }    
     const buyTop = <>
@@ -44,10 +31,10 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editin
     </>
     const editTop = <>
         <button onClick={() => setCardOpen(true)}><MaterialSymbolsIcon name="edit" size='3rem' /></button>
-        <button onClick={handleDelete}><MaterialSymbolsIcon name="delete" size="3rem" /></button>
+        <button onClick={handleDelete} id="delete-offer-button" ><MaterialSymbolsIcon name="delete" size="3rem" /></button>
     </>
     return (<>
-        <OfferModal open={cardOpen} onClose={() => setCardOpen(false)}/>
+        <OfferModal offerData={offerData} open={cardOpen} onClose={() => setCardOpen(false)} editing={editing}/>
         <div className="offer-card-small" >
             {editing ? editTop : buyTop}
             <h3>{name}</h3>
@@ -59,7 +46,7 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerid, name, price, editin
                         Caducado
                     </>}
             </p>
-            <h3>{`${price}$`}</h3>
+            <h3>{`$${price}`}</h3>  
         </div>
     </>);
 };

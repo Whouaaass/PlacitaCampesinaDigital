@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext({
   token: "",
   user: "", /*!< User  */
+  rol: "", /*!< Rol */
   loginAction: async (data: loginData) => {},
   logOut: () => { },
   verify: async () => { },
@@ -16,6 +17,7 @@ interface AuthProviderProps {
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState(localStorage.getItem("user") || "");
   const [token, setToken] = useState(localStorage.getItem("site") || "");  
+  const [rol, setRol] = useState(localStorage.getItem("rol") || "");
   const navigate = useNavigate();
   
   const loginAction = async (data: loginData) => {
@@ -30,9 +32,11 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
     const res = await response.json();
     if (res.data) {
       setUser(res.data.userid);
-      setToken(res.token);
+      setRol(res.data.rol);
+      setToken(res.token);     
       localStorage.setItem("user", res.data.userid);
-      localStorage.setItem("site", res.token);
+      localStorage.setItem("rol", res.data.rol);
+      localStorage.setItem("site", res.token);            
       navigate("/market");      
     }    
     throw new Error(res.message);
@@ -60,13 +64,15 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       return;
     setUser("");
     setToken("");
+    setRol("");
     localStorage.removeItem("user");
     localStorage.removeItem("site");
+    localStorage.removeItem("rol");
     navigate("/login");
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, loginAction, logOut, verify }}>
+    <AuthContext.Provider value={{ token, user, rol, loginAction, logOut, verify }}>
       {children}
     </AuthContext.Provider>
   );

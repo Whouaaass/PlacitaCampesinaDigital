@@ -16,6 +16,7 @@ import Market from './components/Market/Market';
 import ProductsSec from './components/ProductsSec/ProductsSec';
 import AuthProvider from './hooks/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
+import OffersProvider from './hooks/OffersProvider';
 
 function App() {
   return (
@@ -25,10 +26,12 @@ function App() {
           <Route path='/' element={<Home />} />
           <Route path='/login' element={<Login />} />
           <Route path='/signup' element={<SignUp />} />
-          <Route element={<PrivateRoute />}>
-            <Route path='/market' element={<Market />} />
-            <Route path='/products' element={<ProductsSec />} />
-          </Route>
+          
+            <Route element={<PrivateRoute />}>
+              <Route path='/market' element={<OffersProvider><Market /></OffersProvider>} />
+              <Route path='/products' element={<OffersProvider><ProductsSec /></OffersProvider>} />
+            </Route>
+          
           <Route path="*">404 Not Found</Route>
         </Routes>
       </AuthProvider>

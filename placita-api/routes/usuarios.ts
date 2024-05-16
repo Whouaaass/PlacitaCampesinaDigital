@@ -30,6 +30,7 @@ router.get("/verify", Verify, async (req: Request, res: Response) => {
     res.status(200).json({
         status: "success",
         message: "User is authenticated",
+        user: req.body.user
     });
  });
 
@@ -40,7 +41,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const connection = await db.connect();
     const { id, password } = req.body;
     try {
-        const result = await connection.execute(`SELECT usucontrasenia FROM usuario WHERE usuid = ${id}`);
+        const result = await connection.execute(`SELECT usucontrasenia, usutipo FROM usuario WHERE usuid = ${id}`);
 
         if (result.rows.length <= 0)
             return res.status(404).send("Usuario no encontrado");
@@ -65,6 +66,7 @@ router.post("/login", async (req: Request, res: Response) => {
             token: token,
             data: {
                 userid: id,
+                rol: user_data.USUTIPO
             }
         });
 

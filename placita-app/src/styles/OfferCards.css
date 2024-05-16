@@ -10,6 +10,9 @@
     width: calc(100% - 10px);
     max-width: 1070px;
     overflow: visible;
+    #delete-offer-button:hover {
+        background-color: var(--lava);
+    }
 }
 .offer-card-small {
     display: grid;    

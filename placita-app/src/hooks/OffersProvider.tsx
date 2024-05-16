@@ -4,35 +4,46 @@ import { PopUpRef } from '../components/PopUp';
 
 
 export const OffersContext = createContext({
-    offers: [],
-    loadOffers: () => { },
-    loadOffersByUser: (id: number) => { },
-    deleteOffer: (id: number) => { },
-    addOffer: (offer: any) => { }
+    offers: [] as any[],
+    loadOffers: async () => { },
+    loadOffersByUser: async (id: number) => {},
+    deleteOffer: async (id: number, token: string) => { return {} as any},
+    addOffer: async (offer: any) => { return {} as any},
+    refreshOffers: (() => { }),
 });
 
-const SearchProvider: FC<PropsWithChildren> = ({ children }) => {
-    const [offers, setOffers] = useState([]);
+let refreshOffers = () => {return Promise.resolve()};
+
+const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
+    const [offers, setOffers] = useState([]);      
 
     const methods = {
         loadOffers: async () => {
             const response = await fetch('http://localhost:3000/ofertas');
+            console.log(response);
             const data = await response.json();
-            setOffers(data);            
+            setOffers(data.data);
+            refreshOffers = () => methods.loadOffers();                     
             return data;
         },
         loadOffersByUser: async (id: number) => {
             const response = await fetch(`http://localhost:3000/ofertas/user/${id}`);
             const data = await response.json();
-            setOffers(data);
+            setOffers(data.data);
+            refreshOffers = () => methods.loadOffersByUser(id);
             return data;
         },
-        deleteOffer: async (id: number) => {
+        deleteOffer: async (id: number, token: string) => {
             const response = await fetch(`http://localhost:3000/ofertas/${id}`, {
-                method: 'DELETE'
-            });
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    token: `session=${token}`
+                }});
             const data = await response.json();                        
+            refreshOffers();
             return data;
+            
         },
         addOffer: async (offer: any, popup?: PopUpRef) => {
             const response = await fetch(`http://localhost:3000/ofertas`, {
@@ -42,14 +53,20 @@ const SearchProvider: FC<PropsWithChildren> = ({ children }) => {
                 },
                 body: JSON.stringify(offer)
             });
-            const data = await response.json();            
+            const data = await response.json();        
+            refreshOffers();       
             return data;
         }
     }    
+    
+
+    // ...
+
     return (
         <OffersContext.Provider value={{
             offers,
-            ...methods
+            ...methods,
+            refreshOffers: refreshOffers
         }}>
             {children}
         </OffersContext.Provider >
@@ -57,7 +74,7 @@ const SearchProvider: FC<PropsWithChildren> = ({ children }) => {
 };
 
 
-export default SearchProvider;
+export default OffersProvider;
 
 
 /**

@@ -181,6 +181,14 @@ input.input-1:focus {
     border: unset;
 }
 
+input.input-t {
+    padding-inline: 1rem;
+    font: inherit;
+    border: unset;
+    outline: none;
+    background-color: transparent;
+}
+
 select.select-1 {
     appearance: none;
     /* safari */
@@ -210,4 +218,11 @@ textarea.textarea-1 {
     background-color: var(--lightgray);
     padding: 1rem;
     height: 150px;
+}
+
+textarea.textarea-t {
+    font: inherit;
+    border: unset;
+    outline: none;
+    background-color: transparent;
 }
