@@ -6,11 +6,12 @@ import { FC, useContext } from 'react';
 import MarketFrame from '../Frames/MarketFrame';
 import { useEffect } from 'react';
 import OffersContainer from '../Offers/OffersContainer';
-import SearchProvider from '../../hooks/SearchProvider';
+import SearchProvider, { SearchContext } from '../../hooks/SearchProvider';
 import { OffersContext } from '../../hooks/OffersProvider';
 
 const Market: FC = () => {
     const { loadOffers } = useContext(OffersContext);    
+    
 
     useEffect(() => {
         loadOffers().then((data: any) => {

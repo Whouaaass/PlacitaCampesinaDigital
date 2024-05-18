@@ -47,7 +47,7 @@ function Login() {
         const control = e.target as HTMLFormElement;
         control.classList.add('invalid');
         if (control.validity.valueMissing) {
-            popUpRef.current?.show('Por favor ingrese toda la información solicitada');
+            popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
         }
         if (control.validity.patternMismatch) {

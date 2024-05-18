@@ -2,7 +2,7 @@
  * SearchBar component that allows users to search and order items.
  * @component
  */
-import { ChangeEvent, Dispatch, FC, Reducer, useContext, useReducer } from 'react';
+import { ChangeEvent, FC, useContext } from 'react';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { SearchProps, SearchContext, ORDEROPTIONS } from '../../hooks/SearchProvider';
 
@@ -15,7 +15,7 @@ import { SearchProps, SearchContext, ORDEROPTIONS } from '../../hooks/SearchProv
  * @note it has to be wrapped in a SearchContext.Provider
  */
 const SearchBar: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {
-    const { search, setSearch } = useContext(SearchContext);
+    const { search, setSearch } = useContext(SearchContext);    
     /**
      * Handles the change event of the search input.
      * @param e - The change event.
@@ -25,7 +25,7 @@ const SearchBar: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {
     }
 
     function handleOnSubmit(e: any) {
-        e.preventDefault();
+        e.preventDefault();        
         onSubmit();
     }
 

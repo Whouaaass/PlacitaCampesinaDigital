@@ -13,10 +13,9 @@ export const SearchContext = createContext({
 });
 
 export const ORDEROPTIONS = [
-    "Precio",
     "Nombre",
-    "Cantidad",
-    "Fecha",
+    "Precio",
+    "Tipo",    
 ];
 
 const reducer: Reducer<SearchProps, any> = (state: SearchProps, action: any) => {
