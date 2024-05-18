@@ -8,8 +8,24 @@ import CustomSelect1 from '../CustomComponents/CustomSelect1';
 import { Link } from 'react-router-dom';
 
 
-const DUMMY_MUNICIPIOS = ['---', 'San Salvador', 'Santa Tecla', 'Santa Ana', 'San Miguel', 'DUMMYVALUES'];
+const DUMMY_MUNICIPIOS = ['Popayán'];
 let MUNICIPIOS: string[] | null = null;
+
+const getMunicipios = async () => {
+    const response = await fetch("http://localhost:3000/municipios");
+    return await response.json();
+};
+
+const signUpUser = async (user: any) => {
+    const response = await fetch("http://localhost:3000/usuarios/signup", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    });
+    return response.json();
+}
 
 /** 
  * @brief SingUp component that renders a page to register a new user.
@@ -25,8 +41,7 @@ function SignUp() {
         municipio: '',
         agrocauca: '',
         agrocode: ''
-    });    
-    console.log(user);
+    });
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
 
@@ -34,23 +49,20 @@ function SignUp() {
 
     // Effects
     useEffect(() => {
-        fetch("http://localhost:3000/municipios"
-        ).then((res) => {
-            console.log('res: ', res)
-            res.json().then((data) => {                
-                MUNICIPIOS = data.map((m: any) => m.MUNNOMBRE);
-
-                setUser({
-                    ...user,
-                    municipio: MUNICIPIOS? MUNICIPIOS[0] : ''
-                });
-                // TODO: posible error en la asignacion de MUNICIPIOS si un municipio falta en la consecucion de la tabla
-            })
-            //MUNICIPIOS = res;
+        getMunicipios().then((data) => {
+            if (data.error) {
+                console.log(data.error);
+                return;
+            }
+            MUNICIPIOS = data.data.map((m: any) => m.MUNNOMBRE);
+            setUser({
+                ...user,
+                municipio: MUNICIPIOS ? MUNICIPIOS[0] : ''
+            });
         }).catch((err) => {
-            console.log('something went wrong with the fetch')
-            console.log(err)
-        })
+            console.log(err.message)
+        });
+
     }, []);
 
     // Functions
@@ -67,7 +79,7 @@ function SignUp() {
         submitButton.current?.blur();
         submitButton.current?.setAttribute('disabled', 'true');
         submitButton.current?.setAttribute('autocomplete', 'off');
-        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);        
+        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);
 
         if (user.agrocauca === "yes" && !validateAgrocode(user.agrocode)) {
             popUpRef.current?.show('Codigo de gremio incorrecto');
@@ -76,38 +88,25 @@ function SignUp() {
 
         if (user.municipio === '') {
             const form = e.target as HTMLFormElement;
-            form.municipioid.className = 'invalid';
+            form.municipio.classList.add('invalid');
             popUpRef.current?.show('Por favor, seleccione un municipio');
             return;
         }
 
-        // sends the data to the api server
-        fetch("http://localhost:3000/usuarios/signup", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        }).then((res) => {
-            console.log('res: ', res)
-            if (res.ok) {
-                popUpRef.current?.show('Usuario registrado exitosamente', 'blue');
-                setTimeout(() => window.location.href = '/login', 2000);                
-            } else {
-                res.json().then((data) => {                    
-                    if (data.errorNum === 1) {
-                        popUpRef.current?.show('La cedula ya se encuentra registrada');
-                    } else if (data.errorNum === 20001) {
-                        popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
-                    }
-                    else {
-                        console.log('Error interno', data.errorNum);
-                        popUpRef.current?.show('Error al registrar el usuario');
-                    }
-                });
+        // sends the sign up data to the api server
+        signUpUser(user).then((data) => {
+            if (data.errorNum === 1) {
+                popUpRef.current?.show('La cedula ya se encuentra registrada');
+                return;
             }
+            if (data.errorNum === 20001) {
+                popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
+                return;
+            }
+            console.log('Error inesperado', data);
+            popUpRef.current?.show('Error al registrar el usuario');
         }).catch((err) => {
-            console.log('something went wrong with the insert fetch')
+            console.log('Error al enviar la peticion al servidor')
             console.log(err)
         });
     }
@@ -139,7 +138,7 @@ function SignUp() {
                             value={user.firstname}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.name}
+                        //pattern={RegexValidators.name}
 
                         />
                         <CustomInput1
@@ -149,7 +148,7 @@ function SignUp() {
                             value={user.lastname}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.name}
+                        //pattern={RegexValidators.name}
                         />
                         <CustomInput1
                             label='Contraseña'
@@ -166,7 +165,7 @@ function SignUp() {
                             value={user.id}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.cedula}
+                        //pattern={RegexValidators.cedula}
                         />
                         <CustomInput1
                             label='Teléfono'

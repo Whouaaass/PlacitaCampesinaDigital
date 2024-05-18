@@ -25,6 +25,7 @@ const CustomSelect1: FC<CustomProps> = ({ values, label, value, name, required, 
         <label className="input-container custom-select">
             {`${label} ${required ? '*' : ''}`}
             <select id={name} name={name} value={value} onChange={innerOnChange} required={required} className="select-1">
+                <option value="" disabled selected>Selecciona un municipio</option>
                 {values.map((value, index) => (
                     <option key={index} value={value}>{value}</option>
                 ))}

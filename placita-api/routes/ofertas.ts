@@ -9,6 +9,8 @@ const router = express.Router();
 
 router.get("/", async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const sqltable = "vista_ofertas_disponibles";
     const dbQuery = `SELECT * FROM ${sqltable}`;
     try {
@@ -21,6 +23,8 @@ router.get("/", async (req: Request, res: Response) => {
 
 router.get("/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
     const dbQuery = `SELECT * FROM vista_ofertas_disponibles WHERE id = ${id}`;
     try {
@@ -37,6 +41,8 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.get("/user/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
     const dbQuery = `SELECT * FROM vista_ofertas_disponibles WHERE usuid = ${id}`;
     try {
@@ -50,6 +56,8 @@ router.get("/user/:id", async (req: Request, res: Response) => {
 
 router.post("/", Verify, async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     console.log(req.body);
     const { name, user, quantity, price, expirationDate, description } = req.body;
     const dbInsertQuery = `BEGIN 
@@ -67,6 +75,8 @@ router.post("/", Verify, async (req: Request, res: Response) => {
 
 router.post("/edit", Verify, async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const { id, user, name, quantity, price, expirationDate, description } = req.body;
     const dbQuery = `BEGIN 
     PAQ_OFERTA.ACTUALIZAR_OFERTA(${id}, ${user.USUID}, '${name}',TO_DATE('${expirationDate}','YYYY-MM-DD'), '${description}', ${quantity}, ${price}, 'Y' ); 
@@ -82,6 +92,8 @@ router.post("/edit", Verify, async (req: Request, res: Response) => {
 
 router.delete("/:id", Verify, async (req: Request, res: Response) => {
     const connection = await db.connect();
+    if (!connection)
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
     const dbQuery = `BEGIN 
     PAQ_OFERTA.DESACTIVAR_OFERTA(${id}); 
