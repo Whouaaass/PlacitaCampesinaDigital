@@ -14,10 +14,10 @@ const OffersContainer: React.FC<CustomProps> = ({editing}) => {
     return (
         <ul id="offers-container">
             {offers.map((offer) => (
-                <li key={offer.ID}>
+                <li key={offer.OFEID}>
                     <OfferCardSmall
                         offerData={{
-                            offerid: offer.ID,
+                            offerid: offer.OFEID,
                             name: offer.NOMBRE,
                             price: offer.PRECIO,
                             amount: offer.CANTIDAD,

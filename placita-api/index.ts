@@ -21,5 +21,6 @@ app.use('/usuarios', usersRouter);
 app.use('/municipios', municipiosRouter);
 app.use('/ofertas', ofertasRouter);
 app.use('/productos', productosRouter);
+app.use('/dbtest', require('./routes/dbtest'));
 
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));

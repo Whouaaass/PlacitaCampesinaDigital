@@ -33,7 +33,7 @@ router.get("/", async (req: Request, res: Response) => {
 router.get("/verify", Verify, async (req: Request, res: Response) => {
     res.status(200).json({
         status: "success",
-        message: "User is authenticated",
+        message: "Usuario autenticado",
         user: req.body.user
     });
  });

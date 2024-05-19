@@ -55,10 +55,7 @@ function SignUp() {
                 return;
             }
             MUNICIPIOS = data.data.map((m: any) => m.MUNNOMBRE);
-            setUser({
-                ...user,
-                municipio: MUNICIPIOS ? MUNICIPIOS[0] : ''
-            });
+            setUser({...user});
         }).catch((err) => {
             console.log(err.message)
         });

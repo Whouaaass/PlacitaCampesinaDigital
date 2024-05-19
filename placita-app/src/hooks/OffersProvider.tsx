@@ -40,6 +40,8 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
             const response = await fetch('http://localhost:3000/ofertas');
             console.log(response);
             const data = await response.json();
+            console.log(data.error);
+            if (data.error) throw new Error(data.error);
             setOffers(data.data);
             loadMethod.method = 'loadOffers';
             loadMethod.args = [];
@@ -48,6 +50,7 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
         loadOffersByUser: async (id: number) => {
             const response = await fetch(`http://localhost:3000/ofertas/user/${id}`);
             const data = await response.json();
+            if (data.error) throw new Error(data.error);
             setOffers(data.data);
             loadMethod.method = 'loadOffersByUser';
             loadMethod.args = [id];            
@@ -71,7 +74,7 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
             else if (loadMethod.method === 'loadOffersByUser')
                 methods.loadOffersByUser(loadMethod.args[0]);
         },
-        addOffer: async (offer: any, popup?: PopUpRef) => {
+        addOffer: async (offer: any) => {
             const response = await fetch(`http://localhost:3000/ofertas`, {
                 method: 'POST',
                 headers: {

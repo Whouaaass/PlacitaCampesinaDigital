@@ -11,7 +11,7 @@ router.get("/", async (req: Request, res: Response) => {
     const connection = await db.connect();
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
-    const sqltable = "vista_ofertas_disponibles";
+    const sqltable = "v_ofertas";
     const dbQuery = `SELECT * FROM ${sqltable}`;
     try {
         const result = await connection.execute(dbQuery);
@@ -44,7 +44,7 @@ router.get("/user/:id", async (req: Request, res: Response) => {
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
-    const dbQuery = `SELECT * FROM vista_ofertas_disponibles WHERE usuid = ${id}`;
+    const dbQuery = `SELECT * FROM v_ofertas WHERE usuid = ${id}`;
     try {
         const result = await connection.execute(dbQuery);
         res.status(200).json({data: result.rows});
