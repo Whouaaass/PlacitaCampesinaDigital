@@ -95,7 +95,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     const { id, municipio, firstname, lastname, password, dir, agrocauca, telnumber } = req.body;
     const campesino = agrocauca === 'yes' ? 'Campesino' : 'Comprador';
     const hashedPassword = password; // replace with hashed password in production
-    const bdpetition = `begin paq_usuario.insertar_usuario(${id}, '${municipio}', '${firstname}', '${lastname}', '${dir}', ${telnumber}, '${hashedPassword}', '${campesino}'); end;`;
+    const bdpetition = `begin paq_usuarios.insertar_usuario(${id}, '${municipio}', '${firstname}', '${lastname}', '${dir}', ${telnumber}, '${hashedPassword}', '${campesino}'); end;`;
     console.log(bdpetition);
     console.log(req.body)
     try {

@@ -104,6 +104,9 @@ function SignUp() {
                 popUpRef.current?.show('Error en el formato de la cedula');
                 return;
             }
+            if (data.errorNum) {
+                popUpRef.current?.show('Volve a correr el script de la bd >:u');
+            }
             popUpRef.current?.show('Usuario creado exitosamente', 'blue');
             
         }).catch((err) => {
