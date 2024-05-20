@@ -95,7 +95,7 @@ router.post("/signup", async (req: Request, res: Response) => {
     const { id, municipio, firstname, lastname, password, dir, agrocauca, telnumber } = req.body;
     const campesino = agrocauca === 'yes' ? 'Campesino' : 'Comprador';
     const hashedPassword = password; // replace with hashed password in production
-    const bdpetition = `begin registro_usuario.insertar_usuario(${id}, '${municipio}', '${firstname}', '${lastname}', '${dir}', ${telnumber}, '${hashedPassword}', '${campesino}'); end;`;
+    const bdpetition = `begin paq_usuario.insertar_usuario(${id}, '${municipio}', '${firstname}', '${lastname}', '${dir}', ${telnumber}, '${hashedPassword}', '${campesino}'); end;`;
     console.log(bdpetition);
     console.log(req.body)
     try {
@@ -107,11 +107,11 @@ router.post("/signup", async (req: Request, res: Response) => {
     } catch (error: any) {
         console.log(error);
         if (error.errorNum)
-            res.status(500).json({ status: 'error', message: 'Oracle Database error', errorNum: error.errorNum });
+            res.status(500).json({ status: 'error', message: 'Error de la base de datos', errorNum: error.errorNum });
         else if (error.code)
-            res.status(500).json({ status: 'error', message: 'Server error', code: error.code });
+            res.status(500).json({ status: 'error', message: 'Errror del sevidor', code: error.code });
         else {
-            res.status(500).json({ status: 'error', message: 'Unknown error' });
+            res.status(500).json({ status: 'error', message: 'Error Interno del servidor' });
         }
     } finally {
         connection?.close();

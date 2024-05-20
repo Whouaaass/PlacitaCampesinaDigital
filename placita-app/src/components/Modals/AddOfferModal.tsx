@@ -59,13 +59,17 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
     }, []);
 
     function handleChange(e: any) {
+        e.target.setCustomValidity('');
+        if (e.target.name === 'expirationDate' && e.target.value && !checkExpirationDate(e.target.value)) {
+            e.target.setCustomValidity('La fecha de caducaidad debe de ser posterior a la fecha actual');                        
+        }
         setOffer({
             ...offer,
             [e.target.name]: e.target.value
         });
     }
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
-        e.preventDefault();
+        e.preventDefault();        
         addOffer(offer, token).then((response) => {
             console.log(response);
             if (response.message) {
@@ -96,6 +100,12 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
             popUpRef.current?.show('Formato de entrada incorrecto');
             return;
         }
+    }
+
+    function checkExpirationDate(value: string) {        
+        const date = new Date(value);        
+        const today = new Date();    
+        return date.getUTCDate() >= today.getUTCDate();        
     }
 
     return (<>

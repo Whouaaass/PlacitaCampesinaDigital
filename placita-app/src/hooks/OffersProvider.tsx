@@ -20,7 +20,7 @@ const loadMethod = {
 const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
     const [offers, setOffers] = useState<Array<RawOfferProps>>([]);
     const [filters, setFilters] = useState<OffersFilters | null>(null);
-    console.log(offers);
+    
     const filteredOffers = filters? offers.sort((offerA, offerB) => {
         if (filters.orderby === 'Nombre') 
             return offerA.NOMBRE > offerB.NOMBRE ? 1 : -1;
@@ -30,9 +30,9 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
             return offerA.TIPO > offerB.TIPO ? 1 : -1;
         return 0;
     }).filter((offer) => {
-        return offer.NOMBRE.startsWith(filters.search)
-            || offer.TIPO.startsWith(filters.search)
-            || offer.DESCRIPCION.startsWith(filters.search);        
+        return offer.NOMBRE.toLowerCase().startsWith(filters.search.toLowerCase())
+            || offer.TIPO.toLowerCase().startsWith(filters.search.toLowerCase())
+            || offer.DESCRIPCION.toLowerCase().startsWith(filters.search.toLowerCase());        
     }) : offers;
 
     const methods = {

@@ -34,7 +34,7 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerData, editing, expired}
         <button onClick={handleDelete} id="delete-offer-button" ><MaterialSymbolsIcon name="delete" size="3rem" /></button>
     </>
     return (<>
-        <OfferModal offerData={offerData} open={cardOpen} onClose={() => setCardOpen(false)} editing={editing}/>
+        {cardOpen && <OfferModal offerData={offerData} open={cardOpen} onClose={() => setCardOpen(false)} editing={editing}/>}
         <div className="offer-card-small" >
             {editing ? editTop : buyTop}
             <h3>{name}</h3>

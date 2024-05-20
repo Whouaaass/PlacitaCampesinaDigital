@@ -188,6 +188,7 @@ input.input-t {
     border: unset;
     outline: none;
     background-color: transparent;
+    cursor:text;        
 }
 
 select.select-1 {
@@ -226,4 +227,10 @@ textarea.textarea-t {
     border: unset;
     outline: none;
     background-color: transparent;
+    width: 100%;
+    field-sizing: content;
+}
+
+.blink {
+    animation: blink 2s ease-in-out infinite;
 }

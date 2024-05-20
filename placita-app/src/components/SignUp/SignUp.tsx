@@ -5,7 +5,7 @@ import YesNoRadioButton from '../CustomComponents/YesNoRadioButton';
 import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 
 const DUMMY_MUNICIPIOS = ['Popayán'];
@@ -100,9 +100,14 @@ function SignUp() {
                 popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
                 return;
             }
-            console.log('Error inesperado', data);
-            popUpRef.current?.show('Error al registrar el usuario');
+            if (data.errorNum === 1438) {
+                popUpRef.current?.show('Error en el formato de la cedula');
+                return;
+            }
+            popUpRef.current?.show('Usuario creado exitosamente', 'blue');
+            
         }).catch((err) => {
+            popUpRef.current?.show('Error del servidor');
             console.log('Error al enviar la peticion al servidor')
             console.log(err)
         });

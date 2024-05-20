@@ -12,7 +12,7 @@ router.get("/", async (req: Request, res: Response) => {
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     try {
-        const result = await connection.execute("SELECT * FROM municipio");
+        const result = await connection.execute("SELECT * FROM municipio ORDER BY munnombre ASC");
         return res.json({ data: result.rows });
     } catch (error) {
         return res.status(500).json({ error: "Error interno del servidor" });

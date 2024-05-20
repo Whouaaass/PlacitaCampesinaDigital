@@ -31,6 +31,7 @@
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     column-gap: 50px;
     row-gap: 1rem;
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
 
     h1 {
         justify-self: center;
@@ -78,12 +79,17 @@
     background-color: var(--white);
     border-radius: 50px;
     max-width: 800px;
+    height: max-content;
     display: flex;
     flex-direction: column;
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
     label {
         font-size: x-large;
         font-weight: bold;
         max-height: 70px;
+    }
+    form {
+        display: block;
     }
     #offer-modal-data {        
         display: grid;
@@ -106,7 +112,10 @@
             align-self: self-end;
         }        
     }
-    label#offer-modal__description {
+    label#offer-modal__description {        
+        display: block;        
+        word-wrap:break-word;
+        max-height: none;                
         margin-inline: 70px;
         margin-bottom: 20px;
     }
@@ -126,18 +135,29 @@
         }
     }
 
-    #edit-offer-button {
-        background-color: transparent;
+    #edit-offer-button, #save-offer-button {
+        margin-left: auto;        
+        margin-right: 20px;
+        margin-bottom: 10px;
+        background-color: transparent;          
+        width: max-content;
         border: none;
-        border-radius: 15px;
+        border-radius: 30px;
         outline: none;
+        cursor: pointer;
     }
     #edit-offer-button:hover {
         background-color: var(--lightgray);
     }
 
     #close-offer-modal-button {
-
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        cursor: pointer;
     }
 
     

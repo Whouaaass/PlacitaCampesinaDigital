@@ -270,6 +270,16 @@ PROCEDURE insertar_usuario (
     p_usuContrasenia IN varchar2,
     p_usuTipo IN varchar2
 );
+PROCEDURE insertar_usuario (
+    p_usuId IN NUMBER,
+    p_munNombre IN varchar2,
+    p_usuNombre IN varchar2,
+    p_usuApellido IN varchar2,
+    p_usuDireccion IN varchar2,
+    p_usuTelefono IN INT,
+    p_usuContrasenia IN varchar2,
+    p_usuTipo IN varchar2
+);
 END paq_usuario;
 --Cuerpo
 CREATE OR REPLACE PACKAGE BODY paq_usuario IS
@@ -319,6 +329,24 @@ IS
 BEGIN
     INSERT INTO USUARIO (usuId, munCodigo, usuNombre, usuApellido, usuDireccion, usuTelefono, usuContrasenia, usuTipo)
     VALUES (p_usuId, p_munCodigo, p_usuNombre, p_usuApellido, p_usuDireccion, p_usuTelefono,  p_usuContrasenia, p_usuTipo);
+    COMMIT;
+END insertar_usuario;
+PROCEDURE insertar_usuario (
+    p_usuId IN NUMBER,
+    p_munNombre IN varchar2,
+    p_usuNombre IN varchar2,
+    p_usuApellido IN varchar2,
+    p_usuDireccion IN varchar2,
+    p_usuTelefono IN INT,
+    p_usuContrasenia IN varchar2,
+    p_usuTipo IN varchar2
+)
+IS
+    v_munCodigo MUNICIPIO.munCodigo%TYPE;
+BEGIN
+    SELECT munCodigo INTO v_munCodigo FROM MUNICIPIO WHERE munNombre = p_munNombre;
+    INSERT INTO USUARIO (usuId, munCodigo, usuNombre, usuApellido, usuDireccion, usuTelefono, usuContrasenia, usuTipo)
+    VALUES (p_usuId, v_munCodigo, p_usuNombre, p_usuApellido, p_usuDireccion, p_usuTelefono,  p_usuContrasenia, p_usuTipo);
     COMMIT;
 END insertar_usuario;
 END paq_usuario;

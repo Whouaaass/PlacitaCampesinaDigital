@@ -11,14 +11,12 @@ const SearchBar1: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {
     function handleOnSubmit(e: any) {
         e.preventDefault();        
         onSubmit(e);        
-    }    
-
-
+    }
     return <form id="searchbar" onSubmit={handleOnSubmit} className='prevent-select'>
         <button type="submit">
             <MaterialSymbolsIcon name="search" opsz="48" weight='900' color='black' />
         </button>
-        <label id="input-label">
+        <label title="search" id="input-label">
             <input type="search" name="search" />
         </label>
         <div id="orderby-section">
