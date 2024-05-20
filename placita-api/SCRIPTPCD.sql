@@ -58,6 +58,7 @@ CREATE TABLE OFERTA (
     ofePrecio NUMBER(9,2) NOT NULL,
     ofeActivo CHAR(1) NOT NULL,
     CONSTRAINT pk_ofeId PRIMARY KEY (ofeId),
+    CONSTRAINT uq_ofe UNIQUE (ofeId, usuId, proId, ofeFechaCaducidad, ofeCantidad, ofeDescripcion, ofePrecio, ofeActivo),
     CONSTRAINT fk_ofer_usuId FOREIGN KEY (usuId) REFERENCES USUARIO(usuId),
     CONSTRAINT fk_ofer_proId FOREIGN KEY (proId) REFERENCES PRODUCTO(proId),
     CONSTRAINT chk_ofer_estado CHECK (ofeActivo IN('Y','N'))

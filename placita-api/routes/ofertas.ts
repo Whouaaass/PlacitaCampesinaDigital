@@ -56,6 +56,7 @@ router.get("/user/:id", async (req: Request, res: Response) => {
 
 router.post("/", Verify, async (req: Request, res: Response) => {
     const connection = await db.connect();
+    console.log(req.body)
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     console.log(req.body);
@@ -74,12 +75,13 @@ router.post("/", Verify, async (req: Request, res: Response) => {
 
 
 router.post("/edit", Verify, async (req: Request, res: Response) => {
-    const connection = await db.connect();
+    const connection = await db.connect();  
+    console.log(req.body)
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
-    const { id, user, name, quantity, price, expirationDate, description } = req.body;
+    const { offerid, user, name, quantity, price, expirationDate, description } = req.body;
     const dbQuery = `BEGIN 
-    PAQ_OFERTA.ACTUALIZAR_OFERTA(${id}, ${user.USUID}, '${name}',TO_DATE('${expirationDate}','YYYY-MM-DD'), '${description}', ${quantity}, ${price}, 'Y' ); 
+    PAQ_OFERTA.ACTUALIZAR_OFERTA(${offerid}, ${user.USUID}, '${name}',TO_DATE('${expirationDate}','YYYY-MM-DD'), '${description}', ${quantity}, ${price}, 'Y' ); 
     END;`;
     try {
         await connection.execute(dbQuery);

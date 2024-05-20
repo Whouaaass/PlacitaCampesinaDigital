@@ -1,7 +1,22 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import Modal from './Modal';
 import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
+import { useAuth } from '../../hooks/AuthProvider';
+import PopUp, { PopUpRef } from '../PopUp';
+
+const editOffer = async (offer: any, token: string) => {
+    const response = await fetch('http://localhost:3000/ofertas/edit', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            token: `session=${token}`
+        },
+        body: JSON.stringify(offer)
+    });
+    return await response.json();
+}
+
 
 interface OfferModalProps {
     offerData: any;
@@ -11,14 +26,18 @@ interface OfferModalProps {
     onClose: () => void;
 }
 
-const MONTHS = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
+const MONTHS = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
 const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, open, onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
     const [data, setData] = useState(offerData);
+    const { token } = useAuth();
+    const popUpRef = useRef<PopUpRef>(null);
 
-    const expDate = new Date(data.expDate);
-    const expDateString = `${expDate.getDay()}-${MONTHS[expDate.getMonth()]}-${expDate.getFullYear()}`;
+    const [year, month, day] = data.expDate.substring(0, 10).split("-");
+    console.log(data);
+
+    const expDateString = `${day}-${MONTHS[+month]}-${year}`;
 
     const handleOnChange = (e: any) => {
         const { name, value } = e.target;
@@ -27,8 +46,12 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, ope
     const handleClose = () => {
         onClose();
     }
-    const handleSave = async() => {
-        
+    const handleSave = async () => {
+        const res = await editOffer(data, token);
+        if (res.error) {
+            popUpRef.current?.show("Error al insertar oferta: " + res.error);
+            return;
+        }
         setIsEditing(false);
     }
 
@@ -58,7 +81,7 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, ope
             </label>
             <label id="offer-modal__expiration">
                 Fecha Caducidad:
-                <input type="date" name="expDate" className='input-t blink' />
+                <input type="date" name="expDate" value={data.expDate} className='input-t blink' onChange={handleOnChange} />
             </label>
         </div>
         <label id="offer-modal__description">
@@ -70,31 +93,32 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, ope
     </>);
     const dataElements = isEditing ? dataOnEdit : dataOnView;
 
-    return (<Modal>
-
-        <div id="offer-modal">
-            {dataElements}
-            {buying &&
-                <div id="offer-modal-buy">
-                    <label>
-                        Indique la cantidad que desea
-                        <input type="number" className='input-1' />
-                    </label>
-                    <button className="button-3">Añadir</button>
-                </div>}
-            {editing && !isEditing &&
-                <button id="edit-offer-button" onClick={() => setIsEditing(true)}>
-                    <MaterialSymbolsIcon name="edit" size='3rem' color='black' />
+    return (<>
+        <PopUp ref={popUpRef} />
+        <Modal>
+            <div id="offer-modal">
+                {dataElements}
+                {buying &&
+                    <div id="offer-modal-buy">
+                        <label>
+                            Indique la cantidad que desea
+                            <input type="number" className='input-1' />
+                        </label>
+                        <button className="button-3">Añadir</button>
+                    </div>}
+                {editing && !isEditing &&
+                    <button id="edit-offer-button" onClick={() => setIsEditing(true)}>
+                        <MaterialSymbolsIcon name="edit" size='3rem' color='black' />
+                    </button>
+                }
+                <button id="close-offer-modal-button" onClick={handleClose}>
+                    <MaterialSymbolsIcon name="close" size='3rem' color='black' />
                 </button>
-            }
-            <button id="close-offer-modal-button" onClick={handleClose}>
-                <MaterialSymbolsIcon name="close" size='3rem' color='black' />
-            </button>
-        </div>
-        <div id="modal-mask" onClick={handleClose} />
+            </div>
+            <div id="modal-mask" onClick={handleClose} />
 
-    </Modal>
-    );
+        </Modal>
+    </>);
 };
 
 export default OfferModal;

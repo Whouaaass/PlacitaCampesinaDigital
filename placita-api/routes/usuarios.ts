@@ -59,12 +59,12 @@ router.post("/login", async (req: Request, res: Response) => {
 
 
         const options: CookieOptions = {
-            maxAge: 20 * 60 * 1000, // 20 minutes para expirar
+            maxAge: 2 * 60 * 60 * 1000, //  2 horas para expirar
             httpOnly: true, // The cookie is only accessible by the web server
             secure: true,
             sameSite: "none",
         }
-        const token = jwt.sign({ id }, SECRET_ACCESS_TOKEN as Secret, { expiresIn: '20m' });
+        const token = jwt.sign({ id }, SECRET_ACCESS_TOKEN as Secret, { expiresIn: '2h' });
         res.cookie('token', token, options);
         res.status(200).json({
             status: 'success',
