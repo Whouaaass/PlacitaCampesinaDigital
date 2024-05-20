@@ -323,48 +323,16 @@ BEGIN
 END insertar_usuario;
 END paq_usuario;
 
---Paquete oferta
-CREATE OR REPLACE PACKAGE paq_oferta IS
---Funciones
-FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE;
-FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE;
---Procedimientos
-PROCEDURE ord_ofe_nombre_Prod;
-PROCEDURE ofertas_mas_baratas;
-PROCEDURE ord_ofe_fecha_cad;
-PROCEDURE ord_ofe_fecha_cad(p_proTipo IN varchar2);
-PROCEDURE list_ofertas_tipo;
-PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER);
-PROCEDURE desactivar_oferta (
-    p_ofeId IN oferta.ofeId%type
-);
-PROCEDURE actualizar_oferta (
-    p_ofeId IN INT,
-    p_usuId IN NUMBER,
-    p_proId IN INT,
-    p_ofeFechaCaducidad IN DATE,
-    p_ofeDescripcion IN varchar2,
-    p_ofeCantidad IN INT,
-    p_ofePrecio NUMBER,
-    p_ofeActivo CHAR
-);
-PROCEDURE insertar_oferta (
-    p_usuId IN NUMBER,
-    p_proId IN INT,
-    p_ofeFechaCaducidad IN DATE,
-    p_ofeDescripcion IN varchar2,
-    p_ofeCantidad IN INT,
-    p_ofePrecio NUMBER,
-    p_ofeActivo CHAR
-);
-END paq_oferta;
+
 
 --Vistas
 CREATE OR REPLACE VIEW v_ofertas as
 SELECT
     OFERTA.ofeId as ofeid,
+    USUARIO.usuid as usuid,    
     USUARIO.usunombre || ' ' || USUARIO.usuapellido AS ofertador,
     PRODUCTO.proNombre as nombre,
+    PRODUCTO.proTipo as tipo,
     OFERTA.ofeFechaCaducidad as fechaCaducidad,
     OFERTA.ofeDescripcion as descripcion,
     OFERTA.ofeCantidad as cantidad,
@@ -446,6 +414,42 @@ SELECT proNombre, proTipo, usuNombre || ' ' || usuApellido AS Campesino,TO_CHAR(
             WHERE Producto.proTipo = 'Fruta'
             ORDER BY Oferta.ofeFechaCaducidad ASC;
 --Select * from v_ofe_fruta;
+
+--Paquete oferta
+CREATE OR REPLACE PACKAGE paq_oferta IS
+--Funciones
+FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE;
+FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE;
+--Procedimientos
+PROCEDURE ord_ofe_nombre_Prod;
+PROCEDURE ofertas_mas_baratas;
+PROCEDURE ord_ofe_fecha_cad;
+PROCEDURE ord_ofe_fecha_cad(p_proTipo IN varchar2);
+PROCEDURE list_ofertas_tipo;
+PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER);
+PROCEDURE desactivar_oferta (
+    p_ofeId IN oferta.ofeId%type
+);
+PROCEDURE actualizar_oferta (
+    p_ofeId IN INT,
+    p_usuId IN NUMBER,
+    p_proId IN INT,
+    p_ofeFechaCaducidad IN DATE,
+    p_ofeDescripcion IN varchar2,
+    p_ofeCantidad IN INT,
+    p_ofePrecio NUMBER,
+    p_ofeActivo CHAR
+);
+PROCEDURE insertar_oferta (
+    p_usuId IN NUMBER,
+    p_proNombre IN VARCHAR2,
+    p_ofeFechaCaducidad IN DATE,
+    p_ofeDescripcion IN varchar2,
+    p_ofeCantidad IN INT,
+    p_ofePrecio NUMBER,
+    p_ofeActivo CHAR
+);
+END paq_oferta;
 --Cuerpo
 CREATE OR REPLACE PACKAGE BODY paq_oferta IS
 --Funciones
@@ -624,7 +628,7 @@ BEGIN
 END actualizar_oferta;
 PROCEDURE insertar_oferta (
     p_usuId IN NUMBER,
-    p_proId IN INT,
+    p_proNombre IN VARCHAR2,
     p_ofeFechaCaducidad IN DATE,
     p_ofeDescripcion IN varchar2,
     p_ofeCantidad IN INT,
@@ -632,9 +636,11 @@ PROCEDURE insertar_oferta (
     p_ofeActivo CHAR
 )
 IS
+    v_proId PRODUCTO.proId%TYPE;
 BEGIN
+    SELECT proId INTO v_proId FROM PRODUCTO WHERE proNombre = p_proNombre;
     INSERT INTO OFERTA(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo)
-    VALUES (p_usuId, p_proId, p_ofeFechaCaducidad, p_ofeDescripcion,p_ofeCantidad, p_ofePrecio,p_ofeActivo);
+    VALUES (p_usuId, v_proId, p_ofeFechaCaducidad, p_ofeDescripcion,p_ofeCantidad, p_ofePrecio,p_ofeActivo);
     COMMIT;
 END insertar_oferta;
 END paq_oferta;

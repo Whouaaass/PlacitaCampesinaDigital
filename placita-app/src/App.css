@@ -16,6 +16,36 @@
     background-color: var(--lightred) !important;
 }
 
+.input-question {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-content: left;
+    width: 70vw;
+    min-width: 200px;
+    max-width: 310px;
+    margin-bottom: 20px;
+}
+
+.vertical-line {
+    border-left: 1px solid black;
+    height: 100%;
+}
+
+.prevent-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
+.upside-down {
+    transform: rotate(180deg);
+}
+
 #root {
     position: absolute;
     display: flex;
@@ -80,35 +110,6 @@ main.pine-background {
     height: 100%;
 }
 
-.input-question {
-    margin-top: 10px;
-    display: flex;
-    flex-direction: row;
-    justify-content: space-around;
-    align-content: left;
-    width: 70vw;
-    min-width: 200px;
-    max-width: 310px;
-    margin-bottom: 20px;
-}
-
-.vertical-line {
-    border-left: 1px solid black;
-    height: 100%;
-}
-
-.prevent-select {
-    -webkit-user-select: none;
-    /* Safari */
-    -ms-user-select: none;
-    /* IE 10 and IE 11 */
-    user-select: none;
-    /* Standard syntax */
-}
-
-.upside-down {
-    transform: rotate(180deg);
-}
 
 button.button-1 {
     width: 100%;
@@ -150,7 +151,7 @@ button.button-2:hover {
 }
 
 button.button-3 {
-    background-color: var(--lightgray);    
+    background-color: var(--lightgray);
     font-family: 'Inter';
     font-weight: 900;
     font-size: larger;

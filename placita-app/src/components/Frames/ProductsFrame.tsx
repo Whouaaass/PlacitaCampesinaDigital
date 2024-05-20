@@ -6,7 +6,7 @@ import { FC, PropsWithChildren } from 'react';
 import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { Link } from 'react-router-dom';
-import SearchBar from '../CustomComponents/SearchBar';
+import SearchBar1 from '../CustomComponents/SearchBar1';
 
 const ProductsFrame: FC<PropsWithChildren> = ({ children }) => {    
     return <>
@@ -16,7 +16,7 @@ const ProductsFrame: FC<PropsWithChildren> = ({ children }) => {
             </Link>
 
             <h1 id="page-title">Mis productos</h1>
-            <SearchBar />
+            <SearchBar1 />
 
             <Link id="go-market" to="/market">
                 <button id="go-market-button" className='button-2'>

@@ -6,11 +6,10 @@ import { FC, ReactNode, useContext } from 'react';
 
 import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
-import SearchBar from '../CustomComponents/SearchBar';
+import SearchBar1 from '../CustomComponents/SearchBar1';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthProvider';
-import { OffersContext } from '../../hooks/OffersProvider';
-import { SearchContext } from '../../hooks/SearchProvider';
+import { OffersContext } from '../../hooks/OffersProvider'; 
 
 // Propiedades que recibe el componente
 type CustomProps = {
@@ -19,15 +18,19 @@ type CustomProps = {
 
 const MarketFrame: FC<CustomProps> = ({ children }) => {
     const { logOut, rol } = useAuth();
-    const { setFilters} = useContext(OffersContext);
-    const { order, search } = useContext(SearchContext);
+    const { setFilters } = useContext(OffersContext);
 
-    const onSearch = () => {
+
+    const onSearch = (e: Event) => {
+        const form = e.target as HTMLFormElement;
         console.log('searching');
-        setFilters({
-            search: search,
-            orderby: order
-        });
+        if (form) {
+            setFilters({
+                search: form.search.value,
+                orderby: form.orderby.value
+            });
+        }
+
     }
 
 
@@ -49,7 +52,7 @@ const MarketFrame: FC<CustomProps> = ({ children }) => {
                 <img id="placita-logo" src={placitaLogo} alt='placita-logo' />
                 <h1>Marketplace</h1>
             </div>
-            <SearchBar onSubmit={onSearch} />
+            <SearchBar1 onSubmit={onSearch} />
 
             <button id="close-session-button" onClick={() => logOut()}>
                 <MaterialSymbolsIcon name="close" opsz="48" weight='600' size='2.5rem' color="black" />

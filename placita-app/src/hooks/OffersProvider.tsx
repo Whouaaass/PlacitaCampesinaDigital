@@ -20,7 +20,7 @@ const loadMethod = {
 const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
     const [offers, setOffers] = useState<Array<RawOfferProps>>([]);
     const [filters, setFilters] = useState<OffersFilters | null>(null);
-
+    console.log(offers);
     const filteredOffers = filters? offers.sort((offerA, offerB) => {
         if (filters.orderby === 'Nombre') 
             return offerA.NOMBRE > offerB.NOMBRE ? 1 : -1;

@@ -6,16 +6,15 @@ import { FC, useContext } from 'react';
 import MarketFrame from '../Frames/MarketFrame';
 import { useEffect } from 'react';
 import OffersContainer from '../Offers/OffersContainer';
-import SearchProvider, { SearchContext } from '../../hooks/SearchProvider';
 import { OffersContext } from '../../hooks/OffersProvider';
 
 const Market: FC = () => {
-    const { loadOffers } = useContext(OffersContext);    
-    
+    const { loadOffers } = useContext(OffersContext);
+
 
     useEffect(() => {
         loadOffers().then((data: any) => {
-            if (data.error) throw new Error(data.error);            
+            if (data.error) throw new Error(data.error);
         }).catch((err) => {
             console.log('something went wrong with the fetch')
             console.log(err)
@@ -23,11 +22,9 @@ const Market: FC = () => {
     }, []);
 
     return (
-        <SearchProvider>
-            <MarketFrame>
-                <OffersContainer /> 
-            </MarketFrame>
-        </SearchProvider>
+        <MarketFrame>
+            <OffersContainer />
+        </MarketFrame>
     );
 };
 

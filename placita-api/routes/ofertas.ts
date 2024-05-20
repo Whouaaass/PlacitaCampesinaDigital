@@ -35,7 +35,7 @@ router.get("/:id", async (req: Request, res: Response) => {
             res.status(404).json({ error: "Oferta not found" });
         }
     } catch (error: any) {
-        res.status(500).json({ error: "Internal server error", errorNum: error.errorNum});
+        res.status(500).json({ error: "Error Interno del servidor", errorNum: error.errorNum});
     }
 });
 
@@ -50,7 +50,7 @@ router.get("/user/:id", async (req: Request, res: Response) => {
         res.status(200).json({data: result.rows});
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error: "Internal server error" });
+        res.status(500).json({ error: "Error Interno del servidor" });
     }
 });
 

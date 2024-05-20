@@ -9,8 +9,13 @@
     width: 100%;
     min-width: 500px;
 
-    input {
-        padding-left: 1rem;
+    #input-label {
+        height: auto;
+        width: 100%;            
+        padding-inline: 1rem;  
+    }
+
+    input {        
         background-color: transparent;
         border: none;
         height: 100%;
@@ -39,29 +44,13 @@
     }
 
     select {
-        appearance: none;
+        
         font: inherit;
         font-weight: normal;
         background-color: transparent;
         border: none;
         height: 100%;
-        padding-inline: 0.5rem;
-
-        option {
-            border-bottom: solid black 1px;
-        }
-    }
-
-    select:hover {
-        cursor: pointer;
-        color: var(--infoblue);
-        opacity: 0.5;
-    }
-
-    select:focus {
-        outline: none;
-        color: var(--infoblue);
-        opacity: 0.8;
+        padding-inline: 0.5rem;                
     }
 
     .material-symbols-rounded {
@@ -93,16 +82,16 @@
 
 #search-orderby {
     font-weight: bold;
-    padding-left: 1em;
+    margin-left: 10px;
+    margin-right: 10px;
     width: max-content;
     height: 100%;
 
-}
+    span {
+        position: relative;
+        top: 0.3rem;
+        font-size: 1.2rem;
+        font-weight: normal;
+    }
 
-#direction-symbol-container {
-    display: flex;
-    align-items: center;
-    padding: 0;
-    margin: 0;
-    margin-right: 1rem;
 }
