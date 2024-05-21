@@ -81,7 +81,15 @@ router.post("/edit", Verify, async (req: Request, res: Response) => {
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const { offerid, user, name, quantity, price, expirationDate, description } = req.body;
     const dbQuery = `BEGIN 
-    PAQ_OFERTA.ACTUALIZAR_OFERTA(${offerid}, ${user.USUID}, '${name}',TO_DATE('${expirationDate}','YYYY-MM-DD'), '${description}', ${quantity}, ${price}, 'Y' ); 
+    PAQ_OFERTA.ACTUALIZAR_OFERTA(
+        ${offerid}, 
+        ${user.USUID}, 
+        '${name}',
+        TO_DATE('${(expirationDate as string).substring(0,10)}','YYYY-MM-DD'), 
+        '${description}', 
+        ${quantity}, 
+        ${price}, 
+        'Y' ); 
     END;`;
     try {
         await connection.execute(dbQuery);

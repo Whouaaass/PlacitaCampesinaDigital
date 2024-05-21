@@ -1,9 +1,10 @@
-import React, { useRef, useState } from 'react';
+import React, { useContext, useRef, useState } from 'react';
 import Modal from './Modal';
 import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { useAuth } from '../../hooks/AuthProvider';
 import PopUp, { PopUpRef } from '../PopUp';
+import { OffersContext } from '../../hooks/OffersProvider';
 
 const editOffer = async (offer: any, token: string) => {
     const response = await fetch('http://localhost:3000/ofertas/edit', {
@@ -13,7 +14,7 @@ const editOffer = async (offer: any, token: string) => {
             token: `session=${token}`
         },
         body: JSON.stringify(offer)
-    });
+    });    
     return await response.json();
 }
 
@@ -32,10 +33,10 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
     
     const [data, setData] = useState(offerData);
     const { token } = useAuth();
+    const { refreshOffers } = useContext(OffersContext);
     const popUpRef = useRef<PopUpRef>(null);
 
-    const [year, month, day] = data.expirationDate.substring(0, 10).split("-");
-    console.log(data);
+    const [year, month, day] = data.expirationDate.substring(0, 10).split("-");   
 
     const expDateString = `${day}-${MONTHS[+month]}-${year}`;
 
@@ -46,12 +47,26 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
     const handleClose = () => {
         onClose();
     }
-    const handleSave = async () => {
+    const handleSave = async () => {        
+        // Check if data has changed
+        if (JSON.stringify(offerData) === JSON.stringify(data)) {
+            setIsEditing(false);
+            return;
+        }
         const res = await editOffer(data, token);
+        if (res.errorNum === 20011) {
+            popUpRef.current?.show("Error de formato al insertar oferta");
+            return;
+        }
+        if (res.errorNum === 20012) {
+            popUpRef.current?.show("No se pudo actualizar: La fecha de caducidad no puede ser menor a la fecha actual");
+            return;
+        }
         if (res.error) {
             popUpRef.current?.show("Error al insertar oferta: " + res.error);
             return;
         }
+        refreshOffers();
         setIsEditing(false);
     }
 
@@ -110,6 +125,9 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
                     <button id="edit-offer-button" onClick={() => setIsEditing(true)}>
                         <MaterialSymbolsIcon name="edit" size='3rem' color='black' />
                     </button>
+                }
+                {buying && <>
+                </>
                 }
                 <button id="close-offer-modal-button" onClick={handleClose}>
                     <MaterialSymbolsIcon name="close" size='3rem' color='black' />
