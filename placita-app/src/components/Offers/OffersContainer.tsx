@@ -20,8 +20,8 @@ const OffersContainer: React.FC<CustomProps> = ({editing}) => {
                             offerid: offer.OFEID,
                             name: offer.NOMBRE,
                             price: offer.PRECIO,
-                            amount: offer.CANTIDAD,
-                            expDate: offer.FECHACADUCIDAD,
+                            quantity: offer.CANTIDAD,
+                            expirationDate: offer.FECHACADUCIDAD,
                             description: offer.DESCRIPCION
                         }}
                         editing={editing}                        

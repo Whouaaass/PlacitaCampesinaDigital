@@ -97,9 +97,7 @@ router.delete("/:id", Verify, async (req: Request, res: Response) => {
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
-    const dbQuery = `BEGIN 
-    PAQ_OFERTA.DESACTIVAR_OFERTA(${id}); 
-    END;`;
+    const dbQuery = `BEGIN PAQ_OFERTA.DESACTIVAR_OFERTA(${id}); END;`;
     try {
         await connection.execute(dbQuery);
         res.status(200).json({ message: "Offer deleted" });

@@ -21,20 +21,20 @@ const editOffer = async (offer: any, token: string) => {
 interface OfferModalProps {
     offerData: any;
     editing?: boolean;
-    buying?: boolean;
-    open: boolean;
+    buying?: boolean;    
     onClose: () => void;
 }
 
 const MONTHS = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'];
 
-const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, open, onClose }) => {
+const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
+    
     const [data, setData] = useState(offerData);
     const { token } = useAuth();
     const popUpRef = useRef<PopUpRef>(null);
 
-    const [year, month, day] = data.expDate.substring(0, 10).split("-");
+    const [year, month, day] = data.expirationDate.substring(0, 10).split("-");
     console.log(data);
 
     const expDateString = `${day}-${MONTHS[+month]}-${year}`;
@@ -60,7 +60,7 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, ope
             <img src={placitaLogo} className='prevent-select'></img>
             <label id="offer-modal__name">{data.name}</label>
             <label id="offer-modal__price">${data.price}</label>
-            <label id="offer-modal__quantity">{data.amount} Unidades</label>
+            <label id="offer-modal__quantity">{data.quantity} Unidades</label>
             <label id="offer-modal__expiration">Caduca: {expDateString}</label>
         </div>
         <label id="offer-modal__description">
@@ -77,11 +77,11 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, ope
             </label>
             <label id="offer-modal__quantity">
                 Cantidad:
-                <input type="number" name="amount" value={data.amount} onChange={handleOnChange} className='input-t blink' />
+                <input type="number" name="quantity" value={data.quantity} onChange={handleOnChange} className='input-t blink' />
             </label>
             <label id="offer-modal__expiration">
                 Fecha Caducidad:
-                <input type="date" name="expDate" value={data.expDate} className='input-t blink' onChange={handleOnChange} />
+                <input type="date" name="expirationDate" value={`${year}-${month}-${day}`} className='input-t blink' onChange={handleOnChange} />
             </label>
         </div>
         <label id="offer-modal__description">
