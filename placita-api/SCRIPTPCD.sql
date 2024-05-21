@@ -449,6 +449,7 @@ CREATE OR REPLACE PACKAGE paq_oferta IS
 --Funciones
 FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE;
 FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE;
+FUNCTION obtener_descuento(p_ofeId IN  Oferta.ofeId%TYPE) RETURN Oferta.ofePrecio%TYPE;
 --Procedimientos
 PROCEDURE ord_ofe_nombre_Prod;
 PROCEDURE ofertas_mas_baratas;
@@ -506,7 +507,32 @@ FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCant
             v_cantidad := -1;
             RETURN v_cantidad; 
     END cantidad_disponible;
-    
+FUNCTION obtener_descuento(p_ofeId IN  Oferta.ofeId%TYPE) RETURN Oferta.ofePrecio%TYPE IS
+    v_fechaCaducidad Oferta.ofeFechaCaducidad%TYPE;
+    v_hoy DATE := SYSDATE;
+    v_descuento Oferta.ofePrecio%TYPE;
+    v_precio Oferta.ofePrecio%TYPE;
+    BEGIN
+        SELECT ofeFechaCaducidad,ofePrecio INTO v_fechaCaducidad,v_precio FROM Oferta WHERE ofeId = p_ofeId;
+        CASE
+        WHEN v_fechaCaducidad > v_hoy + 30 THEN --Ningun descuento
+            v_descuento := 0;
+        WHEN v_fechaCaducidad BETWEEN v_hoy + 21 AND v_hoy + 30 THEN --10% de descuento
+            v_descuento := v_precio * 0.1;
+        WHEN v_fechaCaducidad BETWEEN v_hoy + 11 AND v_hoy + 20 THEN--20% de descuento
+            v_descuento := v_precio * 0.2;
+        WHEN v_fechaCaducidad <= v_hoy + 10 THEN--50% de descuento
+            v_descuento := v_precio * 0.5;
+        ELSE
+            v_descuento := 0; -- Caso default
+        END CASE;
+        return v_descuento;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+        DBMS_OUTPUT.PUT_LINE('Oferta inexistente');
+        v_descuento := 0;
+        return v_descuento;
+END obtener_descuento;        
 --Procedimientos
 PROCEDURE ord_ofe_nombre_Prod
 IS
