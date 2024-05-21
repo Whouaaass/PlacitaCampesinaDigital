@@ -470,6 +470,16 @@ PROCEDURE actualizar_oferta (
     p_ofePrecio NUMBER,
     p_ofeActivo CHAR
 );
+PROCEDURE actualizar_oferta (
+    p_ofeId IN INT,
+    p_usuId IN NUMBER,
+    p_proNombre IN VARCHAR2,
+    p_ofeFechaCaducidad IN DATE,
+    p_ofeDescripcion IN varchar2,
+    p_ofeCantidad IN INT,
+    p_ofePrecio NUMBER,
+    p_ofeActivo CHAR
+);
 PROCEDURE insertar_oferta (
     p_usuId IN NUMBER,
     p_proNombre IN VARCHAR2,
@@ -681,6 +691,33 @@ BEGIN
     WHERE ofeId = p_ofeId AND usuId = p_usuId AND proId = p_proId;
     COMMIT;
 END actualizar_oferta;
+PROCEDURE actualizar_oferta (
+    p_ofeId IN INT,
+    p_usuId IN NUMBER,
+    p_proNombre IN VARCHAR2,
+    p_ofeFechaCaducidad IN DATE,
+    p_ofeDescripcion IN varchar2,
+    p_ofeCantidad IN INT,
+    p_ofePrecio NUMBER,
+    p_ofeActivo CHAR
+)
+IS
+ v_proId PRODUCTO.proId%TYPE;
+BEGIN
+    SELECT proId INTO v_proId FROM PRODUCTO WHERE proNombre = p_proNombre;
+    UPDATE OFERTA
+    SET ofeFechaCaducidad = p_ofeFechaCaducidad,
+        ofeCantidad = p_ofeCantidad,
+        ofePrecio = p_ofePrecio,
+        ofeDescripcion = p_ofeDescripcion, 
+        ofeActivo = p_ofeActivo
+    WHERE ofeId = p_ofeId AND usuId = p_usuId AND proId = v_proId;
+
+    IF SQL%NOTFOUND THEN
+        THROW_APPLICATION_ERROR(-20011, 'No se pudo actualizar la oferta');
+    END IF;
+    COMMIT;
+END actualizar_oferta;
 PROCEDURE insertar_oferta (
     p_usuId IN NUMBER,
     p_proNombre IN VARCHAR2,
@@ -698,6 +735,8 @@ BEGIN
     VALUES (p_usuId, v_proId, p_ofeFechaCaducidad, p_ofeDescripcion,p_ofeCantidad, p_ofePrecio,p_ofeActivo);
     COMMIT;
 END insertar_oferta;
+
+
 END paq_oferta;
 
 --Paquete oferta
