@@ -685,6 +685,13 @@ BEGIN
     IF p_ofeFechaCaducidad < SYSDATE THEN
         RAISE_APPLICATION_ERROR(-20012, 'La fecha de caducidad no puede ser menor a la fecha actual');
     END IF;
+    IF p_ofeCantidad <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20013, 'La cantidad no puede ser menor o igual a 0');
+    END IF;
+    IF p_ofePrecio <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20014, 'El precio no puede ser menor o igual a 0');
+    END IF;
+
     UPDATE OFERTA
     SET ofeFechaCaducidad = p_ofeFechaCaducidad,
         ofeCantidad = p_ofeCantidad,
@@ -692,7 +699,7 @@ BEGIN
         ofeDescripcion = p_ofeDescripcion, 
         ofeActivo = p_ofeActivo
     WHERE ofeId = p_ofeId AND usuId = p_usuId AND proId = p_proId;
-    IF SQL%NOTFOUND THEN
+    IF SQL%ROWCOUNT THEN
         RAISE_APPLICATION_ERROR(-20011, 'No se pudo actualizar la oferta');
     END IF;
     COMMIT;
@@ -725,10 +732,22 @@ PROCEDURE insertar_oferta (
 IS
     v_proId PRODUCTO.proId%TYPE;
 BEGIN
+    IF p_ofeFechaCaducidad < SYSDATE THEN
+        RAISE_APPLICATION_ERROR(-20012, 'La fecha de caducidad no puede ser menor a la fecha actual');
+    END IF;
+    IF p_ofeCantidad <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20013, 'La cantidad no puede ser menor o igual a 0');
+    END IF;
+    IF p_ofePrecio <= 0 THEN
+        RAISE_APPLICATION_ERROR(-20014, 'El precio no puede ser menor o igual a 0');
+    END IF;
+
     SELECT proId INTO v_proId FROM PRODUCTO WHERE proNombre = p_proNombre;
     INSERT INTO OFERTA(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo)
     VALUES (p_usuId, v_proId, p_ofeFechaCaducidad, p_ofeDescripcion,p_ofeCantidad, p_ofePrecio,p_ofeActivo);
     COMMIT;
+
+    
 END insertar_oferta;
 
 

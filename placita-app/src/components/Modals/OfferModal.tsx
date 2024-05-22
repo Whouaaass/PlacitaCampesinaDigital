@@ -41,7 +41,13 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
     const expDateString = `${day}-${MONTHS[+month]}-${year}`;
 
     const handleOnChange = (e: any) => {
-        const { name, value } = e.target;
+        const { name, value, type } = e.target;        
+        /*
+        if (type === 'number' && (+value < 1 && value !== '')) {
+            popUpRef.current?.show("El valor debe ser mayor a 0");
+            return;
+        }
+        */
         setData({ ...data, [name]: value });
     }
     const handleClose = () => {
@@ -54,16 +60,17 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
             return;
         }
         const res = await editOffer(data, token);
-        if (res.errorNum === 20011) {
-            popUpRef.current?.show("Error de formato al insertar oferta");
-            return;
-        }
-        if (res.errorNum === 20012) {
-            popUpRef.current?.show("No se pudo actualizar: La fecha de caducidad no puede ser menor a la fecha actual");
-            return;
-        }
+        if (res.errorNum === 20011)
+            return popUpRef.current?.show("Error de formato al insertar oferta");
+        if (res.errorNum === 20012) 
+            return popUpRef.current?.show("Error al actualizar: La fecha de caducidad no puede ser menor a la fecha actual");            
+        if (res.errorNum === 20013)           
+            return popUpRef.current?.show("Error al actualizar: La cantidad no puede ser menor a 1");;        
+        if (res.errorNum === 20014)
+            return popUpRef.current?.show("Error al actualizar: El precio no puede ser menor a 1");
+
         if (res.error) {
-            popUpRef.current?.show("Error al insertar oferta: " + res.error);
+            popUpRef.current?.show("Error al actualizar: " + res.error);
             return;
         }
         refreshOffers();

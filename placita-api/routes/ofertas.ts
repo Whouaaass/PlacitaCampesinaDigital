@@ -95,7 +95,7 @@ router.post("/edit", Verify, async (req: Request, res: Response) => {
         await connection.execute(dbQuery);
         res.status(201).json({ message: "Offer edited" });
     } catch (error : any) {
-        console.log(error);
+        console.log(JSON.stringify(error));
         res.status(500).json({ error: "Internal server error", errorNum: error.errorNum});
     }
 });
