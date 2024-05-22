@@ -105,13 +105,14 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
     function checkExpirationDate(value: string) {        
         const date = new Date(value);        
         const today = new Date();    
-        return date.getUTCDate() >= today.getUTCDate();        
+        console.log(today.getTimezoneOffset());
+        return date.getTime() >= today.getTime() - today.getTimezoneOffset()*60*1000;        
     }
 
     return (<>
         {open &&
             <Modal>
-                <form id="add-offer-modal" onSubmit={handleSubmit} onInvalid={handleInvalid}>
+                <form id="add-offer-modal" className="modal" onSubmit={handleSubmit} onInvalid={handleInvalid}>
                     <h1>Ingresar Datos de la oferta</h1>
                     <CustomSelect1 values={products} label="Nombre" name="name" value={offer.name} required
                         onChange={handleChange}

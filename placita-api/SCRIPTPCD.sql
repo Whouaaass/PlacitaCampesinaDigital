@@ -1,4 +1,6 @@
-/* SCRIPTPCDV3 */
+select * from user_triggers;
+
+
 drop table municipio cascade constraint;
 drop table producto cascade constraint;
 drop table factura cascade constraint;
@@ -813,9 +815,12 @@ CREATE OR REPLACE PACKAGE paq_compra IS
 --Funciones
 --Procedimientos
 PROCEDURE comprar(
-    p_facId IN INT,
+    p_usuId IN NUMBER,
+    p_proId IN INT,
     p_ofeId IN INT,
-    p_comCantidadUnidades IN INT);
+    p_comCantidadUnidades IN INT,
+    p_comSubtotal IN NUMBER
+);
 PROCEDURE eliminar_compra (
     p_comId IN compra.comId%type
 );
@@ -834,6 +839,23 @@ PROCEDURE insertar_compra (
     p_comSubtotal NUMBER
 );
 END paq_compra;
+--Vistas
+CREATE OR REPLACE VIEW v_compras AS
+SELECT c.comId AS "ID de Compra",
+    f.facId AS "ID de Factura",
+    u.usuId AS "ID de Usuario",
+    u.usuNombre AS "Nombre de Usuario",
+    c.ofeId AS "ID de Oferta",
+    o.ofeDescripcion AS "Descripción de la Oferta",
+    c.comCantidadUnidades AS "Cantidad de Unidades",
+    c.comSubtotal AS "Subtotal",
+    f.facFecha AS "Fecha de Factura",
+    f.facTotal AS "Total de Factura"
+FROM COMPRA c
+INNER JOIN FACTURA f ON c.facId = f.facId
+INNER JOIN USUARIO u ON f.usuId = u.usuId
+INNER JOIN OFERTA o ON c.ofeId = o.ofeId;
+--Select * from v_compras;
 --Cuerpo
 CREATE OR REPLACE PACKAGE BODY paq_compra IS 
 --Funciones
@@ -884,6 +906,126 @@ BEGIN
     COMMIT;
 END insertar_compra;
 END paq_compra;
+
+CREATE OR REPLACE TYPE compra_record AS OBJECT (
+    comId NUMBER,
+    facId NUMBER,
+    usuId NUMBER,
+    usuNombre VARCHAR2(100),
+    ofeId NUMBER,
+    ofeDescripcion VARCHAR2(255),
+    comCantidadUnidades NUMBER,
+    comSubtotal NUMBER,
+    facFecha DATE,
+    facTotal NUMBER
+);
+--Instanciar la tabla compra por factura
+CREATE OR REPLACE TYPE compra_table  AS TABLE OF compra_record;
+--Funcion
+CREATE OR REPLACE FUNCTION ver_compras_por_factura(fac_id_param NUMBER)
+RETURN compra_table PIPELINED AS
+BEGIN
+    FOR r IN (
+        SELECT c.comId,
+            f.facId,
+            u.usuId,
+            u.usuNombre,
+            c.ofeId,
+            o.ofeDescripcion,
+            c.comCantidadUnidades,
+            c.comSubtotal,
+            f.facFecha,
+            f.facTotal
+        FROM COMPRA c
+        INNER JOIN FACTURA f ON c.facId = f.facId
+        INNER JOIN USUARIO u ON f.usuId = u.usuId
+        INNER JOIN OFERTA o ON c.ofeId = o.ofeId
+        WHERE f.facId = fac_id_param
+    ) LOOP
+        PIPE ROW (compra_record(r.comId, r.facId, r.usuId, r.usuNombre, r.ofeId, r.ofeDescripcion, r.comCantidadUnidades, r.comSubtotal, r.facFecha, r.facTotal));
+    END LOOP;
+    RETURN;
+END;
+--SELECT * FROM TABLE(ver_compras_por_factura(1));
+
+--Select * from v_compras_fac;
+
+--drop type compra_type 
+--drop type compra_table_type 
+-- drop procedure comprar
+CREATE OR REPLACE TYPE compra_type AS OBJECT (        
+    ofeId INT,    
+    comCantidadUnidades INT    
+);
+
+CREATE OR REPLACE TYPE compra_table_type AS TABLE OF compra_type;
+CREATE OR REPLACE PROCEDURE comprar (
+    compras IN compra_table_type,
+    p_usuId IN usuario.USUID%TYPE    
+) AS
+    -- Variables for storing intermediate data
+    v_comId NUMBER;
+    v_facId NUMBER;
+    v_total NUMBER := 0;
+    v_precioUnitario NUMBER;
+    v_subtotal NUMBER;
+    -- for ouput
+    rc sys_refcursor;
+BEGIN
+    -- Start the transaction
+    -- Generate a new ID for factura
+    SELECT ofeId_seq.NEXTVAL INTO v_facId FROM dual;
+
+    -- Inserts into the factura so the compras can reference it
+    INSERT INTO FACTURA (facId, usuId, facFecha, facTotal)
+        VALUES (v_facId, p_usuId, SYSDATE, 0);
+
+    FOR i IN 1 .. compras.COUNT LOOP
+        -- Gets the unitary price of the offer
+        
+        SELECT ofePrecio INTO v_precioUnitario FROM OFERTA WHERE ofeId = compras(i).ofeId;
+        -- Compute subtotal
+        v_subtotal := v_precioUnitario * compras(i).comCantidadUnidades;        
+        -- Generate a new ID for the compra (assuming a sequence is used)
+        SELECT comId_seq.NEXTVAL INTO v_comId FROM dual;   
+        -- Insert compra
+        INSERT INTO COMPRA (comId, facId, ofeId, comCantidadUnidades, comSubtotal) /* Depending on the trigger to check quantity*/
+        VALUES (v_comId, v_facId, compras(i).ofeId, compras(i).comCantidadUnidades, v_subtotal);
+        UPDATE OFERTA SET ofeCantidad = ofeCantidad - compras(i).comCantidadUnidades WHERE ofeId = compras(i).ofeId;
+        -- Update the total of the factura
+        v_total := v_total + v_subtotal;        
+    END LOOP;
+
+    -- Push the total value into the factura
+    UPDATE FACTURA SET FACTOTAL = v_total WHERE facId = v_facId;
+
+    -- Return the data
+    OPEN rc FOR SELECT c.comId,
+            f.facId as facid,
+            u.usuId as usuid,
+            u.usuNombre || ' ' || u.USUAPELLIDO as comprador,
+            c.ofeId as ofeid,            
+            c.comCantidadUnidades as unidades,
+            c.comSubtotal as subtotal,
+            f.facFecha as fechacompra,
+            f.facTotal as total
+        FROM COMPRA c
+        INNER JOIN FACTURA f ON c.facId = f.facId
+        INNER JOIN USUARIO u ON f.usuId = u.usuId
+        INNER JOIN OFERTA o ON c.ofeId = o.ofeId
+        WHERE f.facId = v_facId;
+    dbms_sql.return_result(rc);
+    -- Commit the transaction
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN
+        -- Rollback the transaction in case of an error
+        dbms_output.put_line('Error: ' || SQLERRM);
+        ROLLBACK;
+        RAISE;
+END comprar;
+
+-- EXECUTE comprar(compra_table_type(compra_type(3, 1), compra_type(4, 2)), 10492027);
 
 --Eliminar datos de las tablas
 /*BEGIN
@@ -1006,8 +1148,8 @@ BEGIN
   
     --UPDATE PARA OFERTA
     paq_oferta.actualizar_oferta(1, 10492021, 1, TO_DATE('27/05/24','DD/MM/YY'),'Semillas mojadas' ,28, 1500, 'Y');
-    paq_oferta.actualizar_oferta(3, 10492021, 3, TO_DATE('20/04/24','DD/MM/YY'),'Manzana menos manzanosa' ,15, 4000, 'Y');
-    paq_oferta.actualizar_oferta(5, 10492023, 5, TO_DATE('01/04/24','DD/MM/YY'), ':(',30, 22000, 'Y');
+    paq_oferta.actualizar_oferta(3, 10492021, 3, TO_DATE('20/04/25','DD/MM/YY'),'Manzana menos manzanosa' ,15, 4000, 'Y');
+    paq_oferta.actualizar_oferta(5, 10492023, 5, TO_DATE('01/04/25','DD/MM/YY'), ':(',30, 22000, 'Y');
 
     --UPDATE PARA FACTURA
     paq_factura.actualizar_fecha_factura(1, 10492021, SYSDATE - 5);

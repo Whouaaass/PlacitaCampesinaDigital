@@ -8,6 +8,7 @@ import './styles/ProductsSec.css';
 import './styles/SearchBar.css';
 import './styles/OfferCards.css';
 import './styles/Modals.css';
+import './styles/buyCart.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/Login/Login';
@@ -17,6 +18,7 @@ import ProductsSec from './components/ProductsSec/ProductsSec';
 import AuthProvider from './hooks/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
 import OffersProvider from './hooks/OffersProvider';
+import BuyCartSec from './components/Cart/buyCartSec';
 
 function App() {
   return (
@@ -28,6 +30,7 @@ function App() {
           <Route path='/signup' element={<SignUp />} />
           
             <Route element={<PrivateRoute />}>
+              <Route path='/cart' element={<OffersProvider><BuyCartSec /></OffersProvider>} />  
               <Route path='/market' element={<OffersProvider><Market /></OffersProvider>} />
               <Route path='/products' element={<OffersProvider><ProductsSec /></OffersProvider>} />
             </Route>

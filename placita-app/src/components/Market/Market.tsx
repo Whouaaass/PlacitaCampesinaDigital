@@ -9,16 +9,18 @@ import OffersContainer from '../Offers/OffersContainer';
 import { OffersContext } from '../../hooks/OffersProvider';
 
 const Market: FC = () => {
-    const { loadOffers } = useContext(OffersContext);
+    const { loadOffers, clearFilters } = useContext(OffersContext);
+
 
 
     useEffect(() => {
+        clearFilters();
         loadOffers().then((data: any) => {
             if (data.error) throw new Error(data.error);
         }).catch((err) => {
             console.log('something went wrong with the fetch')
             console.log(err)
-        });
+        });        
     }, []);
 
     return (

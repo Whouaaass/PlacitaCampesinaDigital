@@ -41,7 +41,7 @@ router.get("/experimental", async (req: Request, res: Response) => {
         declare
             rc sys_refcursor;
         begin
-            open rc for select * from oferta;
+            open rc for select * from oferta inner join producto on oferta.proid = producto.proid;
             dbms_sql.return_result(rc);
         end;
         `);

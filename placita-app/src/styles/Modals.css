@@ -1,3 +1,11 @@
+.modal {
+    position: absolute;
+    background-color: var(--white);
+    border-radius: 50px;
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+
 #modal-root.active {
     display: flex;
     justify-content: center;
@@ -18,20 +26,18 @@
     z-index: -1;
 }
 
-#add-offer-modal {
-    position: absolute;
+
+#add-offer-modal {    
     width: 70%;
     max-width: 570px;
     min-width: 260px;
     padding-inline: 70px;
-    padding-block: 50px;
-    background-color: var(--white);
-    border-radius: 50px;
+    padding-block: 50px;    
+    
     display: grid;    
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
     column-gap: 50px;
-    row-gap: 1rem;
-    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
+    row-gap: 1rem;   
 
     h1 {
         justify-self: center;
@@ -75,14 +81,10 @@
 }
 
 #offer-modal {
-    position: absolute;
-    background-color: var(--white);
-    border-radius: 50px;
     max-width: 800px;
     height: max-content;
     display: flex;
-    flex-direction: column;
-    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
+    flex-direction: column;    
     label {
         font-size: x-large;
         font-weight: bold;
@@ -160,5 +162,42 @@
         cursor: pointer;
     }
 
+    
+}
+
+#buy-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+
+    img {
+        width: 60%;
+        margin: auto 0 0;
+    }
+    h2 {
+        font-size: xx-large;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    label {        
+        display:contents;     
+        input {
+            width: 50%;
+        }                   
+    }
+    button {
+        margin-block: 1rem;
+    }
+    button#close-buy-modal-button {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;        
+        right: 10px;
+        top: 0px        
+    }
     
 }

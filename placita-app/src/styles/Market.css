@@ -32,11 +32,12 @@
     }
 
     #go-cart {
+        display: contents;        
         grid-column: 1 / 2;
         grid-row: 1;
     }
 
-    #go-products {
+    #go-products {        
         grid-column: 1 / 2;
         grid-row: 2;
     }

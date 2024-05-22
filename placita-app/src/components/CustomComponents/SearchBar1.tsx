@@ -1,12 +1,20 @@
-import { FC  } from 'react';
+import { FC, useContext } from 'react';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
-import { ORDEROPTIONS } from '../../hooks/SearchProvider';
+import { OffersContext, OffersFilters } from '../../hooks/OffersProvider';
 
 export interface SearchBarProps {
     onSubmit?: (e: Event) => void;
 }
 
-const SearchBar1: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {
+const ORDEROPTIONS = ['Nombre', 'Precio', 'Cantidad'];
+
+const SearchBar1: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {    
+    const { filters, setFilters } = useContext(OffersContext);
+
+    function handleChange(e: any) {
+        const {name, value} = e.target as HTMLInputElement;
+        setFilters({ ...(filters as OffersFilters), [name]: value } );
+    }
 
     function handleOnSubmit(e: any) {
         e.preventDefault();        
@@ -17,13 +25,13 @@ const SearchBar1: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {
             <MaterialSymbolsIcon name="search" opsz="48" weight='900' color='black' />
         </button>
         <label title="search" id="input-label">
-            <input type="search" name="search" />
+            <input type="search" name="search" value={filters.search} onChange={handleChange}/>
         </label>
         <div id="orderby-section">
             <span className="vertical-line" />
             <div id="search-orderby">
                 Ordenar por:
-                <select title="orderby" name="orderby" >
+                <select title="orderby" value={filters.orderby} name="orderby" onChange={handleChange} >
                     {ORDEROPTIONS.map((value, index) => (
                         <option key={index} value={value}>{value}</option>
                     ))}

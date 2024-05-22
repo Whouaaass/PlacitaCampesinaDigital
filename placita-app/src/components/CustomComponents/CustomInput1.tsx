@@ -2,12 +2,12 @@
  * @file InputContainer1.tsx
  * @brief Archivo de definición de un componente funcional que representa un contenedor de entrada de texto
  */
-import { InputHTMLAttributes, FC } from 'react';
+import { InputHTMLAttributes, FC, Ref, RefObject } from 'react';
 
 // Propiedades que recibe el componente
 interface CustomProps extends InputHTMLAttributes<HTMLInputElement> {
     onChange: (e: any) => void;
-    label: string;
+    label: string;    
 };
 
 const CustomInput1: FC<CustomProps> = ({ label, type, name, value, required, onChange, ...props }) => {

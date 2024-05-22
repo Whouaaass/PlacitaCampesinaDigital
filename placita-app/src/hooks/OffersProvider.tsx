@@ -1,16 +1,20 @@
 
 import { createContext, useState, FC, PropsWithChildren} from 'react';
-import { PopUpRef } from '../components/PopUp';
 
 export const OffersContext = createContext({
     offers: [] as any[],
+    cart: [] as any[],
     loadOffers: async () => { },
     loadOffersByUser: async (id: number) => {},
     deleteOffer: async (id: number, token: string) => { return {} as any},
     addOffer: async (offer: any) => { return {} as any},
     refreshOffers: (() => { }),
+    filters: {} as OffersFilters,
     setFilters: (filters: OffersFilters) => { },
-    clearFilters: () => { }
+    clearFilters: () => { },
+    addToCart: (name: string, price: number, offerid: number, quantity: number) => { },
+    deleteFromCart: (offerid: number) => {   },
+    resetCart: () => { }
 });
 
 const loadMethod = {
@@ -19,9 +23,10 @@ const loadMethod = {
 }
 const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
     const [offers, setOffers] = useState<Array<RawOfferProps>>([]);
-    const [filters, setFilters] = useState<OffersFilters | null>(null);
-    
-    const filteredOffers = filters? offers.sort((offerA, offerB) => {
+    const [cart, setCart] = useState<Array<cartItemProps>>([]);
+    const [filters, setFilters] = useState<OffersFilters>({search: '', orderby: 'Nombre'});
+    console.log(cart);
+    const filteredOffers = offers.sort((offerA, offerB) => {
         if (filters.orderby === 'Nombre') 
             return offerA.NOMBRE > offerB.NOMBRE ? 1 : -1;
         if (filters.orderby === 'Precio') 
@@ -33,7 +38,7 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
         return offer.NOMBRE.toLowerCase().startsWith(filters.search.toLowerCase())
             || offer.TIPO.toLowerCase().startsWith(filters.search.toLowerCase())
             || offer.DESCRIPCION.toLowerCase().startsWith(filters.search.toLowerCase());        
-    }) : offers;
+    });
 
     const methods = {
         loadOffers: async () => {
@@ -87,7 +92,20 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
             return data;
         },
         clearFilters: () => {
-            setFilters(null);
+            setFilters({search: '', orderby: 'Nombre'});
+        },
+        addToCart: (name: string, price: number, offerid: number, quantity: number) => {
+            //const offer = offers.find((offer) => offer.ID === offerid);
+            //if (!offer) return;
+            // TODO: Check if the offer is still available
+            const accum = cart.find((item) => item.offerid === offerid)?.quantity || 0;            
+            setCart([...cart.filter((item) => item.offerid !== offerid), {name, price, offerid, quantity: quantity + accum}]);
+        },
+        deleteFromCart: (offerid: number) => {
+            setCart(cart.filter((item) => item.offerid !== offerid));
+        },
+        resetCart: () => {
+            setCart([]);
         }
     }    
     
@@ -97,7 +115,9 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
     return (
         <OffersContext.Provider value={{
             offers: filteredOffers,            
+            cart,
             setFilters,
+            filters,
             ...methods,            
         }}>
             {children}
@@ -136,4 +156,10 @@ export interface OfferProps {
     description: string;
     quantity: number;
     expirationDate: string;
+}
+export interface cartItemProps {
+    name: string;
+    price: number;
+    offerid: number;
+    quantity: number;
 }

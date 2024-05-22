@@ -118,7 +118,7 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
     return (<>
         <PopUp ref={popUpRef} />
         <Modal>
-            <div id="offer-modal">
+            <div id="offer-modal" className='modal'>
                 {dataElements}
                 {buying &&
                     <div id="offer-modal-buy">

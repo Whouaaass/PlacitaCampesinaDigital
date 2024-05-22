@@ -234,3 +234,10 @@ textarea.textarea-t {
 .blink {
     animation: blink 2s ease-in-out infinite;
 }
+
+
+.container-2 {
+    background-color: var(--lightgray);
+    border-radius: 50px;
+    border: 20px;
+}

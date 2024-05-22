@@ -1,21 +1,23 @@
 /**
  * @brief Componente que representa una oferta en la pagina principal
  */
-import React, { useContext, useState } from 'react';
+import { useContext, useState, FC, HTMLAttributes } from 'react';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { useAuth } from '../../hooks/AuthProvider';
 import OfferModal from '../Modals/OfferModal';
 import { OffersContext } from '../../hooks/OffersProvider';
+import BuyModal from '../Modals/BuyModal';
 
-interface OfferCardProps extends React.HTMLAttributes<HTMLDivElement> {
+interface OfferCardProps extends HTMLAttributes<HTMLDivElement> {
     offerData: any;
     editing?: boolean;
     expired?: boolean;    
 }
 
-const OfferCardSmall: React.FC<OfferCardProps> = ({ offerData, editing, expired}) => {
+const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing, expired}) => {
     const {offerid, name, price, quantity} = offerData;
     const [cardOpen, setCardOpen] = useState(false);
+    const [buyOpen, setBuyOpen] = useState(false);
     const { token } = useAuth();
     const { deleteOffer } = useContext(OffersContext);
 
@@ -26,7 +28,7 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerData, editing, expired}
         });
     }    
     const buyTop = <>
-        <button><MaterialSymbolsIcon name="shopping_cart" size='3rem' /></button>
+        <button onClick={() => setBuyOpen(true)}><MaterialSymbolsIcon name="shopping_cart" size='3rem' /></button>
         <button onClick={() => setCardOpen(true)}><MaterialSymbolsIcon name="visibility" size='3rem' /></button>
     </>
     const editTop = <>
@@ -35,6 +37,7 @@ const OfferCardSmall: React.FC<OfferCardProps> = ({ offerData, editing, expired}
     </>
     return (<>
         {cardOpen && <OfferModal offerData={offerData} onClose={() => setCardOpen(false)} editing={editing}/>}
+        {buyOpen && <BuyModal offerData={offerData} onClose={() => setBuyOpen(false)}/>}
         <div className="offer-card-small" >
             {editing ? editTop : buyTop}
             <h3>{name}</h3>
