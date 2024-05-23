@@ -9,6 +9,7 @@ import './styles/SearchBar.css';
 import './styles/OfferCards.css';
 import './styles/Modals.css';
 import './styles/buyCart.css';
+import './styles/Ticket.css';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import Home from './components/Home';
 import Login from './components/Login/Login';
@@ -19,6 +20,7 @@ import AuthProvider from './hooks/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
 import OffersProvider from './hooks/OffersProvider';
 import BuyCartSec from './components/Cart/buyCartSec';
+import Factura from './components/Factura/Factura';
 
 function App() {
   return (
@@ -34,7 +36,7 @@ function App() {
               <Route path='/market' element={<OffersProvider><Market /></OffersProvider>} />
               <Route path='/products' element={<OffersProvider><ProductsSec /></OffersProvider>} />
             </Route>
-          
+          <Route path="/test" element={<Factura/>}/>
           <Route path="*">404 Not Found</Route>
         </Routes>
       </AuthProvider>

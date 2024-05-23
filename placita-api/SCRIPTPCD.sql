@@ -1,5 +1,5 @@
 select * from user_triggers;
-
+--Push
 
 drop table municipio cascade constraint;
 drop table producto cascade constraint;
@@ -84,7 +84,7 @@ CREATE TABLE FACTURA (
     facId INT NOT NULL,
     usuId NUMBER NOT NULL,
     facFecha DATE NOT NULL,
-    facTotal DECIMAL(9,2) NOT NULL,
+    facTotal DECIMAL(11,2) NOT NULL,
     CONSTRAINT PK_facId PRIMARY KEY (facId),
     CONSTRAINT FK_FAC_usuId FOREIGN KEY (usuId) REFERENCES USUARIO(usuId)
 );
@@ -98,7 +98,9 @@ CREATE OR REPLACE TRIGGER TG_ins_factura
 BEFORE INSERT ON factura
 FOR EACH ROW
 BEGIN
-    :NEW.facId := facId_seq.NEXTVAL;
+    if :NEW.facId is null then
+        :NEW.facId := facId_seq.NEXTVAL;
+    end if;
 END;
 -- Tabla COMPRA
 CREATE TABLE COMPRA (
@@ -701,7 +703,7 @@ BEGIN
         ofeDescripcion = p_ofeDescripcion, 
         ofeActivo = p_ofeActivo
     WHERE ofeId = p_ofeId AND usuId = p_usuId AND proId = p_proId;
-    IF SQL%ROWCOUNT THEN
+    IF SQL%ROWCOUNT < 1 THEN
         RAISE_APPLICATION_ERROR(-20011, 'No se pudo actualizar la oferta');
     END IF;
     COMMIT;
@@ -814,13 +816,11 @@ END paq_factura;
 CREATE OR REPLACE PACKAGE paq_compra IS
 --Funciones
 --Procedimientos
-PROCEDURE comprar(
-    p_usuId IN NUMBER,
-    p_proId IN INT,
+PROCEDURE comprar (
+    p_facId IN INT,
     p_ofeId IN INT,
-    p_comCantidadUnidades IN INT,
-    p_comSubtotal IN NUMBER
-);
+    p_comCantidadUnidades IN INT
+    );
 PROCEDURE eliminar_compra (
     p_comId IN compra.comId%type
 );
@@ -974,11 +974,14 @@ CREATE OR REPLACE PROCEDURE comprar (
 BEGIN
     -- Start the transaction
     -- Generate a new ID for factura
+    v_facId := OFEID_SEQ.NEXTVAL;
     SELECT ofeId_seq.NEXTVAL INTO v_facId FROM dual;
 
     -- Inserts into the factura so the compras can reference it
-    INSERT INTO FACTURA (facId, usuId, facFecha, facTotal)
-        VALUES (v_facId, p_usuId, SYSDATE, 0);
+    INSERT INTO FACTURA ( FACID, usuId, facFecha, facTotal)
+        VALUES ( v_facid, p_usuId, SYSDATE, 0);
+
+    
 
     FOR i IN 1 .. compras.COUNT LOOP
         -- Gets the unitary price of the offer
@@ -1107,13 +1110,14 @@ delete from municipio;
     paq_usuario.insertar_usuario(10492027, 3, 'Juan', 'Hernandez', 'Calle 15 #1-3',2322, 'azucar220', 'Comprador');
 
     -- Inserciones en la tabla OFERTA
-    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(1,10492021, 1, SYSDATE + 10,'Semillas secas' ,20,1000,'Y');
-    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(2,10492023, 2, SYSDATE + 5,'Gallina rabona' ,15,7000,'Y');
-    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(3,10492021, 3, SYSDATE + 8, 'Manzanas verdes muy verdes' ,10,3000,'Y');
-    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(4,10492021, 4, SYSDATE + 12, 'Tomates muy rojos' ,5,2500,'Y');
-    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(5,10492023, 5, SYSDATE + 7,'Fertilizante de marca DiomedesOrg' ,25,20000,'Y');
+    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(1,10492021, 1, SYSDATE + 10,'Semillas secas' ,2220,1000,'Y');
+    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(2,10492023, 2, SYSDATE + 5,'Gallina rabona' ,1225,7000,'Y');
+    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(3,10492021, 3, SYSDATE + 8, 'Manzanas verdes muy verdes' ,2210,3000,'Y');
+    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(4,10492021, 4, SYSDATE + 12, 'Tomates muy rojos' ,225,2500,'Y');
+    INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(5,10492023, 5, SYSDATE + 7,'Fertilizante de marca DiomedesOrg' ,2225,20000,'Y');
 
     -- Inserciones en la tabla FACTURA
+    /*
     INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (1,10492021, SYSDATE, 20000.50);
     INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (2,10492022, SYSDATE - 1, 11500.25);
     INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (3,10492023, SYSDATE - 2, 12000.75);
@@ -1126,7 +1130,7 @@ delete from municipio;
     INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (3,3, 3, 3,2150);
     INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (4,4, 4, 1,4500);
     INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (5,5, 5, 5,5000);
-
+*/
     COMMIT;
 END;
 --BLOQUE ANONIMO PARA LAS ACTUALIZACIONES(3 UPDATE POR CADA TABLA)
@@ -1152,15 +1156,16 @@ BEGIN
     paq_oferta.actualizar_oferta(5, 10492023, 5, TO_DATE('01/04/25','DD/MM/YY'), ':(',30, 22000, 'Y');
 
     --UPDATE PARA FACTURA
+    /*
     paq_factura.actualizar_fecha_factura(1, 10492021, SYSDATE - 5);
     paq_factura.actualizar_fecha_factura(3, 10492023, SYSDATE - 4);
     paq_factura.actualizar_fecha_factura(5, 10492026, SYSDATE + 7);
-
+    */
     --UPDATE COMPRA
-    paq_compra.actualizar_compra(1, 1, 1, 5, 10000);
+    /*paq_compra.actualizar_compra(1, 1, 1, 5, 10000);
     paq_compra.actualizar_compra(3, 3, 3, 4, 4500);
     paq_compra.actualizar_compra(5, 5, 5, 10, 5400);
-    
+    */
     COMMIT;
 END;
 ALTER TRIGGER TG_ins_oferta ENABLE;
@@ -1182,12 +1187,16 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20001, 'La cédula no puede tener menos de 8 dígitos.');
     END IF;
 END TR_validar_longitud_cedula;
-
+select * from usuario
 --ALTER TRIGGER TR_validar_longitud_cedula DISABLE;
+
+
+set serveroutput on
 CREATE OR REPLACE TRIGGER TR_cantidad_valida
 BEFORE INSERT OR UPDATE OF comCantidadUnidades ON Compra
 FOR EACH ROW
 BEGIN
+    dbms_output.put_line('1: ' || :NEW.comCantidadUnidades  || '  2: ' ||  paq_oferta.cantidad_disponible(:NEW.ofeId)    );
     IF INSERTING THEN
         IF(:NEW.comCantidadUnidades > paq_oferta.cantidad_disponible(:NEW.ofeId)) THEN
             RAISE_APPLICATION_ERROR(-20200,'Cantidad no disponible');

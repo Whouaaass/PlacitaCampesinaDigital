@@ -24,7 +24,7 @@ class dbInterface {
     } 
 }
 
-const DB_USER = process.env.DB_USER || 'demoplacita';
+const DB_USER = process.env.DB_USER || 'bd2';
 const DB_PASSWORD = process.env.DB_PASSWORD || 'oracle';
 const DB_CONNECTION_STRING = process.env.DB_CONNECTION_STRING || 'localhost:1521/xe';
 

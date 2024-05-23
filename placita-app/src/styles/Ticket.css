@@ -1,0 +1,43 @@
+#factura-header {
+    background-color: var(--steelblue);
+    color: var(--white);
+    padding-inline: 40px;
+    display: flex;
+    align-items: center;
+    img {
+        width: 100px;
+        height: 100px;
+    }
+    label {
+        margin-right: auto;
+        h1, p {
+            margin: 0;
+        }
+    }
+}
+#factura-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    
+    ul {
+        list-style: none;
+        
+    }
+    li {
+        display: flex;
+        flex-direction: row;
+        align-items: center;                
+        h3, p {            
+            margin: 0;
+        }
+        h3 {
+            margin-right: auto;
+        }
+    }
+    #factura-total {
+        padding-block: 10px;
+        border-block: 1px solid black;
+    }
+}
