@@ -1007,6 +1007,7 @@ BEGIN
             f.facId as facid,
             u.usuId as usuid,
             u.usuNombre || ' ' || u.USUAPELLIDO as comprador,
+            p.pronombre as producto,
             c.ofeId as ofeid,            
             c.comCantidadUnidades as unidades,
             c.comSubtotal as subtotal,
@@ -1016,6 +1017,7 @@ BEGIN
         INNER JOIN FACTURA f ON c.facId = f.facId
         INNER JOIN USUARIO u ON f.usuId = u.usuId
         INNER JOIN OFERTA o ON c.ofeId = o.ofeId
+        INNER JOIN PRODUCTO p ON o.proid = p.proid
         WHERE f.facId = v_facId;
     dbms_sql.return_result(rc);
     -- Commit the transaction
@@ -1209,3 +1211,21 @@ BEGIN
     END IF;
 END TR_cantidad_valida;
 --ALTER TRIGGER TR_cantidad_valida DISABLE;
+
+CREATE OR REPLACE TRIGGER TR_insert_view_ofertas
+INSTEAD OF INSERT ON v_ofertas
+FOR EACH ROW
+DECLARE
+var_proId producto.proId%type;
+BEGIN
+SELECT producto.proId
+INTO var_proId
+FROM oferta 
+INNER JOIN producto 
+ON producto.proId = oferta.proId
+WHERE proNOMBRE = :NEW.NOMBRE;
+    INSERT INTO oferta(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(:NEW.usuId, var_ProId,:NEW.FechaCaducidad,:NEW.Descripcion,:NEW.Cantidad,:NEW.Precio,'Y'); 
+END TR_insert_view_ofertas;
+select * from usuario
+select * from oferta;
+

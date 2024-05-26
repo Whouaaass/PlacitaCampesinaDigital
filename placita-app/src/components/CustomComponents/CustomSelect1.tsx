@@ -7,6 +7,7 @@ import { FC } from 'react';
 // Propiedades que recibe el componente
 /* TODO: Define the values */
 type CustomProps = {
+    defaultValue?: string;
     values: string[];
     label: string;
     name: string;
@@ -15,7 +16,7 @@ type CustomProps = {
     onChange: (e: any) => void;
 };
 
-const CustomSelect1: FC<CustomProps> = ({ values, label, value, name, required, onChange }) => {
+const CustomSelect1: FC<CustomProps> = ({ defaultValue, values, label, value, name, required, onChange }) => {
     
     function innerOnChange(e: any) {
         e.target.classList.remove('invalid');
@@ -25,7 +26,7 @@ const CustomSelect1: FC<CustomProps> = ({ values, label, value, name, required, 
         <label className="input-container custom-select">
             {`${label} ${required ? '*' : ''}`}
             <select id={name} name={name} value={value} onChange={innerOnChange} required={required} className="select-1">
-                <option value="" disabled>Selecciona un municipio</option>
+                <option value="" disabled>{defaultValue ?? '---'}</option>
                 {values.map((value, index) => (
                     <option key={index} value={value}>{value}</option>
                 ))}

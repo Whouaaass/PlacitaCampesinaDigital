@@ -6,12 +6,12 @@
     width: calc(100% - 20px);
     /* Se le debe restar el padding*/
     padding-inline: 10px;
-    min-height: 180px;
+    min-height: 120px;
 
     display: flex;
     flex-direction: row;
 
-    #page-title {
+    #page-title {        
         font-family: 'Kulim Park';
         font-size: xx-large;
         margin: auto;
@@ -24,10 +24,9 @@
             padding-bottom: 1rem;
         }
     }
-    #go-market {
+    #go-market {       
         position: absolute;
-        right: 20px;
-        top: 50px;  
+        right: 20px;        
         grid-column: 1 / 2;
         grid-row: 1;
     }
@@ -41,7 +40,7 @@
 
 #cart-container {
     font-family: 'Kulim Park' !important;
-    margin-top: 180px;
+    margin-top: 120px;
     display: grid;
     scroll-behavior: smooth;
     grid-template-columns: 6fr 3fr;    

@@ -20,7 +20,7 @@ import AuthProvider from './hooks/AuthProvider';
 import PrivateRoute from './components/auth/PrivateRoute';
 import OffersProvider from './hooks/OffersProvider';
 import BuyCartSec from './components/Cart/buyCartSec';
-import Factura from './components/Factura/Factura';
+import Ticket from './components/Ticket/Ticket';
 
 function App() {
   return (
@@ -36,7 +36,7 @@ function App() {
               <Route path='/market' element={<OffersProvider><Market /></OffersProvider>} />
               <Route path='/products' element={<OffersProvider><ProductsSec /></OffersProvider>} />
             </Route>
-          <Route path="/test" element={<Factura/>}/>
+          <Route path="/test" element={<Ticket ticketData={[{}]}/>}/>
           <Route path="*">404 Not Found</Route>
         </Routes>
       </AuthProvider>

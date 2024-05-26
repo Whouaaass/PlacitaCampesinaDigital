@@ -50,12 +50,12 @@ router.post("/login", async (req: Request, res: Response) => {
         const result = await connection.execute(`SELECT usucontrasenia, usutipo FROM usuario WHERE usuid = ${id}`);
 
         if (result.rows.length <= 0)
-            return res.status(404).send("Usuario no encontrado");
+            return res.status(404).json({ status: 404, error: "Usuario no encontrado" });
 
         const user_data = result.rows[0];
 
         if (password != user_data.USUCONTRASENIA)
-            return res.status(401).json({ status: 'error', message: 'Invalid password' });
+            return res.status(401).json({ status: 401, error: 'Contraseña incorrecta' });
 
 
         const options: CookieOptions = {

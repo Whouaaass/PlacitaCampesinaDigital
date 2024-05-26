@@ -13,6 +13,7 @@ interface CustomProps extends InputHTMLAttributes<HTMLInputElement> {
 const CustomInput1: FC<CustomProps> = ({ label, type, name, value, required, onChange, ...props }) => {
     function innerOnChange(e: any) {
         e.target.classList.remove('invalid');
+        e.target.setCustomValidity('');
         onChange(e);
     }
     return (

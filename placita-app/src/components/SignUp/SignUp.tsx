@@ -191,6 +191,7 @@ function SignUp() {
                             required
                         />
                         <CustomSelect1
+                            defaultValue='Seleccione un municipio'
                             values={MUNICIPIOS ?? DUMMY_MUNICIPIOS}
                             label='Municipio'
                             name='municipio'

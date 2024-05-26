@@ -1,4 +1,7 @@
-#factura-header {
+#ticket {
+    width: 350px;
+}
+#ticket-header {
     background-color: var(--steelblue);
     color: var(--white);
     padding-inline: 40px;
@@ -15,20 +18,24 @@
         }
     }
 }
-#factura-content {
+#ticket-content {
     display: flex;
     flex-direction: column;
     align-items: center;
 
     
     ul {
+        padding: 0;
         list-style: none;
-        
+        display: block;
+        min-width: 250px;
     }
     li {
+
         display: flex;
         flex-direction: row;
-        align-items: center;                
+        align-items: center;
+        justify-content: space-between;
         h3, p {            
             margin: 0;
         }
@@ -36,8 +43,13 @@
             margin-right: auto;
         }
     }
-    #factura-total {
+    #ticket-total {
         padding-block: 10px;
         border-block: 1px solid black;
     }
+}
+
+#ticket-info-1 {
+    max-width: 270px;
+    font-weight:200;
 }

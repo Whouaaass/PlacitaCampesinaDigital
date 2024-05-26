@@ -29,7 +29,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       },
       body: JSON.stringify(data),
     });
-    const res = await response.json();
+    const res = await response.json();    
     if (res.data) {
       setUser(res.data.userid);
       setRol(res.data.rol);
@@ -39,7 +39,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       localStorage.setItem("site", res.token);            
       navigate("/market");      
     }    
-    throw new Error(res.message);
+    return res;    
 
   };
   const verify = async () => {

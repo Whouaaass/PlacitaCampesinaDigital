@@ -62,6 +62,9 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
         e.target.setCustomValidity('');
         if (e.target.name === 'expirationDate' && e.target.value && !checkExpirationDate(e.target.value)) {
             e.target.setCustomValidity('La fecha de caducaidad debe de ser posterior a la fecha actual');                        
+        } else
+        if (e.target.name === 'price' && e.target.value < 0) { 
+            e.target.setCustomValidity('El precio no puede ser menor a 0');
         }
         setOffer({
             ...offer,
@@ -72,6 +75,10 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
         e.preventDefault();        
         addOffer(offer, token).then((response) => {
             console.log(response);
+            if (response.error) {
+                popUpRef.current?.show(`Error al agregar la oferta: ${response.error}`, "red");
+                return;
+            }
             if (response.message) {
                 popUpRef.current?.show("Oferta agregada exitosamente", "blue");
                 setOffer({
@@ -82,11 +89,8 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
                     description: ''
                 });
                 onSuccess();
-            }
-            if (response.error) {
-                popUpRef.current?.show("Error al agregar la oferta", "red");
-            }
-        });;
+            }            
+        });
     }
 
     function handleInvalid(e: FormEvent<HTMLFormElement>) {
@@ -114,7 +118,7 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
             <Modal>
                 <form id="add-offer-modal" className="modal" onSubmit={handleSubmit} onInvalid={handleInvalid}>
                     <h1>Ingresar Datos de la oferta</h1>
-                    <CustomSelect1 values={products} label="Nombre" name="name" value={offer.name} required
+                    <CustomSelect1 defaultValue="Selecciona un producto" values={products} label="Nombre" name="name" value={offer.name} required
                         onChange={handleChange}
                     />
                     <CustomInput1 label="Cantidad" type="number" name="quantity" value={offer.quantity} required

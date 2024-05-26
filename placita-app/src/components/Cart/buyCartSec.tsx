@@ -30,13 +30,12 @@ const BuyCartSec: FC<BuyCartSecProps> = (props) => {
     const popUpRef = useRef<PopUpRef>(null);
     const total = cart.reduce((acc, item) => acc + item.price * item.quantity, 0);
 
-    useEffect(() => {
-
-    }, []);
-
-
     const handleBuy = async () => {
         const res = await sendCompra(cart, token);
+        if (cart.length === 0) {
+            popUpRef.current?.show('No hay productos en el carrito');
+            return;
+        }
         if (res.error) {
             popUpRef.current?.show('Error al realizar la compra');
             return;

@@ -33,15 +33,13 @@ function Login() {
         });
     }
 
-    function handleSubmit(e: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
         e.preventDefault();
-        auth.loginAction(user).catch((err: any) => {
-            if (err.message === "Invalid password")
-                popUpRef.current?.show("Contraseña o usuario incorrecto");
-            else
-                popUpRef.current?.show("Error al iniciar sesión");
-        });
+        const res : any = await auth.loginAction(user)
+        if (res.status === 401 || res.status === 404) {
+            popUpRef.current?.show("Usuario o contraseña incorrectas");
+        }
     }
     function handleInvalid(e: FormEvent<HTMLFormElement>) {
         const control = e.target as HTMLFormElement;
