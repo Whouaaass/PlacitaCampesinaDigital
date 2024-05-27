@@ -1,4 +1,4 @@
-select * from user_triggers;
+
 --Push
 
 drop table municipio cascade constraint;
@@ -77,7 +77,18 @@ FOR EACH ROW
 BEGIN
     :NEW.ofeId := ofeId_seq.NEXTVAL;
 END;
-
+-- Trigger upt_oferta
+CREATE OR REPLACE TRIGGER TG_upt_oferta
+BEFORE UPDATE OF ofeCantidad ON OFERTA
+FOR EACH ROW
+BEGIN
+    IF :NEW.ofeCantidad < 0 THEN
+        RAISE_APPLICATION_ERROR(-20001, 'La cantidad de la oferta no puede ser menor a 0');
+    END IF;
+    IF :NEW.ofeCantidad = 0 THEN
+        UPDATE OFERTA SET ofeActivo = 'N' WHERE ofeId = :NEW.ofeId;
+    END IF;
+END;
 
 -- Tabla FACTURA
 CREATE TABLE FACTURA (
@@ -122,7 +133,13 @@ NOCACHE;
 CREATE OR REPLACE TRIGGER TG_ins_compra
 BEFORE INSERT ON compra
 FOR EACH ROW
+DECLARE
+    v_cantidad_disponible OFERTA.ofeCantidad%TYPE;    
 BEGIN
+    SELECT ofeCantidad INTO v_cantidad_disponible FROM OFERTA WHERE ofeId = :NEW.ofeId;
+    IF v_cantidad_disponible < :NEW.comCantidadUnidades THEN
+        RAISE_APPLICATION_ERROR(-20001, 'La cantidad de unidades a comprar supera la cantidad disponible en la oferta');
+    END IF;
     :NEW.comId := comId_seq.NEXTVAL;
 END;
 --PAQUETES
@@ -979,9 +996,7 @@ BEGIN
 
     -- Inserts into the factura so the compras can reference it
     INSERT INTO FACTURA ( FACID, usuId, facFecha, facTotal)
-        VALUES ( v_facid, p_usuId, SYSDATE, 0);
-
-    
+        VALUES ( v_facid, p_usuId, SYSDATE, 0);    
 
     FOR i IN 1 .. compras.COUNT LOOP
         -- Gets the unitary price of the offer

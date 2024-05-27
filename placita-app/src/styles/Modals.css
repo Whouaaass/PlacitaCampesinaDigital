@@ -201,3 +201,25 @@
     }
     
 }
+
+#simple-ask-modal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding: 20px; 
+    padding-inline: 30px;
+    align-content: center;
+    justify-content: center;
+    h2 {        
+        grid-row: 1;
+        grid-column: span 2;
+    }
+    button {
+        height: fit-content;
+        width: fit-content;
+        justify-self: center;
+        align-self: center;
+        padding-inline: 2.5rem;
+        grid-row: 2;
+    }
+}

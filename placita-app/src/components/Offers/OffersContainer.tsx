@@ -18,7 +18,9 @@ const OffersContainer: React.FC<CustomProps> = ({editing}) => {
                     <OfferCardSmall
                         offerData={{
                             offerid: offer.OFEID,
+                            userId: offer.USUID,
                             name: offer.NOMBRE,
+                            type: offer.TIPO,
                             price: offer.PRECIO,
                             quantity: offer.CANTIDAD,
                             expirationDate: offer.FECHACADUCIDAD,

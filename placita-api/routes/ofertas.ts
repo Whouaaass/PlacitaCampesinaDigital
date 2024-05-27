@@ -26,7 +26,7 @@ router.get("/:id", async (req: Request, res: Response) => {
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const { id } = req.params;
-    const dbQuery = `SELECT * FROM vista_ofertas_disponibles WHERE id = :id`;
+    const dbQuery = `SELECT * FROM v_ofertas WHERE id = :id`;
     try {
         const result = await connection.execute(dbQuery, [id]);
         if (result.rows.length > 0) {

@@ -48,17 +48,9 @@ COMPOUND TRIGGER
     END AFTER STATEMENT;
 END TR_verificar_ofertas_iguales;
 
-BEGIN
-    INSERT INTO 
-        oferta(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) 
-        values(10492021, 1, SYSDATE + 10,'Semillas secas' ,2220,1000,'Y');
+/* Script para probar el método*/
+BEGIN    
     INSERT INTO 
         oferta(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) 
         values(10492021, 1, TO_DATE('24/06/2025', 'DD/MM/YYYY'),'Semillas secaFADJSKFAJSLDJFSJLD', 20, 10, 'Y');
 END;
-SELECT * FROM Oferta WHERE USUID = 10492021;
-SELECT LAST_NUMBER FROM USER_SEQUENCES WHERE SEQUENCE_NAME = 'OFEID_SEQ';
-
-
-
-select * from usuario

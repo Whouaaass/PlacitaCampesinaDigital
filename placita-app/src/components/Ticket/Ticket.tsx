@@ -1,58 +1,79 @@
 import { FC } from "react";
 import Modal from "../Modals/Modal";
 import placitaLogo from "/PlacitaLogo.png";
+import {MONTH_NAMES} from "../../CONSTANTS";
+import MaterialSymbolsIcon from "../Icons/MaterialSymbolsIcon";
 
-export const ModalTicket: FC<ModalTicketProps> = ({ ticketData, onClose }) => {
+export const TicketModal: FC<ModalTicketProps> = ({ ticketData = [{}], onClose }) => {
     return <Modal>
-        <Ticket ticketData={{}} />
-        <div id="modal-mask" onClick={onClose}></div>
+        <div id="ticket-modal">
+            <Ticket ticketData={ticketData} />
+            <button id="ticket-exit-button" onClick={onClose} className="button-t">
+                <MaterialSymbolsIcon name="close" size="1.5rem" color='black' />
+            </button>
+        </div>
+
     </Modal>
 }
 
 const Ticket: FC<{ ticketData: any }> = ({ ticketData }) => {
-    const { FACID, TOTAL } = ticketData[0] as TicketData;
-    return <div id="ticket">
+    
+    const { FACID, TOTAL, FECHACOMPRA, USUID } = ticketData[0] as TicketData ?? {};
+    const buyDateFrac = FECHACOMPRA?.substring(0, 10).split('-');
+    const buyDate = `${buyDateFrac[2]}/${MONTH_NAMES[+buyDateFrac[1]]}/${buyDateFrac[0]}`;    
+    return <>
         <div id="ticket-header">
             <label>
+                <img src={placitaLogo} />
                 <h1>Factura</h1>
-                <p>{FACID}</p>
             </label>
-            <img src={placitaLogo} />
+            <label>
+                <p>N° {FACID ?? '0000000'}</p>
+                <p>{buyDate ?? 'DD/MM/YYYY'}</p>
+            </label>
         </div>
         <div id="ticket-content">
-            <h2>Mi Compra</h2>
-            <ul>
-                {ticketData.map((data: TicketData) => {
-                    <li key={data.OFEID}>
-                        <label>
-                            <h3>{data.PRODUCTO}x{data.UNIDADES}</h3>
-                            <p>{data.OFEID}</p>
-                        </label>
-                        <p>{data.SUBTOTAL}</p>
-                    </li>
-                })}
-                <li>
-                    <label>
-                        <h3>Producto</h3>
-                        <p>ID</p>
-                    </label>
-                    <p>Precio</p>
-                </li>
-            </ul>
-            <label id="ticket-total">
-                {TOTAL}
-            </label>
-            <p id="ticket-info-1">Contactese con el siguiente número para continuar con la transacción (Por favor tomar foto a su Factura)</p>
-            <p>{"<Numero de Gremio>"}</p>
+            <p id="id-cliente">Cliente: {USUID ?? '00000'}</p>
+            <h2 className="underline">Mi Compra</h2>
+            <table>
+                <tr><td colSpan={4} className="horizontal-line"></td></tr>
+                <tr>
+                    <th>Nombre</th>
+                    <th>ID</th>
+                    <th>Cantidad</th>
+                    <th>Subtotal</th>
+                </tr>
+                <tr><td colSpan={4} className="horizontal-line"></td></tr>
+                <tbody>
+                    {ticketData.map((data: TicketData) => 
+                        <tr key={data.OFEID}>
+                            <td>{data.PRODUCTO}</td>
+                            <td>{data.OFEID}</td>
+                            <td>{data.UNIDADES}</td>
+                            <td>{data.SUBTOTAL}</td>
+                        </tr>
+                    )}
+                </tbody>
+                <tr><td colSpan={4} className="horizontal-line"></td></tr>
+                <tfoot>
+                    <td colSpan={4}>Total: ${TOTAL ?? "0000"}</td>
+                </tfoot>
+            </table>
+            <p id="ticket-info-1">
+                Contactese con el siguiente número para continuar con la transacción (Por favor tomar foto a su Factura)
+                <br />
+                <br />
+                {"<Numero de Gremio>"}
+            </p>
         </div>
-    </div>
+    </>
 }
 
 export default Ticket;
 
 export interface ModalTicketProps {
     onClose: () => void;
-    ticketData: Array<TicketData>;
+    ticketData?: Array<TicketData>;
 }
 
 export interface TicketData {

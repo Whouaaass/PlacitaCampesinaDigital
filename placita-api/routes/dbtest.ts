@@ -45,7 +45,7 @@ router.get("/experimental", async (req: Request, res: Response) => {
             dbms_sql.return_result(rc);
         end;
         `);
-        res.json({data: data})
+        res.json({data: data.implicitResults[0]});
 
     } catch (error) {
         console.error(error);

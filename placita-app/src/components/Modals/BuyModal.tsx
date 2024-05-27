@@ -29,7 +29,13 @@ const BuyModal: React.FC<BuyModalProps> = ({ offerData, onClose }) => {
             popUpRef.current?.show('La cantidad debe ser mayor a 0');            
             return;
         }
-        addToCart(offerData.name, offerData.price, offerData.offerid, +quantity);
+        try {
+            addToCart(offerData.name, offerData.price, offerData.offerid, +quantity);
+        } catch (error: any) {
+            popUpRef.current?.show(error.message);
+            return;
+        }
+        
         onClose();
     }
     return (<>
