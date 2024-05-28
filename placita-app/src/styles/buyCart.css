@@ -1,5 +1,5 @@
 #cart-header {
-    position: absolute;
+    
     background-image: url('inicioSesionBackPic.png');
     background-position-y: calc(100%/1.7);
     background-size: cover;
@@ -39,8 +39,7 @@
 }
 
 #cart-container {
-    font-family: 'Kulim Park' !important;
-    margin-top: 120px;
+    font-family: 'Kulim Park' !important;    
     display: grid;
     scroll-behavior: smooth;
     grid-template-columns: 6fr 3fr;    

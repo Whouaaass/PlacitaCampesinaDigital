@@ -1,5 +1,5 @@
 
-#offers-container {
+.offers-container {
     list-style-type: none;
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
@@ -13,6 +13,15 @@
     #delete-offer-button:hover {
         background-color: var(--lava);
     }
+}
+.offers-container-title {
+    text-align: left;
+    font-size: xx-large;
+    max-width: 1070px;
+    padding: 10px;
+    width: calc(100% - 10px);
+    margin: auto;
+    font-weight: normal;
 }
 .offer-card-small {
     display: grid;    

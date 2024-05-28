@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 const AuthContext = createContext({
   token: "",
   user: "", /*!< User  */
+  userName: "", /*!< Username */
   rol: "", /*!< Rol */
   loginAction: async (data: loginData) => {},
   logOut: () => { },
@@ -16,9 +17,10 @@ interface AuthProviderProps {
 
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState(localStorage.getItem("user") || "");
+  const [userName, setUserName] = useState("");
   const [token, setToken] = useState(localStorage.getItem("site") || "");  
   const [rol, setRol] = useState(localStorage.getItem("rol") || "");
-  const navigate = useNavigate();
+  const navigate = useNavigate();  
   
   const loginAction = async (data: loginData) => {
 
@@ -49,11 +51,13 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
           token: `session=${token}`,
         },
       });
-      if (response.status === 401) {
-        logOut();
-      } else {
-        return response.json();
+      if (response.status !== 200) {
+        return logOut();
       }
+      const res = await response.json();      
+      setUserName(`${res.user.USUNOMBRE} ${res.user.USUAPELLIDO}`);
+      
+      return res;      
     } catch (err) {
       console.error(err);
     }
@@ -72,7 +76,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ token, user, rol, loginAction, logOut, verify }}>
+    <AuthContext.Provider value={{ token, user, userName, rol, loginAction, logOut, verify }}>
       {children}
     </AuthContext.Provider>
   );

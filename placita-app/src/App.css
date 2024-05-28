@@ -7,6 +7,25 @@
     --lava: #D61515;
 }
 
+/**/
+#user-info {
+    display: flex;
+    width: 100%;
+    background-color: var(--infoblue);
+    height: 20px;
+    justify-content: end;
+    .user-name {
+        font-family: 'Inter';
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 20px;
+        color: var(--white);
+        
+    }  
+}
+/**/
+
 .hidden {
     display: none;
     animation: fadeout 0.5s;

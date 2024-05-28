@@ -7,9 +7,11 @@ import placitaLogo from '/PlacitaLogo.png';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { Link } from 'react-router-dom';
 import SearchBar1 from '../CustomComponents/SearchBar1';
+import UserInfo from './UserInfoBar';
 
-const ProductsFrame: FC<PropsWithChildren> = ({ children }) => {    
+const ProductsFrame: FC<PropsWithChildren> = ({ children}) => {    
     return <>
+        <UserInfo />
         <header id="products-header" className="thick flex flex-row">
             <Link to="/market" >
                 <img id="placita-logo" className="prevent-select" src={placitaLogo} alt='placita-logo' />
@@ -28,8 +30,7 @@ const ProductsFrame: FC<PropsWithChildren> = ({ children }) => {
 
         <main id="products-container">
             {children}
-        </main>
-        
+        </main>        
     </>
 }
 

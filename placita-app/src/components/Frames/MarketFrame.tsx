@@ -10,10 +10,11 @@ import SearchBar1 from '../CustomComponents/SearchBar1';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../hooks/AuthProvider';
 import { OffersContext } from '../../hooks/OffersProvider';
+import UserInfo from './UserInfoBar';
 
 // Propiedades que recibe el componente
 type CustomProps = {
-    children: ReactNode;
+    children: ReactNode;    
 };
 
 const MarketFrame: FC<CustomProps> = ({ children }) => {
@@ -35,7 +36,9 @@ const MarketFrame: FC<CustomProps> = ({ children }) => {
 
 
     return <>
+        <UserInfo/>
         <header id="market-header" className="thick flex flex-row" >
+            
             <Link to="/cart" id="go-cart">
                 <button className='button-2'>
                     <MaterialSymbolsIcon name="shopping_cart" opsz="48" weight='600' size='3rem' />

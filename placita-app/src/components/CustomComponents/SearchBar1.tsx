@@ -6,7 +6,7 @@ export interface SearchBarProps {
     onSubmit?: (e: Event) => void;
 }
 
-const ORDEROPTIONS = ['Nombre', 'Precio', 'Cantidad'];
+const ORDEROPTIONS = ['Nombre', 'Precio', 'Tipo'];
 
 const SearchBar1: FC<SearchBarProps> = ({ onSubmit = () => { } }) => {    
     const { filters, setFilters } = useContext(OffersContext);
