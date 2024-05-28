@@ -44,6 +44,7 @@ function SignUp() {
     });
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
+    const navigate = useNavigate();
 
     const isAgrocauca = user.agrocauca === 'yes' ? true : false;
 
@@ -91,24 +92,21 @@ function SignUp() {
         }
 
         // sends the sign up data to the api server
-        signUpUser(user).then((data) => {
-            if (data.errorNum === 1) {
-                popUpRef.current?.show('La cedula ya se encuentra registrada');
-                return;
+        signUpUser({
+            ...user,                        
+            firstname: user.firstname.trim(),
+            lastname: user.lastname.trim(),
+            dir: user.dir.trim(),                                      
+        }).then((data) => {
+            if (data.error) {
+                return popUpRef.current?.show(data.error);                
             }
-            if (data.errorNum === 20001) {
-                popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
-                return;
-            }
-            if (data.errorNum === 1438) {
-                popUpRef.current?.show('Error en el formato de la cedula');
-                return;
-            }
-            if (data.errorNum) {
-                popUpRef.current?.show('Volve a correr el script de la bd >:u');
-            }
-            popUpRef.current?.show('Usuario creado exitosamente', 'blue');
             
+            popUpRef.current?.show('Usuario creado exitosamente', 'blue');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+
         }).catch((err) => {
             popUpRef.current?.show('Error del servidor');
             console.log('Error al enviar la peticion al servidor')
@@ -124,6 +122,9 @@ function SignUp() {
             return;
         }
         if (control.validity.patternMismatch) {
+            if (control.name === 'telnumber') {
+                return popUpRef.current?.show('Teléfono incorrecto (Ej: 3123456789)');
+            }
             popUpRef.current?.show('Formato de entrada incorrecto');
             return;
         }
@@ -165,7 +166,7 @@ function SignUp() {
                         />
                         <CustomInput1
                             label='Cédula'
-                            type='id'
+                            type='number'
                             name='id'
                             value={user.id}
                             onChange={handleChange}

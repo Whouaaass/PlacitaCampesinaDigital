@@ -47,12 +47,13 @@ router.post("/login", async (req: Request, res: Response) => {
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const { id, password } = req.body;
     try {
-        const result = await connection.execute(`SELECT usucontrasenia, usutipo FROM usuario WHERE usuid = ${id}`);
+        const resultdb = await connection.execute(`BEGIN PAQ_FETCH.GET_USUARIO(:id); END;`, [ id ]);
+        const result = resultdb.implicitResults[0];
 
-        if (result.rows.length <= 0)
+        if (result.length <= 0)
             return res.status(404).json({ status: 404, error: "Usuario no encontrado" });
 
-        const user_data = result.rows[0];
+        const user_data = result[0];
 
         if (password != user_data.USUCONTRASENIA)
             return res.status(401).json({ status: 401, error: 'Contraseña incorrecta' });
@@ -106,13 +107,17 @@ router.post("/signup", async (req: Request, res: Response) => {
         });
     } catch (error: any) {
         console.log(error);
-        if (error.errorNum)
-            res.status(500).json({ status: 'error', message: 'Error de la base de datos', errorNum: error.errorNum });
-        else if (error.code)
-            res.status(500).json({ status: 'error', message: 'Errror del sevidor', code: error.code });
-        else {
-            res.status(500).json({ status: 'error', message: 'Error Interno del servidor' });
-        }
+        if (error.errorNum === 1)
+            return res.status(400).json({ error: 'La cedula ya se encuentra registrada', errorNum: error.errorNum });
+        if (error.errorNum === 20001)
+            return res.status(400).json({ error: 'La cedula tiene una longuitud menor a 8', errorNum: error.errorNum });
+        if (error.errorNum === 1438)
+            return res.status(400).json({ error: 'Error en el formato de la cedula', errorNum: error.errorNum });
+        if (error.code)
+            return res.status(500).json({ error: 'Error del sevidor', code: error.code });
+                
+        res.status(500).json({ error: 'Error Interno del servidor' });
+        
     } finally {
         connection?.close();
     }

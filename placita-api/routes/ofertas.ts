@@ -10,17 +10,16 @@ const router = express.Router();
 router.get("/", async (req: Request, res: Response) => {
     const connection = await db.connect();
     if (!connection)
-        return res.status(503).json({ error: "Error al conectar con la base de datos" });
-    const sqltable = "v_ofertas";
-    const dbQuery = `SELECT * FROM ${sqltable}`;
+        return res.status(503).json({ error: "Error al conectar con la base de datos" });    
+    const dbQuery = `BEGIN PAQ_FETCH.GET_OFERTAS(''); END;`;
     try {
-        const result = await connection.execute(dbQuery);
-        res.json({ data: result.rows });
+        const resultdb = await connection.execute(dbQuery);
+        res.json({ data: resultdb.implicitResults[0] });
     } catch (error) {
         res.status(500).json({ error: "Internal server error" });
     }
 });
-
+/*
 router.get("/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
     if (!connection)
@@ -38,16 +37,20 @@ router.get("/:id", async (req: Request, res: Response) => {
         res.status(500).json({ error: "Error Interno del servidor", errorNum: error.errorNum });
     }
 });
+*/
 
 router.get("/user/:id", async (req: Request, res: Response) => {
     const connection = await db.connect();
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const id = req.params.id;
-    const dbQuery = `SELECT * FROM v_ofertas WHERE usuid = ${id}`;
+    //const dbQuery = `SELECT * FROM v_ofertas WHERE usuid = ${id}`;
+    const dbQuery = 'BEGIN PAQ_FETCH.GET_OFERTAS(:usuid, \'\'); END;';
+
     try {
-        const result = await connection.execute(dbQuery);
-        res.status(200).json({ data: result.rows });
+        const resultdb = await connection.execute(dbQuery, [id]);
+        const result = resultdb.implicitResults[0];
+        res.status(200).json({ data: result });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error: "Error Interno del servidor" });
@@ -87,19 +90,11 @@ router.post("/edit", Verify, async (req: Request, res: Response) => {
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const { offerid, user, name, quantity, price, expirationDate, description } = req.body;
-    const dbQuery = `BEGIN 
-    PAQ_OFERTA.ACTUALIZAR_OFERTA(
-        ${offerid}, 
-        ${user.USUID}, 
-        '${name}',
-        TO_DATE('${(expirationDate as string).substring(0, 10)}','YYYY-MM-DD'), 
-        '${description}', 
-        ${quantity}, 
-        ${price}, 
-        'Y' ); 
-    END;`;
+
+    const dbQuery = 'BEGIN PAQ_OFERTA.ACTUALIZAR_OFERTA(:offerid, :usuid, :nombre, TO_DATE(:fechaCaducidad, \'YYYY-MM-DD\'), :descripcion, :cantidad, :precio, \'Y\'); END;'
+
     try {
-        await connection.execute(dbQuery);
+        await connection.execute(dbQuery, [offerid, user.USUID, name, expirationDate, description, quantity, price]);
         res.status(201).json({ message: "Offer edited" });
     } catch (error: any) {
         console.log(JSON.stringify(error));

@@ -1,16 +1,13 @@
-
---Push
-
 drop table municipio cascade constraint;
 drop table producto cascade constraint;
-drop table factura cascade constraint;
 drop table compra cascade constraint;
+drop table detalle_compra cascade constraint;
 drop table oferta cascade constraint;
 drop table usuario cascade constraint;
 --Eliminar datos de las tablas
 /*BEGIN
+delete from detalle_compra;
 delete from compra;
-delete from factura;
 delete from oferta;
 delete from usuario;
 delete from producto;
@@ -22,7 +19,8 @@ CREATE TABLE MUNICIPIO (
     munNombre varchar2(50) NOT NULL,
     munTipoClima varchar2(50) NOT NULL, 
     CONSTRAINT pk_municipio primary key (munCodigo),
-    CONSTRAINT ckc_munTipoClima CHECK (munTipoClima IN ('Frio', 'Templado', 'Caliente'))
+    CONSTRAINT ckc_munTipoClima CHECK (munTipoClima IN ('Frio', 'Templado', 'Caliente')),
+    CONSTRAINT ckc_munCodigoPos CHECK (munCodigo>0)
 );
 
 -- Tabla PRODUCTO
@@ -31,9 +29,9 @@ CREATE TABLE PRODUCTO (
     proNombre varchar2(100) NOT NULL,
     proTipo varchar2(50) NOT NULL ,
     CONSTRAINT pk_producto primary key (proId),
-    CONSTRAINT ckc_prodTipo CHECK (proTipo IN ('Insumo', 'Animal', 'Fruta', 'Vegetal'))
+    CONSTRAINT ckc_prodTipo CHECK (proTipo IN ('Insumo', 'Animal', 'Fruta', 'Vegetal')),
+    CONSTRAINT ckc_proIdPos CHECK (proId>0)
 );
-
 -- Tabla USUARIO
 CREATE TABLE USUARIO (
     usuId NUMBER(10,0) NOT NULL,
@@ -46,7 +44,8 @@ CREATE TABLE USUARIO (
     usuTipo varchar2(20),
     CONSTRAINT pk_usuId PRIMARY KEY (usuId),
     CONSTRAINT fk_usu_munCodigo FOREIGN KEY (munCodigo) REFERENCES MUNICIPIO(munCodigo),
-    CONSTRAINT ckc_usuTipo CHECK (usuTipo IN ('Comprador', 'Campesino'))
+    CONSTRAINT ckc_usuTipo CHECK (usuTipo IN ('Comprador', 'Campesino')),
+    CONSTRAINT ckc_usuIdPos CHECK (usuId > 0)
 );
 
 -- Tabla OFERTA
@@ -60,11 +59,14 @@ CREATE TABLE OFERTA (
     ofePrecio NUMBER(9,2) NOT NULL,
     ofeActivo CHAR(1) NOT NULL,
     CONSTRAINT pk_ofeId PRIMARY KEY (ofeId),
-    CONSTRAINT uq_ofe UNIQUE (ofeId, usuId, proId, ofeFechaCaducidad, ofeCantidad, ofeDescripcion, ofePrecio, ofeActivo),
+    CONSTRAINT uq_ofe UNIQUE (usuId, proId, ofeFechaCaducidad, ofeCantidad, ofeDescripcion, ofePrecio, ofeActivo),
     CONSTRAINT fk_ofer_usuId FOREIGN KEY (usuId) REFERENCES USUARIO(usuId),
     CONSTRAINT fk_ofer_proId FOREIGN KEY (proId) REFERENCES PRODUCTO(proId),
-    CONSTRAINT chk_ofer_estado CHECK (ofeActivo IN('Y','N'))
+    CONSTRAINT chk_ofer_estado CHECK (ofeActivo IN('Y','N')),
+    CONSTRAINT ckc_ofeIdPos CHECK (ofeId>0),
+    CONSTRAINT CKC_OFECANTIDAD CHECK (ofeCantidad >= 0)
 );
+
 --Secuencia de id oferta 
 CREATE SEQUENCE ofeId_seq
 START WITH 1
@@ -77,52 +79,16 @@ FOR EACH ROW
 BEGIN
     :NEW.ofeId := ofeId_seq.NEXTVAL;
 END;
--- Trigger upt_oferta
-CREATE OR REPLACE TRIGGER TG_upt_oferta
-BEFORE UPDATE OF ofeCantidad ON OFERTA
-FOR EACH ROW
-BEGIN
-    IF :NEW.ofeCantidad < 0 THEN
-        RAISE_APPLICATION_ERROR(-20001, 'La cantidad de la oferta no puede ser menor a 0');
-    END IF;
-    IF :NEW.ofeCantidad = 0 THEN
-        UPDATE OFERTA SET ofeActivo = 'N' WHERE ofeId = :NEW.ofeId;
-    END IF;
-END;
 
--- Tabla FACTURA
-CREATE TABLE FACTURA (
-    facId INT NOT NULL,
-    usuId NUMBER NOT NULL,
-    facFecha DATE NOT NULL,
-    facTotal DECIMAL(11,2) NOT NULL,
-    CONSTRAINT PK_facId PRIMARY KEY (facId),
-    CONSTRAINT FK_FAC_usuId FOREIGN KEY (usuId) REFERENCES USUARIO(usuId)
-);
---Secuencia de id factura
-CREATE SEQUENCE facId_seq
-START WITH 1
-INCREMENT BY 1
-NOCACHE;
---Trigger ins_factura
-CREATE OR REPLACE TRIGGER TG_ins_factura
-BEFORE INSERT ON factura
-FOR EACH ROW
-BEGIN
-    if :NEW.facId is null then
-        :NEW.facId := facId_seq.NEXTVAL;
-    end if;
-END;
--- Tabla COMPRA
-CREATE TABLE COMPRA (
+-- Tabla compra
+CREATE TABLE Compra (
     comId INT NOT NULL,
-    facId INT NOT NULL,
-    ofeId INT NOT NULL,
-    comCantidadUnidades INT NOT NULL,
-    comSubtotal NUMBER(9,2) NOT NULL,
+    usuId NUMBER NOT NULL,
+    comFecha DATE NOT NULL,
+    comTotal DECIMAL(11,2) NOT NULL,
     CONSTRAINT PK_comId PRIMARY KEY (comId),
-    CONSTRAINT FK_COMP_facId FOREIGN KEY (facId) REFERENCES FACTURA(facId),
-    CONSTRAINT FK_COMP_ofeId FOREIGN KEY (ofeId) REFERENCES OFERTA(ofeId)
+    CONSTRAINT FK_com_usuId FOREIGN KEY (usuId) REFERENCES USUARIO(usuId),
+    CONSTRAINT ckc_comIdPos CHECK (comId>0)
 );
 --Secuencia de id compra
 CREATE SEQUENCE comId_seq
@@ -133,14 +99,36 @@ NOCACHE;
 CREATE OR REPLACE TRIGGER TG_ins_compra
 BEFORE INSERT ON compra
 FOR EACH ROW
+BEGIN
+    if :NEW.comId is null then
+        :NEW.comId := comId_seq.NEXTVAL;
+    end if;
+END;
+-- Tabla detalle_compra
+CREATE TABLE detalle_compra (
+    detComId INT NOT NULL,
+    comId INT NOT NULL,
+    ofeId INT NOT NULL,
+    detComCantidadUnidades INT NOT NULL,
+    detComSubtotal NUMBER(9,2) NOT NULL,
+    CONSTRAINT PK_detComId PRIMARY KEY (detComId),
+    CONSTRAINT FK_detComP_comId FOREIGN KEY (comId) REFERENCES compra(comId),
+    CONSTRAINT FK_detComP_ofeId FOREIGN KEY (ofeId) REFERENCES OFERTA(ofeId),
+    CONSTRAINT ckc_detComIdPos CHECK (detComId>0)
+);
+--Secuencia de id detalle_compra
+CREATE SEQUENCE detComId_seq
+START WITH 1
+INCREMENT BY 1
+NOCACHE;
+--Trigger ins_detalle_compra
+CREATE OR REPLACE TRIGGER TG_ins_detalle_compra
+BEFORE INSERT ON detalle_compra
+FOR EACH ROW
 DECLARE
     v_cantidad_disponible OFERTA.ofeCantidad%TYPE;    
 BEGIN
-    SELECT ofeCantidad INTO v_cantidad_disponible FROM OFERTA WHERE ofeId = :NEW.ofeId;
-    IF v_cantidad_disponible < :NEW.comCantidadUnidades THEN
-        RAISE_APPLICATION_ERROR(-20001, 'La cantidad de unidades a comprar supera la cantidad disponible en la oferta');
-    END IF;
-    :NEW.comId := comId_seq.NEXTVAL;
+    :NEW.detComId := detComId_seq.NEXTVAL;
 END;
 --PAQUETES
 --PAQUETE Municipio
@@ -468,7 +456,7 @@ SELECT proNombre, proTipo, usuNombre || ' ' || usuApellido AS Campesino,TO_CHAR(
 --Paquete oferta
 CREATE OR REPLACE PACKAGE paq_oferta IS
 --Funciones
-FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE;
+FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad detalle_compra.detComCantidadUnidades%TYPE) RETURN detalle_compra.detComSubtotal%TYPE;
 FUNCTION cantidad_disponible(p_ofeId IN Oferta.ofeId%TYPE) RETURN Oferta.ofeCantidad%TYPE;
 FUNCTION obtener_descuento(p_ofeId IN  Oferta.ofeId%TYPE) RETURN Oferta.ofePrecio%TYPE;
 --Procedimientos
@@ -514,9 +502,9 @@ END paq_oferta;
 --Cuerpo
 CREATE OR REPLACE PACKAGE BODY paq_oferta IS
 --Funciones
-FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad Compra.comCantidadUnidades%TYPE) RETURN Compra.comSubtotal%TYPE IS
+FUNCTION calcular_subtotal(p_ofeId Oferta.ofeId%TYPE, p_cantidad detalle_compra.detComCantidadUnidades%TYPE) RETURN detalle_compra.detComSubtotal%TYPE IS
         v_precio_unitario Oferta.ofePrecio%TYPE;
-        v_subtotal Compra.comSubtotal%TYPE;
+        v_subtotal detalle_compra.detComSubtotal%TYPE;
     BEGIN
         SELECT ofePrecio INTO v_precio_unitario FROM Oferta WHERE ofeId = p_ofeId;
         v_subtotal := p_cantidad * v_precio_unitario;
@@ -583,8 +571,8 @@ IS
 BEGIN
     FOR OfertaRec IN CursorOfertas
     LOOP
-        -- Aquí puedes realizar las operaciones que necesites con los datos de cada oferta
-        DBMS_OUTPUT.PUT_LINE('ID: ' || OfertaRec.ofeId || ', Usuario: ' || OfertaRec.usuNombre || ', Producto: ' || OfertaRec.proNombre || ', Fecha de Caducidad: ' || To_Char(OfertaRec.ofeFechaCaducidad, 'DD MONTH YYYY') || ', Descripción: ' || OfertaRec.ofeDescripcion || ', Cantidad: ' || OfertaRec.ofeCantidad || ', Precio: ' || OfertaRec.ofePrecio);
+        -- Aqu� puedes realizar las operaciones que necesites con los datos de cada oferta
+        DBMS_OUTPUT.PUT_LINE('ID: ' || OfertaRec.ofeId || ', Usuario: ' || OfertaRec.usuNombre || ', Producto: ' || OfertaRec.proNombre || ', Fecha de Caducidad: ' || To_Char(OfertaRec.ofeFechaCaducidad, 'DD MONTH YYYY') || ', Descripci�n: ' || OfertaRec.ofeDescripcion || ', Cantidad: ' || OfertaRec.ofeCantidad || ', Precio: ' || OfertaRec.ofePrecio);
     END LOOP;
 END ord_ofe_nombre_Prod;
 PROCEDURE ofertas_mas_baratas IS
@@ -651,14 +639,14 @@ PROCEDURE ord_ofe_fecha_cad(p_proTipo IN varchar2) IS
                 ORDER BY OFERTA.proId
             )
             LOOP
-                DBMS_OUTPUT.PUT_LINE('ID: ' || oferta_rec.ofeId || ', Usuario: ' || oferta_rec.usuNombre || ', Producto: ' || oferta_rec.proNombre || ', Fecha de Caducidad: ' || oferta_rec.ofeFechaCaducidad || ', Descripción: ' || oferta_rec.ofeDescripcion || ', Cantidad: ' || oferta_rec.ofeCantidad || ', Precio: ' || oferta_rec.ofePrecio);
+                DBMS_OUTPUT.PUT_LINE('ID: ' || oferta_rec.ofeId || ', Usuario: ' || oferta_rec.usuNombre || ', Producto: ' || oferta_rec.proNombre || ', Fecha de Caducidad: ' || oferta_rec.ofeFechaCaducidad || ', Descripci�n: ' || oferta_rec.ofeDescripcion || ', Cantidad: ' || oferta_rec.ofeCantidad || ', Precio: ' || oferta_rec.ofePrecio);
             END LOOP;
         END LOOP;
     END list_ofertas_tipo;
 PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER) IS
         CURSOR offer_cursor IS
             SELECT 
-                u.usuNombre ||' '|| u.usuApellido AS NombreCompleto,
+                u.usuNombre ||' '|| u.usuApellido AS NombredetCompleto,
                 o.ofeDescripcion AS DescripcionOferta,
                 o.ofePrecio AS price
             FROM OFERTA o
@@ -676,7 +664,7 @@ PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER) IS
 
             EXIT WHEN offer_cursor%NOTFOUND;
 
-            DBMS_OUTPUT.PUT_LINE(v_record.NombreCompleto ||': '|| v_record.DescripcionOferta ||' - $'|| v_record.price);
+            DBMS_OUTPUT.PUT_LINE(v_record.NombredetCompleto ||': '|| v_record.DescripcionOferta ||' - $'|| v_record.price);
         END LOOP;
 
         CLOSE offer_cursor;
@@ -775,214 +763,216 @@ END insertar_oferta;
 END paq_oferta;
 
 --Paquete oferta
-CREATE OR REPLACE PACKAGE paq_factura IS
---Funciones
---Procedimientos
---PROCEDIMIENTO PARA FACTURA
-PROCEDURE eliminar_factura (
-    p_facId IN factura.facId%type
-);
-PROCEDURE actualizar_fecha_factura (
-    p_facId IN INT,
-    p_usuId IN NUMBER,
-    p_facFecha IN DATE
-);
-PROCEDURE insertar_factura (
-    p_usuId IN NUMBER,
-    p_facFecha IN DATE,
-    p_facTotal IN DECIMAL
-);
-END paq_factura;
---Cuerpo
-CREATE OR REPLACE PACKAGE BODY paq_factura IS
---Funciones
---Procedimientos
-PROCEDURE eliminar_factura (
-    p_facId IN factura.facId%type
-)
-IS
-BEGIN
-    DELETE FROM FACTURA WHERE facId = p_facId;
-END eliminar_factura;
-PROCEDURE actualizar_fecha_factura (
-    p_facId IN INT,
-    p_usuId IN NUMBER,
-    p_facFecha IN DATE
-)
-IS
-BEGIN
-    UPDATE FACTURA
-    SET facFecha = p_facFecha
-    WHERE facId = p_facId AND usuId = p_usuId;
-    COMMIT;
-END actualizar_fecha_factura;
-PROCEDURE insertar_factura (
-    p_usuId IN NUMBER,
-    p_facFecha IN DATE,
-    p_facTotal IN DECIMAL
-)
-IS
-BEGIN
-    INSERT INTO FACTURA (usuId, facFecha, facTotal)
-    VALUES (p_usuId, p_facFecha, p_facTotal);
-    COMMIT;
-END insertar_factura;
-END paq_factura;
-
---Paquete compra
 CREATE OR REPLACE PACKAGE paq_compra IS
 --Funciones
 --Procedimientos
-PROCEDURE comprar (
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT
-    );
+--PROCEDIMIENTO PARA compra
 PROCEDURE eliminar_compra (
     p_comId IN compra.comId%type
 );
-PROCEDURE actualizar_compra (
+PROCEDURE actualizar_fecha_compra (
     p_comId IN INT,
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT,
-    p_comSubtotal NUMBER
+    p_usuId IN NUMBER,
+    p_comFecha IN DATE
 );
-
 PROCEDURE insertar_compra (
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT,
-    p_comSubtotal NUMBER
+    p_usuId IN NUMBER,
+    p_comFecha IN DATE,
+    p_comTotal IN DECIMAL
 );
 END paq_compra;
---Vistas
-CREATE OR REPLACE VIEW v_compras AS
-SELECT c.comId AS "ID de Compra",
-    f.facId AS "ID de Factura",
-    u.usuId AS "ID de Usuario",
-    u.usuNombre AS "Nombre de Usuario",
-    c.ofeId AS "ID de Oferta",
-    o.ofeDescripcion AS "Descripción de la Oferta",
-    c.comCantidadUnidades AS "Cantidad de Unidades",
-    c.comSubtotal AS "Subtotal",
-    f.facFecha AS "Fecha de Factura",
-    f.facTotal AS "Total de Factura"
-FROM COMPRA c
-INNER JOIN FACTURA f ON c.facId = f.facId
-INNER JOIN USUARIO u ON f.usuId = u.usuId
-INNER JOIN OFERTA o ON c.ofeId = o.ofeId;
---Select * from v_compras;
+
+
 --Cuerpo
-CREATE OR REPLACE PACKAGE BODY paq_compra IS 
+CREATE OR REPLACE PACKAGE BODY paq_compra IS
 --Funciones
 --Procedimientos
- PROCEDURE comprar (
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT
-    )
-    IS
-    BEGIN
-      INSERT INTO COMPRA (facId, ofeId, comCantidadUnidades,comSubtotal)
-      VALUES (p_facId, p_ofeId, p_comCantidadUnidades,paq_oferta.calcular_subtotal(p_ofeId,p_comCantidadUnidades));
-END comprar;
 PROCEDURE eliminar_compra (
     p_comId IN compra.comId%type
 )
 IS
 BEGIN
-    DELETE FROM COMPRA WHERE comId = p_comId;
+    DELETE FROM compra WHERE comId = p_comId;
 END eliminar_compra;
-PROCEDURE actualizar_compra (
+PROCEDURE actualizar_fecha_compra (
     p_comId IN INT,
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT,
-    p_comSubtotal NUMBER
+    p_usuId IN NUMBER,
+    p_comFecha IN DATE
 )
 IS
 BEGIN
-    UPDATE COMPRA
-    SET comCantidadUnidades = p_comCantidadUnidades,
-        comSubtotal = p_comSubtotal
-    WHERE comId = p_comId AND facId = p_facId AND ofeId = p_ofeId;
+    UPDATE compra
+    SET comFecha = p_comFecha
+    WHERE comId = p_comId AND usuId = p_usuId;
     COMMIT;
-END actualizar_compra;
-
+END actualizar_fecha_compra;
 PROCEDURE insertar_compra (
-    p_facId IN INT,
-    p_ofeId IN INT,
-    p_comCantidadUnidades IN INT,
-    p_comSubtotal NUMBER
+    p_usuId IN NUMBER,
+    p_comFecha IN DATE,
+    p_comTotal IN DECIMAL
 )
 IS
 BEGIN
-    INSERT INTO COMPRA (facId, ofeId, comCantidadUnidades,comSubtotal)
-    VALUES (p_facId, p_ofeId, p_comCantidadUnidades,p_comSubtotal);
+    INSERT INTO compra (usuId, comFecha, comTotal)
+    VALUES (p_usuId, p_comFecha, p_comTotal);
     COMMIT;
 END insertar_compra;
 END paq_compra;
 
-CREATE OR REPLACE TYPE compra_record AS OBJECT (
+--Paquete detalle_compra
+CREATE OR REPLACE PACKAGE paq_detalle_compra IS
+--Funciones
+--Procedimientos
+PROCEDURE comprar (
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT
+    );
+PROCEDURE eliminar_detalle_compra (
+    p_detComId IN detalle_compra.detComId%type
+);
+PROCEDURE actualizar_detalle_compra (
+    p_detComId IN INT,
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT,
+    p_detComSubtotal NUMBER
+);
+
+PROCEDURE insertar_detalle_compra (
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT,
+    p_detComSubtotal NUMBER
+);
+END paq_detalle_compra;
+--Vistas
+CREATE OR REPLACE VIEW v_detalle_compras AS
+SELECT c.detComId AS "ID de detalle_compra",
+    f.comId AS "ID de compra",
+    u.usuId AS "ID de Usuario",
+    u.usuNombre AS "Nombre de Usuario",
+    c.ofeId AS "ID de Oferta",
+    o.ofeDescripcion AS "Descripci�n de la Oferta",
+    c.detComCantidadUnidades AS "Cantidad de Unidades",
+    c.detComSubtotal AS "Subtotal",
+    f.comFecha AS "Fecha de compra",
+    f.comTotal AS "Total de compra"
+FROM detalle_compra c
+INNER JOIN compra f ON c.comId = f.comId
+INNER JOIN USUARIO u ON f.usuId = u.usuId
+INNER JOIN OFERTA o ON c.ofeId = o.ofeId;
+--Select * from v_detalle_compras;
+--Cuerpo
+CREATE OR REPLACE PACKAGE BODY paq_detalle_compra IS 
+--Funciones
+--Procedimientos
+ PROCEDURE comprar (
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT
+    )
+    IS
+    BEGIN
+      INSERT INTO detalle_compra (comId, ofeId, detComCantidadUnidades,detComSubtotal)
+      VALUES (p_comId, p_ofeId, p_detComCantidadUnidades,paq_oferta.calcular_subtotal(p_ofeId,p_detComCantidadUnidades));
+END comprar;
+PROCEDURE eliminar_detalle_compra (
+    p_detComId IN detalle_compra.detComId%type
+)
+IS
+BEGIN
+    DELETE FROM detalle_compra WHERE detComId = p_detComId;
+END eliminar_detalle_compra;
+PROCEDURE actualizar_detalle_compra (
+    p_detComId IN INT,
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT,
+    p_detComSubtotal NUMBER
+)
+IS
+BEGIN
+    UPDATE detalle_compra
+    SET detComCantidadUnidades = p_detComCantidadUnidades,
+        detComSubtotal = p_detComSubtotal
+    WHERE detComId = p_detComId AND comId = p_comId AND ofeId = p_ofeId;
+    COMMIT;
+END actualizar_detalle_compra;
+
+PROCEDURE insertar_detalle_compra (
+    p_comId IN INT,
+    p_ofeId IN INT,
+    p_detComCantidadUnidades IN INT,
+    p_detComSubtotal NUMBER
+)
+IS
+BEGIN
+    INSERT INTO detalle_compra (comId, ofeId, detComCantidadUnidades,detComSubtotal)
+    VALUES (p_comId, p_ofeId, p_detComCantidadUnidades,p_detComSubtotal);
+    COMMIT;
+END insertar_detalle_compra;
+END paq_detalle_compra;
+
+CREATE OR REPLACE TYPE detalle_compra_record AS OBJECT (
+    detComId NUMBER,
     comId NUMBER,
-    facId NUMBER,
     usuId NUMBER,
     usuNombre VARCHAR2(100),
     ofeId NUMBER,
     ofeDescripcion VARCHAR2(255),
-    comCantidadUnidades NUMBER,
-    comSubtotal NUMBER,
-    facFecha DATE,
-    facTotal NUMBER
+    detComCantidadUnidades NUMBER,
+    detComSubtotal NUMBER,
+    comFecha DATE,
+    comTotal NUMBER
 );
---Instanciar la tabla compra por factura
-CREATE OR REPLACE TYPE compra_table  AS TABLE OF compra_record;
+--Instanciar la tabla detalle_compra por compra
+CREATE OR REPLACE TYPE detalle_compra_table  AS TABLE OF detalle_compra_record;
 --Funcion
-CREATE OR REPLACE FUNCTION ver_compras_por_factura(fac_id_param NUMBER)
-RETURN compra_table PIPELINED AS
+CREATE OR REPLACE FUNCTION ver_detalle_compras_por_compra(com_id_param NUMBER)
+RETURN detalle_compra_table PIPELINED AS
 BEGIN
     FOR r IN (
-        SELECT c.comId,
-            f.facId,
+        SELECT c.detComId,
+            f.comId,
             u.usuId,
             u.usuNombre,
             c.ofeId,
             o.ofeDescripcion,
-            c.comCantidadUnidades,
-            c.comSubtotal,
-            f.facFecha,
-            f.facTotal
-        FROM COMPRA c
-        INNER JOIN FACTURA f ON c.facId = f.facId
+            c.detComCantidadUnidades,
+            c.detComSubtotal,
+            f.comFecha,
+            f.comTotal
+        FROM detalle_compra c
+        INNER JOIN compra f ON c.comId = f.comId
         INNER JOIN USUARIO u ON f.usuId = u.usuId
         INNER JOIN OFERTA o ON c.ofeId = o.ofeId
-        WHERE f.facId = fac_id_param
+        WHERE f.comId = com_id_param
     ) LOOP
-        PIPE ROW (compra_record(r.comId, r.facId, r.usuId, r.usuNombre, r.ofeId, r.ofeDescripcion, r.comCantidadUnidades, r.comSubtotal, r.facFecha, r.facTotal));
+        PIPE ROW (detalle_compra_record(r.detComId, r.comId, r.usuId, r.usuNombre, r.ofeId, r.ofeDescripcion, r.detComCantidadUnidades, r.detComSubtotal, r.comFecha, r.comTotal));
     END LOOP;
     RETURN;
 END;
---SELECT * FROM TABLE(ver_compras_por_factura(1));
+--SELECT * FROM TABLE(ver_detalle_compras_por_compra(1));
+--Select * from v_detalle_compras_com;
 
---Select * from v_compras_fac;
-
---drop type compra_type 
---drop type compra_table_type 
+--drop type detalle_compra_type 
+--drop type detalle_compra_table_type 
 -- drop procedure comprar
-CREATE OR REPLACE TYPE compra_type AS OBJECT (        
+
+CREATE OR REPLACE TYPE detalle_compra_type AS OBJECT (        
     ofeId INT,    
-    comCantidadUnidades INT    
+    detComCantidadUnidades INT    
 );
 
-CREATE OR REPLACE TYPE compra_table_type AS TABLE OF compra_type;
-CREATE OR REPLACE PROCEDURE comprar (
-    compras IN compra_table_type,
+CREATE OR REPLACE TYPE detalle_compra_table_type AS TABLE OF detalle_compra_type;
+CREATE OR REPLACE PROCEDURE comprar(
+    detalle_compras IN detalle_compra_table_type,
     p_usuId IN usuario.USUID%TYPE    
 ) AS
     -- Variables for storing intermediate data
+    v_detComId NUMBER;
     v_comId NUMBER;
-    v_facId NUMBER;
     v_total NUMBER := 0;
     v_precioUnitario NUMBER;
     v_subtotal NUMBER;
@@ -990,52 +980,54 @@ CREATE OR REPLACE PROCEDURE comprar (
     rc sys_refcursor;
 BEGIN
     -- Start the transaction
-    -- Generate a new ID for factura
-    v_facId := OFEID_SEQ.NEXTVAL;
-    SELECT ofeId_seq.NEXTVAL INTO v_facId FROM dual;
+    -- Generate a new ID for compra
+    v_comId := OFEID_SEQ.NEXTVAL;
+    SELECT ofeId_seq.NEXTVAL INTO v_comId FROM dual;
 
-    -- Inserts into the factura so the compras can reference it
-    INSERT INTO FACTURA ( FACID, usuId, facFecha, facTotal)
-        VALUES ( v_facid, p_usuId, SYSDATE, 0);    
+    -- Inserts into the compra so the detalle_compras can reference it
+    INSERT INTO compra ( comID, usuId, comFecha, comTotal)
+        VALUES ( v_comid, p_usuId, SYSDATE, 0);
 
-    FOR i IN 1 .. compras.COUNT LOOP
+    FOR i IN 1 .. detalle_compras.COUNT LOOP
         -- Gets the unitary price of the offer
         
-        SELECT ofePrecio INTO v_precioUnitario FROM OFERTA WHERE ofeId = compras(i).ofeId;
-        -- Compute subtotal
-        v_subtotal := v_precioUnitario * compras(i).comCantidadUnidades;        
-        -- Generate a new ID for the compra (assuming a sequence is used)
-        SELECT comId_seq.NEXTVAL INTO v_comId FROM dual;   
-        -- Insert compra
-        INSERT INTO COMPRA (comId, facId, ofeId, comCantidadUnidades, comSubtotal) /* Depending on the trigger to check quantity*/
-        VALUES (v_comId, v_facId, compras(i).ofeId, compras(i).comCantidadUnidades, v_subtotal);
-        UPDATE OFERTA SET ofeCantidad = ofeCantidad - compras(i).comCantidadUnidades WHERE ofeId = compras(i).ofeId;
-        -- Update the total of the factura
+        SELECT ofePrecio INTO v_precioUnitario FROM OFERTA WHERE ofeId = detalle_compras(i).ofeId;
+        -- detCompute subtotal
+        v_subtotal := v_precioUnitario * detalle_compras(i).detComCantidadUnidades;        
+        -- Generate a new ID for the detalle_compra (assuming a sequence is used)
+        SELECT detComId_seq.NEXTVAL INTO v_detComId FROM dual;   
+        -- Insert detalle_compra
+        INSERT INTO detalle_compra (detComId, comId, ofeId, detComCantidadUnidades, detComSubtotal) /* Depending on the trigger to check quantity*/
+        VALUES (v_detComId, v_comId, detalle_compras(i).ofeId, detalle_compras(i).detComCantidadUnidades, v_subtotal);
+        UPDATE OFERTA SET ofeCantidad = ofeCantidad - detalle_compras(i).detComCantidadUnidades WHERE ofeId = detalle_compras(i).ofeId;
+        -- Update the total of the compra
         v_total := v_total + v_subtotal;        
     END LOOP;
 
-    -- Push the total value into the factura
-    UPDATE FACTURA SET FACTOTAL = v_total WHERE facId = v_facId;
+    -- Push the total value into the compra
+    UPDATE compra SET comTOTAL = v_total WHERE comId = v_comId;
 
     -- Return the data
-    OPEN rc FOR SELECT c.comId,
-            f.facId as facid,
+    OPEN rc FOR SELECT 
+            dc.detComId as detcomid,
+            c.comId as comid,
             u.usuId as usuid,
-            u.usuNombre || ' ' || u.USUAPELLIDO as comprador,
-            p.pronombre as producto,
-            c.ofeId as ofeid,            
-            c.comCantidadUnidades as unidades,
-            c.comSubtotal as subtotal,
-            f.facFecha as fechacompra,
-            f.facTotal as total
-        FROM COMPRA c
-        INNER JOIN FACTURA f ON c.facId = f.facId
-        INNER JOIN USUARIO u ON f.usuId = u.usuId
-        INNER JOIN OFERTA o ON c.ofeId = o.ofeId
-        INNER JOIN PRODUCTO p ON o.proid = p.proid
-        WHERE f.facId = v_facId;
+            u.usuNombre || ' ' || u.USUAPELLIDO as Comprador,
+            p.proNombre as producto,
+            dc.ofeId as ofeid,            
+            dc.detComCantidadUnidades as unidades,
+            dc.detComSubtotal as subtotal,
+            c.comFecha as fechadetalle_compra,
+            c.comTotal as total
+        FROM detalle_compra dc
+        INNER JOIN COMPRA c ON dc.comId = c.comId        
+        INNER JOIN USUARIO u ON c.usuId = u.usuId
+        INNER JOIN OFERTA o ON dc.ofeId = o.ofeId
+        INNER JOIN PRODUCTO p ON p.proid = o.proid
+        WHERE c.comId = v_comId;
+    -- returns the results of the transaction
     dbms_sql.return_result(rc);
-    -- Commit the transaction
+    -- COMMIT the transaction
     COMMIT;
 EXCEPTION
     WHEN OTHERS THEN
@@ -1045,12 +1037,12 @@ EXCEPTION
         RAISE;
 END comprar;
 
--- EXECUTE comprar(compra_table_type(compra_type(3, 1), compra_type(4, 2)), 10492027);
+-- EXECUTE comprar(detalle_compra_table_type(detalle_compra_type(3, 1), detalle_compra_type(4, 2)), 10492027);
 
 --Eliminar datos de las tablas
 /*BEGIN
+delete from detalle_compra;
 delete from compra;
-delete from factura;
 delete from oferta;
 delete from usuario;
 delete from producto;
@@ -1058,11 +1050,11 @@ delete from municipio;
 END;*/
 --BLOQUE ANONIMO PARA INSERCIONES
 ALTER TRIGGER TG_ins_oferta DISABLE;
-ALTER TRIGGER TG_ins_factura DISABLE;
 ALTER TRIGGER TG_ins_compra DISABLE;
+ALTER TRIGGER TG_ins_detalle_compra DISABLE;
 BEGIN
+delete from detalle_compra;
 delete from compra;
-delete from factura;
 delete from oferta;
 delete from usuario;
 delete from producto;
@@ -1133,20 +1125,20 @@ delete from municipio;
     INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(4,10492021, 4, SYSDATE + 12, 'Tomates muy rojos' ,225,2500,'Y');
     INSERT INTO oferta(ofeId,usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(5,10492023, 5, SYSDATE + 7,'Fertilizante de marca DiomedesOrg' ,2225,20000,'Y');
 
-    -- Inserciones en la tabla FACTURA
+    -- Inserciones en la tabla compra
     /*
-    INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (1,10492021, SYSDATE, 20000.50);
-    INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (2,10492022, SYSDATE - 1, 11500.25);
-    INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (3,10492023, SYSDATE - 2, 12000.75);
-    INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (4,10492025, SYSDATE - 3, 59800.00);
-    INSERT INTO FACTURA (facId,usuId, facFecha, facTotal)VALUES (5,10492027, SYSDATE - 4, 21500.75);
+    INSERT INTO compra (comId,usuId, comFecha, comTotal)VALUES (1,10492021, SYSDATE, 20000.50);
+    INSERT INTO compra (comId,usuId, comFecha, comTotal)VALUES (2,10492022, SYSDATE - 1, 11500.25);
+    INSERT INTO compra (comId,usuId, comFecha, comTotal)VALUES (3,10492023, SYSDATE - 2, 12000.75);
+    INSERT INTO compra (comId,usuId, comFecha, comTotal)VALUES (4,10492025, SYSDATE - 3, 59800.00);
+    INSERT INTO compra (comId,usuId, comFecha, comTotal)VALUES (5,10492027, SYSDATE - 4, 21500.75);
 
-    -- Inserciones en la tabla COMPRA
-    INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (1,1, 1, 2,1000);
-    INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (2,2, 2, 1,2300);
-    INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (3,3, 3, 3,2150);
-    INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (4,4, 4, 1,4500);
-    INSERT INTO COMPRA (comId,facId, ofeId, comCantidadUnidades,comSubtotal)VALUES (5,5, 5, 5,5000);
+    -- Inserciones en la tabla detalle_compra
+    INSERT INTO detalle_compra (detComId,comId, ofeId, detComCantidadUnidades,detComSubtotal)VALUES (1,1, 1, 2,1000);
+    INSERT INTO detalle_compra (detComId,comId, ofeId, detComCantidadUnidades,detComSubtotal)VALUES (2,2, 2, 1,2300);
+    INSERT INTO detalle_compra (detComId,comId, ofeId, detComCantidadUnidades,detComSubtotal)VALUES (3,3, 3, 3,2150);
+    INSERT INTO detalle_compra (detComId,comId, ofeId, detComCantidadUnidades,detComSubtotal)VALUES (4,4, 4, 1,4500);
+    INSERT INTO detalle_compra (detComId,comId, ofeId, detComCantidadUnidades,detComSubtotal)VALUES (5,5, 5, 5,5000);
 */
     COMMIT;
 END;
@@ -1165,29 +1157,29 @@ BEGIN
     --UPDATE PARA USUARIO
     paq_usuario.actualizar_usuario(10492025, 1, 'Jude', 'Bellingham', 'Carrera 3 #7-14','1234', 'rg4l', 'Campesino');
     paq_usuario.actualizar_usuario(10492026, 5, 'Ferland', 'Mendy', 'Carrera 8 #2-15','6532', 'fumarola33', 'Campesino');
-    paq_usuario.actualizar_usuario(10492027, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14','2323', 'papas01', 'Comprador');
+    paq_usuario.actualizar_usuario(10492027, 3, 'Rodrygo', 'Goes', 'Calle 12 #7-14','2323', 'papas01', 'detalle_comprador');
   
     --UPDATE PARA OFERTA
     paq_oferta.actualizar_oferta(1, 10492021, 1, TO_DATE('27/05/24','DD/MM/YY'),'Semillas mojadas' ,28, 1500, 'Y');
     paq_oferta.actualizar_oferta(3, 10492021, 3, TO_DATE('20/04/25','DD/MM/YY'),'Manzana menos manzanosa' ,15, 4000, 'Y');
     paq_oferta.actualizar_oferta(5, 10492023, 5, TO_DATE('01/04/25','DD/MM/YY'), ':(',30, 22000, 'Y');
 
-    --UPDATE PARA FACTURA
+    --UPDATE PARA compra
     /*
-    paq_factura.actualizar_fecha_factura(1, 10492021, SYSDATE - 5);
-    paq_factura.actualizar_fecha_factura(3, 10492023, SYSDATE - 4);
-    paq_factura.actualizar_fecha_factura(5, 10492026, SYSDATE + 7);
+    paq_compra.actualizar_fecha_compra(1, 10492021, SYSDATE - 5);
+    paq_compra.actualizar_fecha_compra(3, 10492023, SYSDATE - 4);
+    paq_compra.actualizar_fecha_compra(5, 10492026, SYSDATE + 7);
     */
-    --UPDATE COMPRA
-    /*paq_compra.actualizar_compra(1, 1, 1, 5, 10000);
-    paq_compra.actualizar_compra(3, 3, 3, 4, 4500);
-    paq_compra.actualizar_compra(5, 5, 5, 10, 5400);
+    --UPDATE detalle_compra
+    /*paq_detalle_compra.actualizar_detalle_compra(1, 1, 1, 5, 10000);
+    paq_detalle_compra.actualizar_detalle_compra(3, 3, 3, 4, 4500);
+    paq_detalle_compra.actualizar_detalle_compra(5, 5, 5, 10, 5400);
     */
     COMMIT;
 END;
 ALTER TRIGGER TG_ins_oferta ENABLE;
-ALTER TRIGGER TG_ins_factura ENABLE;
 ALTER TRIGGER TG_ins_compra ENABLE;
+ALTER TRIGGER TG_ins_detalle_compra ENABLE;
 --TRIGGERS
 CREATE OR REPLACE TRIGGER TR_validar_longitud_cedula
 BEFORE INSERT ON Usuario
@@ -1195,13 +1187,13 @@ FOR EACH ROW
 DECLARE
     v_cedula_length NUMBER(2);
 BEGIN
-    -- Obtener la longitud de la cédula
+    -- Obtener la longitud de la c�dula
     v_cedula_length := LENGTH(:NEW.usuId);
     
     -- Verificar si la longitud es mayor que 10
     IF v_cedula_length < 8 THEN
-        -- Lanzar una excepción si la longitud es mayor que 10
-        RAISE_APPLICATION_ERROR(-20001, 'La cédula no puede tener menos de 8 dígitos.');
+        -- Lanzar una excepci�n si la longitud es mayor que 10
+        RAISE_APPLICATION_ERROR(-20001, 'La c�dula no puede tener menos de 8 d�gitos.');
     END IF;
 END TR_validar_longitud_cedula;
 select * from usuario
@@ -1210,37 +1202,40 @@ select * from usuario
 
 set serveroutput on
 CREATE OR REPLACE TRIGGER TR_cantidad_valida
-BEFORE INSERT OR UPDATE OF comCantidadUnidades ON Compra
+BEFORE INSERT OR UPDATE OF detComCantidadUnidades ON detalle_compra
 FOR EACH ROW
 BEGIN
-    dbms_output.put_line('1: ' || :NEW.comCantidadUnidades  || '  2: ' ||  paq_oferta.cantidad_disponible(:NEW.ofeId)    );
+    dbms_output.put_line('1: ' || :NEW.detComCantidadUnidades  || '  2: ' ||  paq_oferta.cantidad_disponible(:NEW.ofeId)    );
     IF INSERTING THEN
-        IF(:NEW.comCantidadUnidades > paq_oferta.cantidad_disponible(:NEW.ofeId)) THEN
+        IF(:NEW.detComCantidadUnidades > paq_oferta.cantidad_disponible(:NEW.ofeId)) THEN
             RAISE_APPLICATION_ERROR(-20200,'Cantidad no disponible');
         END IF;
     END IF;
     IF UPDATING THEN
-        IF(:NEW.comCantidadUnidades > paq_oferta.cantidad_disponible(:OLD.ofeId)) THEN
+        IF(:NEW.detComCantidadUnidades > paq_oferta.cantidad_disponible(:OLD.ofeId)) THEN
             RAISE_APPLICATION_ERROR(-20200,'Cantidad no disponible');
         END IF;
     END IF;
 END TR_cantidad_valida;
 --ALTER TRIGGER TR_cantidad_valida DISABLE;
 
+SET SERVEROUTPUT ON
 CREATE OR REPLACE TRIGGER TR_insert_view_ofertas
 INSTEAD OF INSERT ON v_ofertas
 FOR EACH ROW
 DECLARE
 var_proId producto.proId%type;
 BEGIN
-SELECT producto.proId
-INTO var_proId
-FROM oferta 
-INNER JOIN producto 
-ON producto.proId = oferta.proId
-WHERE proNOMBRE = :NEW.NOMBRE;
+    select proid into var_proId from producto
+    WHERE proNOMBRE LIKE :NEW.NOMBRE;
     INSERT INTO oferta(usuId, proId, ofeFechaCaducidad,ofeDescripcion,ofeCantidad,ofePrecio,ofeActivo) values(:NEW.usuId, var_ProId,:NEW.FechaCaducidad,:NEW.Descripcion,:NEW.Cantidad,:NEW.Precio,'Y'); 
+EXCEPTION
+    WHEN NO_DATA_FOUND THEN
+        RAISE_APPLICATION_ERROR(-20001, 'El producto "' || :NEW.NOMBRE ||'" no existe');
 END TR_insert_view_ofertas;
-select * from usuario
-select * from oferta;
 
+DESC V_OFERTAS
+--Test
+--INSERT INTO v_ofertas VALUES(1,10492021,'Freddy Anaya','Mula','Animal',SYSDATE,'Vaca muy vacuna',2,100);
+--SELECT * FROM V_OFERTAS
+--SELECT * FROM OFERTA

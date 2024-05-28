@@ -19,12 +19,14 @@ export async function Verify(req : Request , res: Response, next: NextFunction) 
                 // if token has been altered or has expired, return an unauthorized error
                 return res
                     .status(401)
-                    .json({ error: "This session has expired. Please login" });
+                    .json({ error: "La sesión a expirado, por favor inicie sesión de nuevo" });
             }
 
             const { id } = decoded; // get user id from the decoded token
-            const user = await connection.execute(`select * from usuario where usuid = ${id}`); // find user by that `id`
-            const { USUCONTRASENIA: password, ...data } = user.rows[0]; // return user object without the password
+            const resultdb = await connection.execute(`BEGIN PAQ_FETCH.GET_USUARIO(:id); END;`, [ id ]);; // find user by that `id`
+            const users = resultdb.implicitResults[0]; // get the user object from the result
+            if (users.length <= 0) return res.status(404).json({ status: 404, error: "Usuario no encontrado o eliminado" }); // if user is not found, return a not found error
+            const { USUCONTRASENIA: password, ...data } = users[0]; // return user object without the password
             req.body.user = data;
             next();
         });
