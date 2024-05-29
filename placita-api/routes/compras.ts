@@ -13,15 +13,18 @@ router.post("/", Verify, async (req: Request, res: Response) => {
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
     const {cart, user} = req.body;
     //EXECUTE comprar(compra_table_type(compra_type(3, 1), compra_type(4, 2)), 10492027);
-    const stringCart = cart.map((item: any) => `compra_type(${item.offerid}, ${item.quantity})`).join(', ');
+    const stringCart = cart.map((item: any) => `detalle_compra_type(${item.offerid}, ${item.quantity})`).join(', ');
     
-    const dbQuery = `BEGIN comprar(compra_table_type(${stringCart}), ${user.USUID}); END;`;    
+    const dbQuery = `BEGIN comprar(detalle_compra_table_type(${stringCart}), ${user.USUID}); END;`;    
     try {
         const result = await connection.execute(dbQuery);
         res.status(200).json({data: result.implicitResults[0]});
     } catch (error: any) {
         if (error.errorNum === 20001) {            
             return res.status(400).json({ error: 'No se pueden comprar más productos de los que existen', errorNum: 20001 });
+        }
+        if (error.errorNum === 20012) {
+            return res.status(500).json({ error: 'No se pueden comprar productos caducados', errorNum: 20012 });
         }
         console.log(error);
         res.status(500).json({ error: "Internal server error" });

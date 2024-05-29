@@ -126,8 +126,12 @@ CREATE OR REPLACE TRIGGER TG_ins_detalle_compra
 BEFORE INSERT ON detalle_compra
 FOR EACH ROW
 DECLARE
-    v_cantidad_disponible OFERTA.ofeCantidad%TYPE;    
+    V_FECHA_DISPONIBLE DATE;
 BEGIN
+    SELECT ofeFechaCaducidad INTO V_FECHA_DISPONIBLE FROM OFERTA WHERE ofeId = :NEW.ofeId;
+    IF V_FECHA_DISPONIBLE < SYSDATE THEN
+        RAISE_APPLICATION_ERROR(-20012, 'No se pueden comprar ofertas ya caducadas');
+    END IF;
     :NEW.detComId := detComId_seq.NEXTVAL;
 END;
 --PAQUETES
@@ -1037,6 +1041,8 @@ EXCEPTION
         RAISE;
 END comprar;
 
+
+select * from user_triggers where table_name = 'compra';
 -- EXECUTE comprar(detalle_compra_table_type(detalle_compra_type(3, 1), detalle_compra_type(4, 2)), 10492027);
 
 --Eliminar datos de las tablas
