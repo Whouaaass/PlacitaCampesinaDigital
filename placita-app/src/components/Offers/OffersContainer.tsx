@@ -1,7 +1,7 @@
 // Create a component of OffersContainer that will display the offers of the market
 import React, { useContext } from 'react';
 import OfferCardSmall from './OfferCardSmall';
-import { OffersContext } from '../../hooks/OffersProvider';
+import { OffersContext, RawOfferProps } from '../../hooks/OffersProvider';
 
 interface CustomProps extends React.HTMLAttributes<HTMLDivElement> {
     editing?: boolean;
@@ -49,6 +49,7 @@ const SimpleOfferContainer: React.FC<SimpleOfferContainerProps> = ({ offers, tit
                         offerData={{
                             offerid: offer.OFEID,
                             userId: offer.USUID,
+                            vendor: offer.OFERTADOR,
                             name: offer.NOMBRE,
                             type: offer.TIPO,
                             price: offer.PRECIO,
@@ -69,6 +70,6 @@ export default OffersContainer;
 
 interface SimpleOfferContainerProps {
     title?: string;
-    offers: any[];
+    offers: RawOfferProps[];
     editing?: boolean;
 }

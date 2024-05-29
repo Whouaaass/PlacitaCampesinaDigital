@@ -16,7 +16,7 @@ interface OfferCardProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing}) => {
-    const {offerid, name, price, quantity, expirationDate } = offerData;
+    const {offerid, name, price, quantity, expirationDate, vendor } = offerData;
     const [cardOpen, setCardOpen] = useState(false);
     const [buyOpen, setBuyOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
@@ -48,7 +48,7 @@ const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing}) => {
         {buyOpen && <BuyModal offerData={offerData} onClose={() => setBuyOpen(false)}/>}
         <div className="offer-card-small" >
             {editing ? editTop : buyTop}
-            <h3>{name}</h3>
+            <h3>{name}</h3>            
             <p>{`x  ${quantity} Unidades`}</p>
             <p id="tag-caducidad">
                 {expired &&
@@ -58,6 +58,7 @@ const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing}) => {
                     </>}
             </p>
             <h3>{`$${price}`}</h3>  
+            <p>{vendor}</p>
         </div>
     </>);
 };

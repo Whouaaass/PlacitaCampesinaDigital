@@ -151,6 +151,7 @@ export interface OffersFilters {
 export interface RawOfferProps {
     OFEID: number;
     USUID: number;
+    OFERTADOR: string;
     NOMBRE: string;
     TIPO: string;
     PRECIO: number;
@@ -159,6 +160,7 @@ export interface RawOfferProps {
     FECHACADUCIDAD: string;
 }
 export interface OfferProps {
+    vendor: string;
     offerid: number;
     userId: number;
     name: string;

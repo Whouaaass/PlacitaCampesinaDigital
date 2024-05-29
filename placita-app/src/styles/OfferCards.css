@@ -32,12 +32,10 @@
     align-items: center;
     padding: 20px;
     padding-bottom: 15px;
-    column-gap: 10px;
-       
-    *:nth-child(3), *:nth-child(4), *:nth-child(5), *:nth-child(6) {        
-        grid-column-start: span 2;
-    }
+    column-gap: 10px;    
+
     p, h3, h2 {
+        grid-column-start: span 2;
         text-align: left;
         font-weight: normal;
         margin-block: 0px;
