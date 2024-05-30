@@ -3,7 +3,6 @@
  * @brief Archivo de definición de un componente no funcional que representa un marco simple usado en el Login y SignUp (Registro)
  */
 import {FC, ReactNode} from 'react';
-
 // Propiedades que recibe el componente
 type CustomProps = {
     children: ReactNode;
@@ -11,7 +10,7 @@ type CustomProps = {
 
 const SimpleFrame1: FC<CustomProps> = ({ children }) => {
     return <>
-        <header className="thick">
+        <header id="simple-header-1" className="thick">
             <h1>AGROCAUCA</h1>
         </header>
         <main className='pine-background'>

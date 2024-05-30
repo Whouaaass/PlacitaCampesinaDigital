@@ -1,0 +1,225 @@
+.modal {
+    position: absolute;
+    background-color: var(--white);
+    border-radius: 50px;
+    box-shadow: 0 10px 10px 0 rgba(0, 0, 0, 0.2);
+}
+
+
+#modal-root.active {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+}
+
+#modal-mask {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+
+#add-offer-modal {    
+    width: 70%;
+    max-width: 570px;
+    min-width: 260px;
+    padding-inline: 70px;
+    padding-block: 50px;    
+    
+    display: grid;    
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    column-gap: 50px;
+    row-gap: 1rem;   
+
+    h1 {
+        justify-self: center;
+        grid-column: span 2;
+    }
+
+    label {
+        display: flex;
+        flex-direction: column;
+        min-width: 260px;
+    }
+
+    button#close-modal-button {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;        
+        right: 20px;
+        top: 20px
+    }
+
+    label#label-desc {
+        grid-column: span 2;
+    }
+
+    button[type="submit"] {
+        justify-self: center;
+        grid-column: span 2;
+        max-width: 350px;
+    }
+
+    @media screen and (max-width: 740px) {
+
+        h1,
+        label#label-desc,
+        button[type="submit"] {
+            grid-column: span 1;
+        }
+    }
+}
+
+#offer-modal {
+    max-width: 800px;
+    height: max-content;
+    display: flex;
+    flex-direction: column;    
+    label {
+        font-size: x-large;
+        font-weight: bold;
+        max-height: 70px;
+    }
+    form {
+        display: block;
+    }
+    #offer-modal-data {        
+        display: grid;
+        grid-template-columns: 1fr 3fr;
+        grid-template-rows: 1fr 1fr 1fr 1fr;
+        margin: 50px;
+        margin-block: 40px;
+        column-gap: 5px;        
+        img {
+            grid-row: span 4;
+            width: 100%;                  
+        }
+        label#offer-modal__name {            
+            font-size: xx-large;            
+        }
+        label#offer-modal__price {
+            align-self: self-end;
+        }
+        label#offer-modal__expiration {
+            align-self: self-end;
+        }        
+    }
+    label#offer-modal__description {        
+        display: block;        
+        word-wrap:break-word;
+        max-height: none;                
+        margin-inline: 70px;
+        margin-bottom: 20px;
+    }
+    #offer-modal-buy {
+        display: flex;
+        justify-content: space-around;
+        flex-wrap: wrap;
+        margin-bottom: 40px;
+        gap: 20px;
+        label {
+            display: flex;
+            flex-direction: column;
+            font-size:larger;
+        }
+        button {
+            justify-self: self-end;
+        }
+    }
+
+    #edit-offer-button, #save-offer-button {
+        margin-left: auto;        
+        margin-right: 20px;
+        margin-bottom: 10px;
+        background-color: transparent;          
+        width: max-content;
+        border: none;
+        border-radius: 30px;
+        outline: none;
+        cursor: pointer;
+    }
+    #edit-offer-button:hover {
+        background-color: var(--lightgray);
+    }
+
+    #close-offer-modal-button {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background-color: transparent;
+        outline: none;
+        border: none;
+        cursor: pointer;
+    }
+
+    
+}
+
+#buy-modal {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    max-width: 400px;
+
+    img {
+        width: 60%;
+        margin: auto 0 0;
+    }
+    h2 {
+        font-size: xx-large;
+        margin-top: 0;
+        margin-bottom: 1rem;
+    }
+    label {        
+        display:contents;     
+        input {
+            width: 50%;
+        }                   
+    }
+    button {
+        margin-block: 1rem;
+    }
+    button#close-buy-modal-button {
+        background-color: transparent;
+        outline: none;
+        border: none;
+        cursor: pointer;
+        position: absolute;        
+        right: 10px;
+        top: 0px        
+    }
+    
+}
+
+#simple-ask-modal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 1fr 1fr;
+    padding: 20px; 
+    padding-inline: 30px;
+    align-content: center;
+    justify-content: center;
+    h2 {        
+        grid-row: 1;
+        grid-column: span 2;
+    }
+    button {
+        height: fit-content;
+        width: fit-content;
+        justify-self: center;
+        align-self: center;
+        padding-inline: 2.5rem;
+        grid-row: 2;
+    }
+}

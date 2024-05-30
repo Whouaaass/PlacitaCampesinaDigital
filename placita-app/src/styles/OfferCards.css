@@ -1,0 +1,66 @@
+
+.offers-container {
+    list-style-type: none;
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    grid-auto-rows: auto;
+    margin: 0 auto;
+    gap: 5px;
+    padding: 5px;
+    width: calc(100% - 10px);
+    max-width: 1070px;
+    overflow: visible;
+    #delete-offer-button:hover {
+        background-color: var(--lava);
+    }
+}
+.offers-container-title {
+    text-align: left;
+    font-size: xx-large;
+    max-width: 1070px;
+    padding: 10px;
+    width: calc(100% - 10px);
+    margin: auto;
+    font-weight: normal;
+}
+.offer-card-small {
+    display: grid;    
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: 120px 1fr 1fr 1fr 1fr;
+    background-color: var(--lightgray);
+    font-size: medium;    
+    align-items: center;
+    padding: 20px;
+    padding-bottom: 15px;
+    column-gap: 10px;    
+
+    p, h3, h2 {
+        grid-column-start: span 2;
+        text-align: left;
+        font-weight: normal;
+        margin-block: 0px;
+    }
+    #tag-caducidad {
+        font-size: 0.8rem;
+        margin-block: 0;
+        .dot {
+            height: 1rem;
+            width: 1rem;
+            background-color: var(--lava);
+        }
+    }
+
+    button {
+        background-color: var(--infoblue);
+        color: var(--white);        
+        border: none;        
+        border-radius: 1rem;
+        padding: 1rem;
+        cursor: pointer;          
+    }
+
+    button:hover {
+        transform: scale(1.05);
+    }
+
+}

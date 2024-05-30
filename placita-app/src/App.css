@@ -7,79 +7,32 @@
     --lava: #D61515;
 }
 
-.hidden {    
+/**/
+#user-info {
+    display: flex;
+    width: 100%;
+    background-color: var(--infoblue);
+    height: 20px;
+    justify-content: end;
+    .user-name {
+        font-family: 'Inter';
+        font-size: 1rem;
+        font-weight: bold;
+        text-align: right;
+        margin-right: 20px;
+        color: var(--white);
+        
+    }  
+}
+/**/
+
+.hidden {
     display: none;
     animation: fadeout 0.5s;
-}   
-
-.floating-box input.invalid {
-    background-color: #FFD3D3;
 }
 
-#root {    
-    position: absolute;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
-}
-
-#popup-root {
-    position: absolute;
-    bottom: 0px;
-    width: 100%;    
-    z-index: 1000;    
-    overflow: hidden;
-}
-
-#popup {
-    background-color: var(--lava);
-    color: white;
-    animation-name: frombottom;
-    animation-duration: 0.5s;    
-    padding:1px;
-    padding-left: 10px;
-}
-#popup p {
-    text-align: center;
-    padding: 0;    
-}
-
-header.thick {        
-    background-color: #FFFFFF;
-    padding: 20px;
-    border-radius: 10px;
-}
-header h1 {  
-    color: #437CA5;  
-    font-weight: 900;
-    font-size: 2.5rem;
-    margin-bottom: 10px;
-    margin-top: 10px;
-    margin-left: 10px;   
-}
-
-main {
-    flex-grow: 1;
-    overflow: auto;  
-    -ms-overflow-style: none;  /* IE and Edge */
-    scrollbar-width: none;  /* Firefox */
-}
-
-main::-webkit-scrollbar {
-    display: none;      /* Chrome, Safari, Opera*/
-}
-
-main.pine-background {    
-    background-image: url('inicioSesionBackPic.png');
-    background-size: cover;    
-    background-repeat: repeat-y;
-    background-position-x: center;    
-    display: flex;
-    justify-content: center;
-    align-items: start;        
-    height: 100%;    
+.invalid {
+    background-color: var(--lightred) !important;
 }
 
 .input-question {
@@ -94,3 +47,216 @@ main.pine-background {
     margin-bottom: 20px;
 }
 
+.vertical-line {
+    border-left: 1px solid black;
+    height: 100%;
+}
+
+.prevent-select {
+    -webkit-user-select: none;
+    /* Safari */
+    -ms-user-select: none;
+    /* IE 10 and IE 11 */
+    user-select: none;
+    /* Standard syntax */
+}
+
+.upside-down {
+    transform: rotate(180deg);
+}
+
+#root {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    transition: all 0.1s ease;
+}
+
+#popup-root {
+    position: absolute;
+    bottom: 0px;
+    width: 100%;
+    z-index: 1000;
+    overflow: hidden;
+}
+
+#modal-root {
+    position: absolute;
+}
+
+#popup {
+    background-color: var(--lava);
+    color: white;
+    animation-name: frombottom;
+    animation-duration: 0.5s;
+    padding: 1px;
+    padding-left: 10px;
+
+    p {
+        text-align: center;
+        padding: 0;
+    }
+}
+
+header#search-bar {
+    background-color: var(--white);
+}
+
+main {
+    overflow: auto;
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
+}
+
+main::-webkit-scrollbar {
+    display: none;
+    /* Chrome, Safari, Opera*/
+}
+
+main.pine-background {
+    background-image: url('inicioSesionBackPic.png');
+    background-size: cover;
+    background-repeat: repeat-y;
+    background-position-x: center;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    height: 100%;
+}
+
+
+button.button-1 {
+    width: 100%;
+    border: unset;
+    border-radius: 30px;
+    background-color: var(--steelblue);
+    color: var(--white);
+    font-weight: bold;
+    font-size: medium;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+button.button-1:hover {
+    background-color: #5193c2;
+}
+
+button.button-2 {
+    display: flex;
+    background-color: var(--infoblue);
+    color: var(--white);
+    font-family: 'Inter';
+    font-weight: 900;
+    font-size: larger;
+    border: none;
+    gap: 0.5rem;
+    border-radius: 20px;
+    padding-inline: 20px;
+    padding-block: 10px;
+    cursor: pointer;
+    align-items: center;
+}
+
+button.button-2:hover {
+    transform: scale(1.05);
+    background-color: var(--steelblue);
+    color: var(--white);
+    transition: 0.3s ease;
+}
+
+button.button-3 {
+    background-color: var(--lightgray);
+    font-family: 'Inter';
+    font-weight: 900;
+    font-size: larger;
+    border: none;
+    border-radius: 20px;
+    padding-inline: 20px;
+    padding-block: 10px;
+    cursor: pointer;
+}
+
+button.button-3:hover {
+    transform: scale(1.05);
+    background-color: var(--steelblue);
+    color: var(--white);
+    transition: 0.3s ease;
+}
+
+input.input-1 {
+    border: unset;
+    border-radius: 30px;
+    height: 30px;
+    background-color: var(--lightgray);
+    padding-inline: 15px;
+    padding-block: 5px;
+}
+
+input.input-1:focus {
+    border: unset;
+}
+
+input.input-t {
+    padding-inline: 1rem;
+    font: inherit;
+    border: unset;
+    outline: none;
+    background-color: transparent;
+    cursor:text;        
+}
+
+select.select-1 {
+    appearance: none;
+    /* safari */
+    -webkit-appearance: none;
+    /* other styles for aesthetics */
+    width: 100%;
+    font-size: 1rem;
+    padding: 0.675em 6em 0.675em 1em;
+    background-color: var(--lightgray);
+    border: unset;
+    border-radius: 30px;
+    color: black;
+    cursor: pointer;
+}
+
+select.select-1:focus {
+    border: unset;
+}
+
+textarea {
+    font-family: 'Inter'
+}
+
+textarea.textarea-1 {
+    border: unset;
+    border-radius: 30px;
+    background-color: var(--lightgray);
+    padding: 1rem;
+    height: 150px;
+}
+
+textarea.textarea-t {
+    font: inherit;
+    border: unset;
+    outline: none;
+    background-color: transparent;
+    width: 100%;
+    field-sizing: content;
+}
+
+.blink {
+    animation: blink 2s ease-in-out infinite;
+}
+
+
+.container-2 {
+    background-color: var(--lightgray);
+    border-radius: 50px;
+    border: 20px;
+}

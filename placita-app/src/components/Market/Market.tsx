@@ -2,29 +2,30 @@
  * @brief interfaz del mercado donde aparecen todas las ofertas
  */
 
-import {FC} from 'react';
+import { FC, useContext } from 'react';
 import MarketFrame from '../Frames/MarketFrame';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import OffersContainer from '../Offers/OffersContainer';
+import { OffersContext } from '../../hooks/OffersProvider';
 
 const Market: FC = () => {
-    const [ofertas, setOfertas] = useState([]);
+    const { loadOffers, clearFilters } = useContext(OffersContext);
+
+
 
     useEffect(() => {
-        fetch("http://localhost:3000/ofertas"
-        ).then((res) => {
-            res.json().then((data) => {
-                setOfertas(data);
-            })
+        clearFilters();
+        loadOffers().then((data: any) => {
+            if (data.error) throw new Error(data.error);
         }).catch((err) => {
             console.log('something went wrong with the fetch')
             console.log(err)
-        })
+        });        
     }, []);
 
-    
     return (
         <MarketFrame>
-            <div></div>
+            <OffersContainer />
         </MarketFrame>
     );
 };

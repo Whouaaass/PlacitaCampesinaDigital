@@ -2,13 +2,30 @@ import { useState, useRef, FormEvent, useEffect, InvalidEvent } from 'react';
 import { RegexValidators, validateAgrocode } from '../../validators';
 import PopUp, { PopUpRef } from '../PopUp';
 import YesNoRadioButton from '../CustomComponents/YesNoRadioButton';
-import SimpleFrame1 from '../SimpleFrame1';
+import SimpleFrame1 from '../Frames/SimpleFrame1';
 import CustomInput1 from '../CustomComponents/CustomInput1';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
+import { Link, useNavigate } from 'react-router-dom';
 
 
-const DUMMY_MUNICIPIOS = ['---', 'San Salvador', 'Santa Tecla', 'Santa Ana', 'San Miguel', 'DUMMYVALUES'];
+const DUMMY_MUNICIPIOS = ['Popayán'];
 let MUNICIPIOS: string[] | null = null;
+
+const getMunicipios = async () => {
+    const response = await fetch("http://localhost:3000/municipios");
+    return await response.json();
+};
+
+const signUpUser = async (user: any) => {
+    const response = await fetch("http://localhost:3000/usuarios/signup", {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(user)
+    });
+    return response.json();
+}
 
 /** 
  * @brief SingUp component that renders a page to register a new user.
@@ -24,32 +41,26 @@ function SignUp() {
         municipio: '',
         agrocauca: '',
         agrocode: ''
-    });    
-    console.log(user);
+    });
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
+    const navigate = useNavigate();
 
     const isAgrocauca = user.agrocauca === 'yes' ? true : false;
 
     // Effects
     useEffect(() => {
-        fetch("http://localhost:3000/municipios"
-        ).then((res) => {
-            console.log('res: ', res)
-            res.json().then((data) => {                
-                MUNICIPIOS = data.map((m: any) => m.MUNNOMBRE);
-
-                setUser({
-                    ...user,
-                    municipio: MUNICIPIOS? MUNICIPIOS[0] : ''
-                });
-                // TODO: posible error en la asignacion de MUNICIPIOS si un municipio falta en la consecucion de la tabla
-            })
-            //MUNICIPIOS = res;
+        getMunicipios().then((data) => {
+            if (data.error) {
+                console.log(data.error);
+                return;
+            }
+            MUNICIPIOS = data.data.map((m: any) => m.MUNNOMBRE);
+            setUser({...user});
         }).catch((err) => {
-            console.log('something went wrong with the fetch')
-            console.log(err)
-        })
+            console.log(err.message)
+        });
+
     }, []);
 
     // Functions
@@ -66,7 +77,7 @@ function SignUp() {
         submitButton.current?.blur();
         submitButton.current?.setAttribute('disabled', 'true');
         submitButton.current?.setAttribute('autocomplete', 'off');
-        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);        
+        setTimeout(() => submitButton.current?.removeAttribute('disabled'), 2000);
 
         if (user.agrocauca === "yes" && !validateAgrocode(user.agrocode)) {
             popUpRef.current?.show('Codigo de gremio incorrecto');
@@ -75,50 +86,45 @@ function SignUp() {
 
         if (user.municipio === '') {
             const form = e.target as HTMLFormElement;
-            form.municipioid.className = 'invalid';
+            form.municipio.classList.add('invalid');
             popUpRef.current?.show('Por favor, seleccione un municipio');
             return;
         }
 
-        // sends the data to the api server
-        fetch("http://localhost:3000/users/signup", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(user)
-        }).then((res) => {
-            console.log('res: ', res)
-            if (res.ok) {
-                popUpRef.current?.show('Usuario registrado exitosamente', 'blue');
-                setTimeout(() => window.location.href = '/login', 2000);                
-            } else {
-                res.json().then((data) => {                    
-                    if (data.errorNum === 1) {
-                        popUpRef.current?.show('La cedula ya se encuentra registrada');
-                    } else if (data.errorNum === 20001) {
-                        popUpRef.current?.show('La cedula tiene una longuitud menor a 8');
-                    }
-                    else {
-                        console.log('Error interno', data.errorNum);
-                        popUpRef.current?.show('Error al registrar el usuario');
-                    }
-                });
+        // sends the sign up data to the api server
+        signUpUser({
+            ...user,                        
+            firstname: user.firstname.trim(),
+            lastname: user.lastname.trim(),
+            dir: user.dir.trim(),                                      
+        }).then((data) => {
+            if (data.error) {
+                return popUpRef.current?.show(data.error);                
             }
+            
+            popUpRef.current?.show('Usuario creado exitosamente', 'blue');
+            setTimeout(() => {
+                navigate('/login');
+            }, 2000);
+
         }).catch((err) => {
-            console.log('something went wrong with the insert fetch')
+            popUpRef.current?.show('Error del servidor');
+            console.log('Error al enviar la peticion al servidor')
             console.log(err)
         });
     }
     // handle invalid executes every time an input is invalid
     const handleInvalid = (e: InvalidEvent<HTMLFormElement>) => {
         const control = e.target as HTMLFormElement;
-        control.className = 'invalid';        
+        control.classList.add('invalid');
         if (control.validity.valueMissing) {
             popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
         }
         if (control.validity.patternMismatch) {
+            if (control.name === 'telnumber') {
+                return popUpRef.current?.show('Teléfono incorrecto (Ej: 3123456789)');
+            }
             popUpRef.current?.show('Formato de entrada incorrecto');
             return;
         }
@@ -138,7 +144,7 @@ function SignUp() {
                             value={user.firstname}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.name}
+                        //pattern={RegexValidators.name}
 
                         />
                         <CustomInput1
@@ -148,7 +154,7 @@ function SignUp() {
                             value={user.lastname}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.name}
+                        //pattern={RegexValidators.name}
                         />
                         <CustomInput1
                             label='Contraseña'
@@ -160,12 +166,12 @@ function SignUp() {
                         />
                         <CustomInput1
                             label='Cédula'
-                            type='id'
+                            type='number'
                             name='id'
                             value={user.id}
                             onChange={handleChange}
                             required
-                            //pattern={RegexValidators.cedula}
+                        //pattern={RegexValidators.cedula}
                         />
                         <CustomInput1
                             label='Teléfono'
@@ -186,6 +192,7 @@ function SignUp() {
                             required
                         />
                         <CustomSelect1
+                            defaultValue='Seleccione un municipio'
                             values={MUNICIPIOS ?? DUMMY_MUNICIPIOS}
                             label='Municipio'
                             name='municipio'
@@ -218,9 +225,9 @@ function SignUp() {
                             pattern='[0-9]{4}'
                         />
                     }
-                    <button ref={submitButton} type="submit">Registrarse</button>
+                    <button ref={submitButton} type="submit" className='button-1'>Registrarse</button>
                     <hr />
-                    <p>¿Ya tienes cuenta? <a href="/login">Inicia Sesion</a></p>
+                    <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
                 </form>
             </SimpleFrame1>
 

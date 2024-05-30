@@ -1,0 +1,105 @@
+#market-header {    
+    position: relative;
+    background-image: url('inicioSesionBackPic.png');
+    background-position-y: calc(100%/1.7);
+    background-size: cover;
+    width: calc(100% - 20px);
+    /* Se le debe restar el padding*/
+    padding-inline: 10px;
+    min-height: 180px;
+
+    display: grid;
+    grid-template-columns: 2fr 4fr 2fr;
+    grid-template-rows: 1fr 1fr;
+    max-height: 180px;
+
+    #page-title {
+        grid-column: 2 / 3;
+        grid-row: 1;
+        font-family: 'Kulim Park';
+        font-size: large;
+        margin: auto;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        gap: 1.5rem;
+
+        h1 {
+            margin-block: 0;
+            padding-bottom: 1rem;
+        }
+    }
+
+    #go-cart {
+        display: contents;        
+        grid-column: 1 / 2;
+        grid-row: 1;
+    }
+
+    #go-products {        
+        grid-column: 1 / 2;
+        grid-row: 2;
+    }
+
+    #searchbar {
+        grid-column: 2 / 4;
+        grid-row: 2;
+        width: 70%;
+        align-self: center;
+    }
+
+    button.button-2 {
+        align-self: center;
+        width: 240px;
+        height: 65px;
+    }
+
+    button#close-session-button {
+        display: flex;
+        align-items: center;
+        position: absolute;
+        gap: 1rem;
+        top: 0px;
+        right: 0px;
+        border-radius: 0px;
+        color: black;
+        border-bottom-left-radius: 1.7rem;
+        font-family: 'Inter';
+        font-size: larger;
+        font-weight: bold;
+        background-color: var(--lightgray);
+        border: 0cap;
+        padding-block: 5px;
+        padding-right: 1.2rem;
+        padding-left: 0.7rem;
+
+    }
+
+    #close-session-button:hover {
+        background-color: var(--lava);
+        color: white;
+        opacity: 0.8;
+    }
+
+    a {
+        text-decoration: none;
+        color: var(--white);
+    }
+}
+
+#market-container {    
+    display: flex;
+    flex-direction: column;
+    font-size: 1.5rem;
+    font-weight: 900;
+    text-align: center;
+    width: 100%;
+}
+
+
+
+#placita-logo {
+    width: 100px;
+    height: 100px;
+    margin: 0;
+}

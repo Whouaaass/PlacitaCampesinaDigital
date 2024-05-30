@@ -21,13 +21,6 @@ const PopUp = forwardRef<PopUpRef>(({ }, ref) => {
     const style = {
         backgroundColor: COLORREF[props.color as keyof typeof COLORREF],
         color: 'white',
-        //     padding: '1rem',
-        //     position: 'fixed',
-        //     top: '0',
-        //    left: '50%',
-        //    transform: 'translateX(-50%)',
-        //    zIndex: 1000,
-        //    transition: 'visibility 0.5s'
     };
 
     const show = (msg: string, color = 'red') => {

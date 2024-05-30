@@ -1,21 +1,30 @@
-import { FormEvent, useState, useRef } from 'react';
-import PopUp from '../PopUp';
-import { PopUpRef } from '../PopUp';
-import SimpleFrame1 from '../SimpleFrame1';
+import { FormEvent, useState, useRef, useEffect } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { loginData, useAuth } from '../../hooks/AuthProvider';
 import CustomInput1 from '../CustomComponents/CustomInput1';
+import SimpleFrame1 from '../Frames/SimpleFrame1';
+import PopUp, { PopUpRef } from '../PopUp';
 
-const MARKETDIR ="../market";
 
 /** 
  * @brief Login component that renders a page to login an existing user.
  */
 function Login() {
-    const [user, setUser] = useState({
-        id: '',
-        password: ''
+    const [user, setUser] = useState<loginData>({
+        id: "",
+        password: ""
     });
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
+    const auth = useAuth();
+    const navigate = useNavigate();
 
+    useEffect(() => {
+        auth.verify().then((res: any) => {
+            if (res) {
+                navigate('/market');
+            }
+        });
+    }, []);
     // Functions
     function handleChange(e: any) {
         setUser({
@@ -27,29 +36,16 @@ function Login() {
     async function handleSubmit(e: FormEvent<HTMLFormElement>) {
         // Prevent the default form submission
         e.preventDefault();
-
-        //TODO: fetch to the api server...
-        await fetch("http://localhost:3000/users/login", {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ id: user.id, password: user.password })
-        }).then(response => {
-            console.log(response)
-            
-            if (response.ok) {
-                window.location.href = MARKETDIR;
-            } else {
-                popUpRef.current?.show('Usuario o contraseña inválidos');
-            }
-        })
+        const res : any = await auth.loginAction(user)
+        if (res.status === 401 || res.status === 404) {
+            popUpRef.current?.show("Usuario o contraseña incorrectas");
+        }
     }
     function handleInvalid(e: FormEvent<HTMLFormElement>) {
         const control = e.target as HTMLFormElement;
-        control.className = 'invalid';
+        control.classList.add('invalid');
         if (control.validity.valueMissing) {
-            popUpRef.current?.show('Por favor ingrese toda la información solicitada');
+            popUpRef.current?.show('Por favor, ingrese la información solicitada');
             return;
         }
         if (control.validity.patternMismatch) {
@@ -80,9 +76,9 @@ function Login() {
                         onChange={handleChange}
                         required
                     />
-                    <button type="submit">Entrar</button>
+                    <button type="submit" className='button-1'>Entrar</button>
                     <hr />
-                    <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
+                    <p>¿No tienes cuenta? <Link to="/signup">Regístrate</Link></p>
                 </form>
             </SimpleFrame1>
         </>
