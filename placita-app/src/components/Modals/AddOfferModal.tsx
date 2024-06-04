@@ -76,7 +76,7 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
         addOffer(offer, token).then((response) => {
             console.log(response);
             if (response.error) {
-                popUpRef.current?.show(`Error al agregar la oferta: ${response.error}`, "red");
+                popUpRef.current?.show(response.error);
                 return;
             }
             if (response.message) {

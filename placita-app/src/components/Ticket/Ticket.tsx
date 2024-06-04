@@ -18,9 +18,9 @@ export const TicketModal: FC<ModalTicketProps> = ({ ticketData = [{}], onClose }
 
 const Ticket: FC<{ ticketData: any }> = ({ ticketData }) => {
     
-    const { FACID, TOTAL, FECHACOMPRA, USUID } = ticketData[0] as TicketData ?? {};
+    const { COMID, TOTAL, FECHACOMPRA, USUID } = ticketData[0] as TicketData ?? {};
     const buyDateFrac = FECHACOMPRA?.substring(0, 10).split('-');
-    const buyDate = `${buyDateFrac[2]}/${MONTH_NAMES[+buyDateFrac[1]]}/${buyDateFrac[0]}`;    
+    const buyDate = buyDateFrac? `${buyDateFrac[2]}/${MONTH_NAMES[+buyDateFrac[1]]}/${buyDateFrac[0]}` : null;    
     return <>
         <div id="ticket-header">
             <label>
@@ -28,7 +28,7 @@ const Ticket: FC<{ ticketData: any }> = ({ ticketData }) => {
                 <h1>Factura</h1>
             </label>
             <label>
-                <p>N° {FACID ?? '0000000'}</p>
+                <p>N° {COMID ?? '0000000'}</p>
                 <p>{buyDate ?? 'DD/MM/YYYY'}</p>
             </label>
         </div>
@@ -77,7 +77,7 @@ export interface ModalTicketProps {
 }
 
 export interface TicketData {
-    FACID: number;
+    COMID: number;
     USUID: number;
     COMPRADOR: string;
     OFEID: number;

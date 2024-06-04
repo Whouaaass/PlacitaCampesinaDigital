@@ -11,6 +11,17 @@
     row-gap: 0px;
 }
 
+.input-question {
+    margin-top: 10px;
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    justify-content: space-around;
+    align-content: left;    
+    min-width: 200px;    
+    margin-bottom: 20px;
+}
+
 #signup {
     display: flex;
     flex-direction: column;    
@@ -23,5 +34,31 @@
         max-width: 320px;        
     }          
 }
+/* Estilos para el apartado hci */
+#signup.hci {
+    font-size: 1.5rem;
+    * {
+        font-size: 1.5rem;
+    }    
+}
 
+#hci-button {    
+    cursor: pointer;
+    background-color: var(--steelblue);
+    outline: none;
+    border: none;
+    border-radius: 10px;
+    position: absolute;
+    left: 10px;
+    font-weight: 700;
+    font-size: 2rem;
+    
+}
+#hci-button:hover {
+    opacity: 0.9;    
+}
+#big-hci-font {
+    
+    font-size: 3rem;
+}
 

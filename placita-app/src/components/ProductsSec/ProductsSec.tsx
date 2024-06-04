@@ -2,16 +2,18 @@ import React, { useContext, useEffect, useState } from 'react';
 import ProductsFrame from '../Frames/ProductsFrame';
 import OffersContainer from '../Offers/OffersContainer';
 import { useAuth } from '../../hooks/AuthProvider';
-import { DUMMYOFFERS } from './dummyOffers';
 import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import AddOfferModal from '../Modals/AddOfferModal';
 import { OffersContext } from '../../hooks/OffersProvider';
+import { useNavigate } from 'react-router-dom';
 
 const ProductsSec: React.FC = () => {
     const [inOfferAdding, setInOfferAdding] = useState(false);
     const { loadOffersByUser, clearFilters } = useContext(OffersContext);
-    const { user } = useAuth();
+    const { user, rol } = useAuth();
+    const navigate = useNavigate();
     useEffect(() => {
+            if (rol !== 'Campesino') navigate('/market');
         clearFilters();
         refreshOffers();
     }, []);

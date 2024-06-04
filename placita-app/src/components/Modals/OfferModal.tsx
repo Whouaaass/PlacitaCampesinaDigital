@@ -63,14 +63,14 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
         if (res.errorNum === 20011)
             return popUpRef.current?.show("Error de formato al insertar oferta");
         if (res.errorNum === 20012) 
-            return popUpRef.current?.show("Error al actualizar: La fecha de caducidad no puede ser menor a la fecha actual");            
+            return popUpRef.current?.show("La fecha de caducidad no puede ser menor a la fecha actual");            
         if (res.errorNum === 20013)           
-            return popUpRef.current?.show("Error al actualizar: La cantidad no puede ser menor a 1");;        
+            return popUpRef.current?.show("La cantidad no puede ser menor a 1");;        
         if (res.errorNum === 20014)
-            return popUpRef.current?.show("Error al actualizar: El precio no puede ser menor a 1");
+            return popUpRef.current?.show("El precio no puede ser menor a 1");
 
         if (res.error) {
-            popUpRef.current?.show("Error al actualizar: " + res.error);
+            popUpRef.current?.show(res.error);
             return;
         }
         refreshOffers();

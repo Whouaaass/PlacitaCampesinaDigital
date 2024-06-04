@@ -473,7 +473,7 @@ PROCEDURE ordenar_ofertas_campesino(p_campesino_id IN NUMBER);
 PROCEDURE desactivar_oferta (
     p_ofeId IN oferta.ofeId%type
 );
-PROCEDURE actualizar_oferta (
+PROCEDURE actualizar_oferta_p (
     p_ofeId IN INT,
     p_usuId IN NUMBER,
     p_proId IN INT,
@@ -683,7 +683,7 @@ BEGIN
     WHERE ofeId = p_ofeId;
     COMMIT;
 END desactivar_oferta;
-PROCEDURE actualizar_oferta (
+PROCEDURE actualizar_oferta_p (
     p_ofeId IN INT,
     p_usuId IN NUMBER,
     p_proId IN INT,
@@ -716,7 +716,7 @@ BEGIN
         RAISE_APPLICATION_ERROR(-20011, 'No se pudo actualizar la oferta');
     END IF;
     COMMIT;
-END actualizar_oferta;
+END actualizar_oferta_p;
 PROCEDURE actualizar_oferta (
     p_ofeId IN INT,
     p_usuId IN NUMBER,
@@ -731,7 +731,7 @@ IS
  v_proId PRODUCTO.proId%TYPE;
 BEGIN
     SELECT proId INTO v_proId FROM PRODUCTO WHERE proNombre = p_proNombre;
-    actualizar_oferta(p_ofeId, p_usuId, v_proId, p_ofeFechaCaducidad, p_ofeDescripcion, p_ofeCantidad, p_ofePrecio, p_ofeActivo);
+    actualizar_oferta_p(p_ofeId, p_usuId, v_proId, p_ofeFechaCaducidad, p_ofeDescripcion, p_ofeCantidad, p_ofePrecio, p_ofeActivo);
 END actualizar_oferta;
 PROCEDURE insertar_oferta (
     p_usuId IN NUMBER,
@@ -1021,7 +1021,7 @@ BEGIN
             dc.ofeId as ofeid,            
             dc.detComCantidadUnidades as unidades,
             dc.detComSubtotal as subtotal,
-            c.comFecha as fechadetalle_compra,
+            c.comFecha as fechacompra,
             c.comTotal as total
         FROM detalle_compra dc
         INNER JOIN COMPRA c ON dc.comId = c.comId        

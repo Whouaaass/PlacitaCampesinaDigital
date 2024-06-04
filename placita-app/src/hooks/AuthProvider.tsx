@@ -1,29 +1,54 @@
+/**
+ * @file AuthProvider.tsx
+ * @brief Controla la autorización y autenticación de los usuarios.
+ */
+
 import { FC, ReactNode, useContext, createContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const AuthContext = createContext({
+/**
+ * Interface representing the authentication context.
+ */
+interface AuthContextInterface {
+  token: string;
+  user: string; /*!< User */
+  userName: string; /*!< Username */
+  rol: string; /*!< Rol */
+  loginAction: (data: loginData) => Promise<any>;
+  logOut: () => void;
+  verify: () => Promise<any>;
+}
+
+const AuthContext = createContext<AuthContextInterface>({
   token: "",
-  user: "", /*!< User  */
-  userName: "", /*!< Username */
-  rol: "", /*!< Rol */
+  user: "",
+  userName: "",
+  rol: "",
   loginAction: async (data: loginData) => {},
-  logOut: () => { },
-  verify: async () => { },
+  logOut: () => {},
+  verify: async () => {},
 });
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
+/**
+ * Component that provides authentication context to its children.
+ */
 const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState(localStorage.getItem("user") || "");
   const [userName, setUserName] = useState("");
-  const [token, setToken] = useState(localStorage.getItem("site") || "");  
+  const [token, setToken] = useState(localStorage.getItem("site") || "");
   const [rol, setRol] = useState(localStorage.getItem("rol") || "");
-  const navigate = useNavigate();  
-  
-  const loginAction = async (data: loginData) => {
+  const navigate = useNavigate();
 
+  /**
+   * Function to perform login action.
+   * @param data - The login data.
+   * @returns A promise that resolves to the login response.
+   */
+  const loginAction = async (data: loginData) => {
     const response = await fetch("http://localhost:3000/usuarios/login", {
       method: "POST",
       headers: {
@@ -31,19 +56,23 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       },
       body: JSON.stringify(data),
     });
-    const res = await response.json();    
+    const res = await response.json();
     if (res.data) {
       setUser(res.data.userid);
       setRol(res.data.rol);
-      setToken(res.token);     
+      setToken(res.token);
       localStorage.setItem("user", res.data.userid);
       localStorage.setItem("rol", res.data.rol);
-      localStorage.setItem("site", res.token);            
-      navigate("/market");      
-    }    
-    return res;    
-
+      localStorage.setItem("site", res.token);
+      navigate("/market");
+    }
+    return res;
   };
+
+  /**
+   * Function to verify the authentication token.
+   * @returns A promise that resolves to the verification response.
+   */
   const verify = async () => {
     try {
       const response = await fetch("http://localhost:3000/usuarios/verify", {
@@ -54,18 +83,19 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
       if (response.status !== 200) {
         return logOut();
       }
-      const res = await response.json();      
+      const res = await response.json();
       setUserName(`${res.user.USUNOMBRE} ${res.user.USUAPELLIDO}`);
-      
-      return res;      
+      return res;
     } catch (err) {
       console.error(err);
     }
   };
 
+  /**
+   * Function to perform logout action.
+   */
   const logOut = () => {
-    if (!token)
-      return;
+    if (!token) return;
     setUser("");
     setToken("");
     setRol("");
@@ -84,12 +114,18 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
 
 export default AuthProvider;
 
+/**
+ * Interface representing the login data.
+ */
 export interface loginData {
   id: string;
   password: string;
 }
 
-
+/**
+ * Hook to access the authentication context.
+ * @returns The authentication context.
+ */
 export const useAuth = () => {
   return useContext(AuthContext);
 };

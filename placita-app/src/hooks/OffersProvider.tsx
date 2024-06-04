@@ -1,16 +1,18 @@
 
-import { createContext, useState, FC, PropsWithChildren } from 'react';
+import { createContext, useState, FC, PropsWithChildren, useRef } from 'react';
 import { useAuth } from './AuthProvider';
+import PopUp, { PopUpRef } from '../components/PopUp';
 
 export const OffersContext = createContext({
     offers: [] as any[],
     cart: [] as any[],
+    filters: {} as OffersFilters,
+    popUpRef: {} as PopUpRef | null,
     loadOffers: async () => { },
     loadOffersByUser: async (id: number) => { },
     deleteOffer: async (id: number, token: string) => { return {} as any },
     addOffer: async (offer: any) => { return {} as any },
-    refreshOffers: (() => { }),
-    filters: {} as OffersFilters,
+    refreshOffers: (() => { }),    
     setFilters: (filters: OffersFilters) => { },
     clearFilters: () => { },
     addToCart: (name: string, price: number, offerid: number, quantity: number) => { },
@@ -28,6 +30,7 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
     const [cart, setCart] = useState<Array<cartItemProps>>([]);
     const [filters, setFilters] = useState<OffersFilters>({ search: '', orderby: 'Nombre' });
     const {token} = useAuth();    
+    const popUpRef = useRef<PopUpRef>(null);
     const filteredOffers = offers.sort((offerA, offerB) => {
         if (filters.orderby === 'Nombre')
             return offerA.NOMBRE > offerB.NOMBRE ? 1 : -1;
@@ -129,9 +132,11 @@ const OffersProvider: FC<PropsWithChildren> = ({ children }) => {
             offers: filteredOffers,
             cart,
             setFilters,
+            popUpRef: popUpRef?.current,
             filters,
             ...methods,
         }}>
+            <PopUp ref={popUpRef}/>
             {children}
         </OffersContext.Provider >
     );

@@ -42,6 +42,7 @@ function SignUp() {
         agrocauca: '',
         agrocode: ''
     });
+    const [mode, setMode] = useState("");
     const submitButton = useRef<HTMLButtonElement>(null);
     const popUpRef = useRef<HTMLDivElement & PopUpRef>(null);
     const navigate = useNavigate();
@@ -134,7 +135,7 @@ function SignUp() {
         <>
             <PopUp ref={popUpRef} />
             <SimpleFrame1>
-                <form id="signup" onSubmit={handleSubmit} onInvalid={handleInvalid}>
+                <form id="signup" className={mode} onSubmit={handleSubmit} onInvalid={handleInvalid}>
                     <h2>REGISTRARSE</h2>
                     <div id="inputs-container">
                         <CustomInput1
@@ -229,6 +230,9 @@ function SignUp() {
                     <hr />
                     <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
                 </form>
+                <button id="hci-button" onClick={() => setMode((prev) => prev == "hci"? "": "hci")}>
+                    T<span id='big-hci-font'>T</span>
+                </button>
             </SimpleFrame1>
 
         </>

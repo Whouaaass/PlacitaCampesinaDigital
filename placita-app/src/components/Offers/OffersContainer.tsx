@@ -22,20 +22,23 @@ const splitOffersByTipo = (offers: any[]) => {
 
 const OffersContainer: React.FC<CustomProps> = ({ editing }) => {
     const { offers, filters } = useContext(OffersContext);
+    const noMatches = filters.search && offers.length === 0;
     const isTipoDisplay = filters.orderby === 'Tipo';
+    const visibleOffers = editing ? offers : offers.filter((offer) => offer.CANTIDAD > 0);
+    if (noMatches) return <p>No hay ofertas que coincidan con la busqueda</p>;
     if (isTipoDisplay) {
-        const offersByTipo = splitOffersByTipo(offers);
+        const offersByTipo = splitOffersByTipo(visibleOffers);
         const tipos = Object.keys(offersByTipo);
         return <>
             {tipos.map((tipo) => (
-                <div key={tipo} className='contents'>                    
+                <div key={tipo} className='contents'>
                     <SimpleOfferContainer title={tipo} offers={offersByTipo[tipo]} editing={editing} />
                 </div>
             ))}
         </>;
     }
     else {
-        return <SimpleOfferContainer offers={offers} editing={editing} />
+        return <SimpleOfferContainer offers={visibleOffers} editing={editing} />
     }
 };
 
@@ -59,8 +62,7 @@ const SimpleOfferContainer: React.FC<SimpleOfferContainerProps> = ({ offers, tit
                         }}
                         editing={editing}
                     />
-                </li>
-            ))}
+                </li>))}
         </ul>
     </>
 }

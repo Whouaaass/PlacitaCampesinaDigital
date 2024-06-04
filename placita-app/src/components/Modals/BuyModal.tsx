@@ -14,8 +14,7 @@ interface BuyModalProps {
 }
 const BuyModal: React.FC<BuyModalProps> = ({ offerData, onClose }) => {
     const [quantity, setQuantity] = useState(1);
-    const { addToCart } = useContext(OffersContext);
-    const popUpRef = useRef<PopUpRef>(null);    
+    const { addToCart, popUpRef } = useContext(OffersContext);    
 
     const handleOnChange = (e: any) => {
         setQuantity(e.target.value);
@@ -26,20 +25,20 @@ const BuyModal: React.FC<BuyModalProps> = ({ offerData, onClose }) => {
     const handleAdd = async () => {
         // Check if data has changed  
         if (quantity < 1) {
-            popUpRef.current?.show('La cantidad debe ser mayor a 0');            
+            popUpRef?.show('La cantidad debe ser mayor a 0');            
             return;
         }
         try {
-            addToCart(offerData.name, offerData.price, offerData.offerid, +quantity);
+            await addToCart(offerData.name, offerData.price, offerData.offerid, +quantity);
         } catch (error: any) {
-            popUpRef.current?.show(error.message);
+            popUpRef?.show(error.message);
             return;
         }
         
+        popUpRef?.show('Añadido al carrito', 'blue');
         onClose();
     }
-    return (<>
-        <PopUp ref={popUpRef} />
+    return (<>        
         <Modal>
             <div id="buy-modal" className='modal'>
                 <img src={placitaLogo} alt="Placita Logo" className='prevent-select' />

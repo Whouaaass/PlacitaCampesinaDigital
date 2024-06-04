@@ -8,6 +8,7 @@ import OfferModal from '../Modals/OfferModal';
 import { OffersContext, OfferProps } from '../../hooks/OffersProvider';
 import BuyModal from '../Modals/BuyModal';
 import SimpleAskModal from '../Modals/simpleAskModal';
+import PopUp, { PopUpRef } from '../PopUp';
 
 interface OfferCardProps extends HTMLAttributes<HTMLDivElement> {
     offerData: OfferProps;
@@ -21,16 +22,22 @@ const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing}) => {
     const [buyOpen, setBuyOpen] = useState(false);
     const [deleteOpen, setDeleteOpen] = useState(false);
     const { token } = useAuth();
-    const { deleteOffer } = useContext(OffersContext);    
+    const { deleteOffer, popUpRef } = useContext(OffersContext);    
     const expired = (new Date(expirationDate)).getTime() < (new Date()).getTime() //+ 1000*60*60*24*10;
+    
 
     function handleDelete() {
         console.log("Deleting");
         deleteOffer(offerid, token).then((data) => {
-            if (data.error) return console.log(data.error); 
-            else {
+            if (data.error) {
+                console.log(data.error);  
+                popUpRef?.show(data.error);
+            } else {
                 console.log("Deleted");                
+                popUpRef?.show("Oferta eliminada", 'blue');
             }           
+        }).catch(() => {      
+            popUpRef?.show("Error al conectar con el servidor");
         });
         setDeleteOpen(false);
     }    
@@ -42,7 +49,7 @@ const OfferCardSmall: FC<OfferCardProps> = ({ offerData, editing}) => {
         <button onClick={() => setCardOpen(true)}><MaterialSymbolsIcon name="edit" size='3rem' /></button>
         <button onClick={() => setDeleteOpen(true)} id="delete-offer-button" ><MaterialSymbolsIcon name="delete" size="3rem" /></button>
     </>
-    return (<>        
+    return (<>             
         {deleteOpen && <SimpleAskModal question={'¿Quieres eliminar la oferta?'} onAffirmative={handleDelete} onNegative={() => setDeleteOpen(false)} />}
         {cardOpen && <OfferModal offerData={offerData} onClose={() => setCardOpen(false)} editing={editing}/>}
         {buyOpen && <BuyModal offerData={offerData} onClose={() => setBuyOpen(false)}/>}

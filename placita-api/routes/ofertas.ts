@@ -58,6 +58,9 @@ router.get("/user/:id", async (req: Request, res: Response) => {
 });
 
 router.post("/", Verify, async (req: Request, res: Response) => {
+    if (req.body.user.USUTIPO !== "Campesino")
+        return res.status(403).json({ error: "Unauthorized" });
+
     const connection = await db.connect();
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
@@ -73,11 +76,17 @@ router.post("/", Verify, async (req: Request, res: Response) => {
         res.status(201).json({ message: "Offer created" });
     } catch (error: any) {
         console.log(error);
+        if (error.errorNum == 20012) {            
+            return res.status(500).json({ error: "La fecha de caducidad no puede ser menor a la fecha actual", errorNum: error.errorNum });
+        }
         if (error.errorNum == 20013) {
             return res.status(500).json({ error: "La cantidad no puede ser menor o igual a 0", errorNum: error.errorNum });
         }
         if (error.errorNum == 20014) {
             return res.status(500).json({ error: "El precio no puede ser menor o igual a 0", errorNum: error.errorNum });
+        }
+        if (error.errorNum == 1) {
+            return res.status(500).json({ error: "Ya tienes una oferta igual", errorNum: error.errorNum });
         }
         res.status(500).json({ error: "Internal server error" });
     }
@@ -85,24 +94,46 @@ router.post("/", Verify, async (req: Request, res: Response) => {
 
 
 router.post("/edit", Verify, async (req: Request, res: Response) => {
+    if (req.body.user.USUTIPO !== "Campesino")
+        return res.status(403).json({ error: "Unauthorized" });
+
     const connection = await db.connect();
-    console.log(req.body)
+    //console.log(req.body)
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
-    const { offerid, user, name, quantity, price, expirationDate, description } = req.body;
+    const { offerid, user, name, quantity, price, expirationDate, description } = req.body;    
 
-    const dbQuery = 'BEGIN PAQ_OFERTA.ACTUALIZAR_OFERTA(:offerid, :usuid, :nombre, TO_DATE(:fechaCaducidad, \'YYYY-MM-DD\'), :descripcion, :cantidad, :precio, \'Y\'); END;'
+    if (offerid == undefined || user.USUID == undefined || name == undefined || quantity == undefined || price == undefined || expirationDate == undefined || description == undefined) {
+        return res.status(400).json({ error: "Missing parameters" });
+    }
 
+    const dbQuery = 'BEGIN PAQ_OFERTA.ACTUALIZAR_OFERTA(:offerid, :usuid, :proNombre, TO_DATE(:fechaCaducidad, \'YYYY-MM-DD\'), :descripcion, :cantidad, :precio, \'Y\'); END;'
+    console.log(`nombre: "${name}"`);
     try {
-        await connection.execute(dbQuery, [offerid, user.USUID, name, expirationDate, description, quantity, price]);
+        await connection.execute(dbQuery, [offerid, user.USUID, name, expirationDate.substring(0, 10), description, quantity, price]);
         res.status(201).json({ message: "Offer edited" });
     } catch (error: any) {
-        console.log(JSON.stringify(error));
+        console.log(error);
+        if (error.errorNum == 1407) {
+            return res.status(400).json({ error: "Modificación fallida, campos vacios", errorNum: error.errorNum });
+        }
+        if (error.errorNum == 20012) {            
+            return res.status(500).json({ error: "La fecha de caducidad no puede ser menor a la fecha actual", errorNum: error.errorNum });
+        }
+        if (error.errorNum == 20013) {
+            return res.status(500).json({ error: "La cantidad no puede ser menor o igual a 0", errorNum: error.errorNum });
+        }
+        if (error.errorNum == 20014) {
+            return res.status(500).json({ error: "El precio no puede ser menor o igual a 0", errorNum: error.errorNum });
+        }
         res.status(500).json({ error: "Internal server error", errorNum: error.errorNum });
     }
 });
 
 router.delete("/:id", Verify, async (req: Request, res: Response) => {
+    if (req.body.user.USUTIPO !== "Campesino")
+        return res.status(403).json({ error: "Unauthorized" });
+    
     const connection = await db.connect();
     if (!connection)
         return res.status(503).json({ error: "Error al conectar con la base de datos" });
@@ -113,7 +144,7 @@ router.delete("/:id", Verify, async (req: Request, res: Response) => {
         res.status(200).json({ message: "Offer deleted" });
     } catch (error: any) {
         console.log(error);
-
+        
         res.status(500).json({ error: "Internal server error", errorNum: error.errorNum });
     }
 });
