@@ -5,6 +5,7 @@ import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import CustomSelect1 from '../CustomComponents/CustomSelect1';
 import { useAuth } from '../../hooks/AuthProvider';
 import PopUp, { PopUpRef } from '../PopUp';
+import { controlFloatInput, controlIntInput } from '../../controllers/InputTypesControl';
 
 async function getProducts() {
     const response = await fetch('http://localhost:3000/productos');
@@ -26,8 +27,8 @@ async function addOffer(offer: Offer, token: string) {
 
 export interface Offer {
     name: string;
-    quantity: string;
-    price: string;
+    quantity: number;
+    price: number;
     expirationDate: string;
     description: string;
 }
@@ -42,8 +43,8 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
     const popUpRef = useRef<PopUpRef>(null);
     const [offer, setOffer] = useState({
         name: '',
-        quantity: '',
-        price: '',
+        quantity: 0,
+        price: 0,
         expirationDate: '',
         description: ''
     });
@@ -59,18 +60,25 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
     }, []);
 
     function handleChange(e: any) {
+        const name = e.target.name as string;
+        let value = e.target.value;                
         e.target.setCustomValidity('');
-        if (e.target.name === 'expirationDate' && e.target.value && !checkExpirationDate(e.target.value)) {
-            e.target.setCustomValidity('La fecha de caducaidad debe de ser posterior a la fecha actual');                        
+        if (name === 'expirationDate' && value && !checkExpirationDate(value)) {
+            e.target.setCustomValidity('La fecha de caducidad debe de ser posterior a la fecha actual');                        
         } else
-        if (e.target.name === 'price' && e.target.value < 0) { 
-            e.target.setCustomValidity('El precio no puede ser menor a 0');
+        if (name === 'price') { 
+            value = controlFloatInput(value, 10);
         }
+        if (name === 'quantity') {
+            value = controlIntInput(value, 10);
+        }         
+        
         setOffer({
             ...offer,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     }
+    
     function handleSubmit(e: FormEvent<HTMLFormElement>) {
         e.preventDefault();        
         addOffer(offer, token).then((response) => {
@@ -83,8 +91,8 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
                 popUpRef.current?.show("Oferta agregada exitosamente", "blue");
                 setOffer({
                     name: '',
-                    quantity: '',
-                    price: '',
+                    quantity: 0,
+                    price: 0,
                     expirationDate: '',
                     description: ''
                 });
@@ -121,10 +129,10 @@ const AddOfferModal: FC<AddOfferModalProps> = ({ open, onClose, onSuccess }) => 
                     <CustomSelect1 defaultValue="Selecciona un producto" values={products} label="Nombre" name="name" value={offer.name} required
                         onChange={handleChange}
                     />
-                    <CustomInput1 label="Cantidad" type="number" name="quantity" value={offer.quantity} required
+                    <CustomInput1 label="Cantidad" type="text" name="quantity" value={offer.quantity} required
                         onChange={handleChange}
                     />
-                    <CustomInput1 label="Precio ($COP)" type="number" name="price" value={offer.price} required
+                    <CustomInput1 label="Precio ($COP)" type="text" name="price" value={offer.price} step={100} required
                         onChange={handleChange}
                     />
                     <CustomInput1 label="Caducidad" type="date" name="expirationDate" value={offer.expirationDate} required

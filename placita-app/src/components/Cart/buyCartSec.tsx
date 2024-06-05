@@ -45,13 +45,17 @@ const BuyCartSec: FC<BuyCartSecProps> = ({}) => {
         if (res.error) {
             popUpRef.current?.show('Error al realizar la compra');
             return;
-        }
-        popUpRef.current?.show('Compra exitosa', 'blue');
+        }        
         resetCart();
         setTicketData(res.data);
+        popUpRef.current?.show('Compra exitosa', 'blue');
     }
     const handleClearCart = () => {
-        resetCart();
+        if (cart.length > 0) {
+            resetCart();
+            popUpRef.current?.show('Carrito cancelado', 'blue');                
+        }
+        
     }
 
     return (<>
@@ -64,7 +68,7 @@ const BuyCartSec: FC<BuyCartSecProps> = ({}) => {
                 <p>no hay productos en el carrito</p>
                 :cart.map((item: cartItemProps) =>
                     <li key={item.offerid} className='cart-item'>
-                        <CartItem item={item} />
+                        <CartItem item={item}/>
                     </li>
                 )}
             </ul>
@@ -86,12 +90,13 @@ const BuyCartSec: FC<BuyCartSecProps> = ({}) => {
     );
 };
 
-const CartItem: FC<{ item: cartItemProps }> = ({ item }) => {
-    const { deleteFromCart } = useContext(OffersContext);
+const CartItem: FC<{ item: cartItemProps}> = ({ item }) => {
+    const { deleteFromCart, popUpRef } = useContext(OffersContext);
     const handleDelete = () => {
-        deleteFromCart(item.offerid);
+        popUpRef?.show('Compra eliminada', 'blue');
+        deleteFromCart(item.offerid);        
     }
-    return <>
+    return <>        
         <img src={placitaLogo} alt="Logo Placita" />
         <div>
             <p>{item.name}</p>

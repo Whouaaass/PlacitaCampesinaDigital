@@ -5,7 +5,7 @@ import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import PopUp, { PopUpRef } from '../PopUp';
 import { OffersContext } from '../../hooks/OffersProvider';
 import CustomInput1 from '../CustomComponents/CustomInput1';
-
+import { controlIntInput } from '../../controllers/InputTypesControl';
 
 interface BuyModalProps {
     offerData: any;
@@ -16,8 +16,9 @@ const BuyModal: React.FC<BuyModalProps> = ({ offerData, onClose }) => {
     const [quantity, setQuantity] = useState(1);
     const { addToCart, popUpRef } = useContext(OffersContext);    
 
-    const handleOnChange = (e: any) => {
-        setQuantity(e.target.value);
+    const handleOnChange = (e: any) => {        
+        let value = e.target.value;        
+        setQuantity(controlIntInput(value, 10));
     }
     const handleClose = () => {
         onClose();
@@ -45,7 +46,7 @@ const BuyModal: React.FC<BuyModalProps> = ({ offerData, onClose }) => {
                 <h2>{offerData.name}</h2>
 
 
-                <CustomInput1 label="Indique la cantidad que desea" type='number' name='quantity' value={quantity} onChange={handleOnChange} />
+                <CustomInput1 label="Indique la cantidad que desea" type='text' name='quantity' value={quantity} onChange={handleOnChange} />
 
 
                 <button type="button" onClick={handleAdd} className='button-3'>Añadir</button>

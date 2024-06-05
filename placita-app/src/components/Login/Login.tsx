@@ -27,9 +27,19 @@ function Login() {
     }, []);
     // Functions
     function handleChange(e: any) {
+        const name = e.target.name as string;
+        let value = e.target.value as string;        
+        e.target.setCustomValidity('');
+        if (name === 'id') {            
+            if (value.match('(?!^\\d+$)^.+$')) return; // If it's not a number
+            if (value.length > 10) {
+                e.target.setCustomValidity('La cédula no puede tener más de 10 dígitos');
+                value = value.substring(0, 10);
+            }
+        }
         setUser({
             ...user,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     }
 

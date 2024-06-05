@@ -5,8 +5,18 @@ import MaterialSymbolsIcon from '../Icons/MaterialSymbolsIcon';
 import { useAuth } from '../../hooks/AuthProvider';
 import PopUp, { PopUpRef } from '../PopUp';
 import { OffersContext } from '../../hooks/OffersProvider';
+import { controlFloatInput, controlIntInput } from '../../controllers/InputTypesControl';
 
 const editOffer = async (offer: any, token: string) => {
+    if (offer.quantity === '' ||
+        offer.price === '' ||
+        offer.description === '' ||
+        offer.expirationDate === '') throw new Error("Modificación Fallida, campos vacíos")
+    if (offer.quantity < 0) throw new Error("La cantidad no puede ser menor a 0");
+    if (offer.price < 0) throw new Error("El precio no puede ser menor a 0");
+    if (offer.description === '') throw new Error("La descripción no puede estar vacía");
+
+
     const response = await fetch('http://localhost:3000/ofertas/edit', {
         method: 'POST',
         headers: {
@@ -14,7 +24,7 @@ const editOffer = async (offer: any, token: string) => {
             token: `session=${token}`
         },
         body: JSON.stringify(offer)
-    });    
+    });
     return await response.json();
 }
 
@@ -22,7 +32,7 @@ const editOffer = async (offer: any, token: string) => {
 interface OfferModalProps {
     offerData: any;
     editing?: boolean;
-    buying?: boolean;    
+    buying?: boolean;
     onClose: () => void;
 }
 
@@ -30,51 +40,65 @@ const MONTHS = ['', 'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Juli
 
 const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onClose }) => {
     const [isEditing, setIsEditing] = useState(false);
-    
+
     const [data, setData] = useState(offerData);
     const { token } = useAuth();
     const { refreshOffers } = useContext(OffersContext);
     const popUpRef = useRef<PopUpRef>(null);
 
-    const [year, month, day] = data.expirationDate.substring(0, 10).split("-");   
+    const [year, month, day] = data.expirationDate.substring(0, 10).split("-");
 
     const expDateString = `${day}-${MONTHS[+month]}-${year}`;
 
-    const handleOnChange = (e: any) => {
-        const { name, value, type } = e.target;        
+    const handleOnChange = (e: any) => {        
+        const { name, type } = e.target;
+        let value = e.target.value;
         /*
         if (type === 'number' && (+value < 1 && value !== '')) {
             popUpRef.current?.show("El valor debe ser mayor a 0");
             return;
         }
         */
+        if (name === 'quantity') {
+            value = controlIntInput(value, 10);
+        }
+        if (name === 'price') {
+            value = controlFloatInput(value, 10);
+        }        
         setData({ ...data, [name]: value });
     }
+
     const handleClose = () => {
         onClose();
     }
-    const handleSave = async () => {        
+
+    const handleSave = async () => {
         // Check if data has changed
         if (JSON.stringify(offerData) === JSON.stringify(data)) {
             setIsEditing(false);
             return;
         }
-        const res = await editOffer(data, token);
-        if (res.errorNum === 20011)
-            return popUpRef.current?.show("Error de formato al insertar oferta");
-        if (res.errorNum === 20012) 
-            return popUpRef.current?.show("La fecha de caducidad no puede ser menor a la fecha actual");            
-        if (res.errorNum === 20013)           
-            return popUpRef.current?.show("La cantidad no puede ser menor a 1");;        
-        if (res.errorNum === 20014)
-            return popUpRef.current?.show("El precio no puede ser menor a 1");
+        try {
+            const res = await editOffer(data, token);
+            if (res.errorNum === 20011)
+                return popUpRef.current?.show("Error de formato al insertar oferta");
+            if (res.errorNum === 20012)
+                return popUpRef.current?.show("La fecha de caducidad no puede ser menor a la fecha actual");
+            if (res.errorNum === 20013)
+                return popUpRef.current?.show("La cantidad no puede ser menor a 1");;
+            if (res.errorNum === 20014)
+                return popUpRef.current?.show("El precio no puede ser menor a 1");
 
-        if (res.error) {
-            popUpRef.current?.show(res.error);
-            return;
+            if (res.error) {
+                popUpRef.current?.show(res.error);
+                return;
+            }
+            refreshOffers();
+            setIsEditing(false);
+        } catch (e : any) {
+            popUpRef.current?.show(e.message);
         }
-        refreshOffers();
-        setIsEditing(false);
+        
     }
 
     const dataOnView = (<>
@@ -95,11 +119,11 @@ const OfferModal: React.FC<OfferModalProps> = ({ offerData, buying, editing, onC
             <label id="offer-modal__name">{data.name}</label>
             <label id="offer-modal__price">
                 Precio:
-                <input type="number" name="price" value={data.price} onChange={handleOnChange} className='input-t blink' />
+                <input type="text" name="price" value={data.price} step={100} onChange={handleOnChange} className='input-t blink' />
             </label>
             <label id="offer-modal__quantity">
                 Cantidad:
-                <input type="number" name="quantity" value={data.quantity} onChange={handleOnChange} className='input-t blink' />
+                <input type="text" name="quantity" value={data.quantity} onChange={handleOnChange} className='input-t blink' />
             </label>
             <label id="offer-modal__expiration">
                 Fecha Caducidad:

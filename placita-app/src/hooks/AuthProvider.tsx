@@ -48,7 +48,7 @@ const AuthProvider: FC<AuthProviderProps> = ({ children }) => {
    * @param data - The login data.
    * @returns A promise that resolves to the login response.
    */
-  const loginAction = async (data: loginData) => {
+  const loginAction = async (data: loginData) => {    
     const response = await fetch("http://localhost:3000/usuarios/login", {
       method: "POST",
       headers: {

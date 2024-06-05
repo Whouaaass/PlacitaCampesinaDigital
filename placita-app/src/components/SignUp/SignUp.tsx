@@ -16,7 +16,11 @@ const getMunicipios = async () => {
     return await response.json();
 };
 
-const signUpUser = async (user: any) => {
+const signUpUser = async (user: userProps) => {
+    user.firstname = user.firstname.trim();
+    user.lastname = user.lastname.trim();
+    user.dir = user.dir.trim();    
+    user.agrocode = user.agrocode.trim();
     const response = await fetch("http://localhost:3000/usuarios/signup", {
         method: 'POST',
         headers: {
@@ -31,7 +35,7 @@ const signUpUser = async (user: any) => {
  * @brief SingUp component that renders a page to register a new user.
  */
 function SignUp() {
-    const [user, setUser] = useState({
+    const [user, setUser] = useState<userProps>({
         firstname: '',
         lastname: '',
         password: '',
@@ -57,7 +61,7 @@ function SignUp() {
                 return;
             }
             MUNICIPIOS = data.data.map((m: any) => m.MUNNOMBRE);
-            setUser({...user});
+            setUser({ ...user });
         }).catch((err) => {
             console.log(err.message)
         });
@@ -66,9 +70,41 @@ function SignUp() {
 
     // Functions
     const handleChange = (e: any) => {
+        const name = e.target.name as string;
+        const type = e.target.type as string;
+        let value = e.target.value as string;
+
+        if (name === 'firstname' || name === 'lastname' || name === 'dir') {
+            value = value.trimStart();
+        }
+        if (name === 'id') {
+            if (value.match('(?!^\\d+$)^.+$')) return; // If it's not a number
+            if (value.length > 10) {
+                popUpRef.current?.show('La Cédula no puede tener más de 10 dígitos');
+                value = value.substring(0, 10);
+            }
+        }
+        if (name === 'password') {
+            if (value.length > 20) {
+                popUpRef.current?.show('La contraseña no puede tener más de 20 caracteres');
+                value = value.substring(0, 20);
+            };
+        }
+        if (name === 'telnumber') {
+            if (value.match('(?!^\\d+$)^.+$')) return; // If it's not a number
+            if (value.length > 10) {
+                popUpRef.current?.show('El teléfono no puede tener más de 10 dígitos');
+                value = value.substring(0, 10);
+            }
+        
+        }
+        if (name === 'agrocode') {
+            value = value.trimStart();
+        }
+
         setUser({
             ...user,
-            [e.target.name]: e.target.value
+            [name]: value
         });
     }
     const handleSubmit = (e: FormEvent<HTMLFormElement>) => {
@@ -94,15 +130,15 @@ function SignUp() {
 
         // sends the sign up data to the api server
         signUpUser({
-            ...user,                        
+            ...user,
             firstname: user.firstname.trim(),
             lastname: user.lastname.trim(),
-            dir: user.dir.trim(),                                      
+            dir: user.dir.trim(),
         }).then((data) => {
             if (data.error) {
-                return popUpRef.current?.show(data.error);                
+                return popUpRef.current?.show(data.error);
             }
-            
+
             popUpRef.current?.show('Usuario creado exitosamente', 'blue');
             setTimeout(() => {
                 navigate('/login');
@@ -110,7 +146,6 @@ function SignUp() {
 
         }).catch((err) => {
             popUpRef.current?.show('Error del servidor');
-            console.log('Error al enviar la peticion al servidor')
             console.log(err)
         });
     }
@@ -140,7 +175,7 @@ function SignUp() {
                     <div id="inputs-container">
                         <CustomInput1
                             label='Nombre'
-                            type='name'
+                            type='text'
                             name='firstname'
                             value={user.firstname}
                             onChange={handleChange}
@@ -150,7 +185,7 @@ function SignUp() {
                         />
                         <CustomInput1
                             label='Apellido'
-                            type='name'
+                            type='text'
                             name='lastname'
                             value={user.lastname}
                             onChange={handleChange}
@@ -167,7 +202,7 @@ function SignUp() {
                         />
                         <CustomInput1
                             label='Cédula'
-                            type='number'
+                            type='text'
                             name='id'
                             value={user.id}
                             onChange={handleChange}
@@ -182,6 +217,7 @@ function SignUp() {
                             value={user.telnumber}
                             onChange={handleChange}
                             required
+                            placeholder='Ej: 3123456789'
                             pattern={RegexValidators.telnumber}
                         />
                         <CustomInput1
@@ -230,7 +266,7 @@ function SignUp() {
                     <hr />
                     <p>¿Ya tienes cuenta? <Link to="/login">Inicia Sesion</Link></p>
                 </form>
-                <button id="hci-button" onClick={() => setMode((prev) => prev == "hci"? "": "hci")}>
+                <button id="hci-button" onClick={() => setMode((prev) => prev == "hci" ? "" : "hci")}>
                     T<span id='big-hci-font'>T</span>
                 </button>
             </SimpleFrame1>
@@ -241,3 +277,15 @@ function SignUp() {
 }
 
 export default SignUp;
+
+export interface userProps {
+    firstname: string,
+    lastname: string,
+    password: string,
+    id: string,
+    telnumber: string,
+    dir: string,
+    municipio: string,
+    agrocauca: string,
+    agrocode: string
+}
